@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Post a Need - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>Post a Need</h1>
+
+    <form action="/trade/create" method="POST">
+
+        <label>
+            Product
+        </label>
+
+        <input
+            type="text"
+            name="product"
+            placeholder="e.g. Cooking Oil"
+            required
+        >
+
+
+        <label>
+            Quantity
+        </label>
+
+        <input
+            type="number"
+            name="quantity"
+            min="1"
+            required
+        >
+
+
+        <label>
+            Unit
+        </label>
+
+        <input
+            type="text"
+            name="unit"
+            placeholder="e.g. 2L bottles"
+            required
+        >
+
+
+        <label>
+            Maximum Budget
+        </label>
+
+        <input
+            type="number"
+            name="budget"
+            min="0"
+            step="0.01"
+            placeholder="R1800"
+            required
+        >
+
+
+        <label>
+            Maximum Distance
+        </label>
+
+        <select name="maxDistance">
+
+            <option value="2">
+                Within 2 km
+            </option>
+
+            <option value="5" selected>
+                Within 5 km
+            </option>
+
+            <option value="10">
+                Within 10 km
+            </option>
+
+            <option value="50">
+                Any distance
+            </option>
+
+        </select>
+
+
+        <label>
+            Fulfilment
+        </label>
+
+        <select name="fulfilment">
+
+            <option value="pickup">
+                Pickup
+            </option>
+
+            <option value="delivery">
+                Delivery
+            </option>
+
+            <option value="either" selected>
+                Either
+            </option>
+
+        </select>
+
+
+        <label>
+            Additional Details
+        </label>
+
+        <textarea
+            name="description"
+            placeholder="Anything vendors should know..."
+        ></textarea>
+
+
+        <button type="submit">
+            Post Request
+        </button>
+
+    </form>
+
+
+    <a href="/trade">
+        Back to Trade
+    </a>
+
+</body>
+
+</html>

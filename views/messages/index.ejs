@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Messages - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>Messages</h1>
+
+
+    <% if (conversations.length === 0) { %>
+
+        <p>
+            You have no conversations yet.
+        </p>
+
+    <% } %>
+
+
+    <% conversations.forEach(conversation => { %>
+
+        <div>
+
+            <h3>
+                <%= conversation.shop.name %>
+            </h3>
+
+            <p>
+                <%= conversation.lastMessage.content %>
+            </p>
+
+            <small>
+                <%= conversation.lastMessage.createdAt.toLocaleString() %>
+            </small>
+
+            <br>
+
+            <a href="/messages/<%= conversation.shop._id %>">
+                Open Chat
+            </a>
+
+        </div>
+
+        <hr>
+
+    <% }) %>
+
+
+    <a href="/dashboard">
+        Back to Dashboard
+    </a>
+
+</body>
+
+</html>

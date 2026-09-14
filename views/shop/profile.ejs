@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= shop.name %> - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1><%= shop.name %></h1>
+
+    <p>
+        <%= shop.category %>
+    </p>
+
+    <p>
+        📍 <%= shop.address %>
+    </p>
+
+    <p>
+        ⭐ <%= shop.rating %>
+    </p>
+
+    <p>
+        <%= shop.description || "No description yet." %>
+    </p>
+
+    <a href="/shop/edit">
+        Edit Shop
+    </a>
+
+    <a href="/dashboard">
+        Dashboard
+    </a>
+
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Offers - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>Offers</h1>
+
+
+    <h2>Offers Received</h2>
+
+
+    <% if (receivedOffers.length===0) { %>
+
+        <p>
+            No offers received yet.
+        </p>
+
+        <% } %>
+
+
+            <% receivedOffers.forEach(offer=> { %>
+
+                <div>
+
+                    <h3>
+                        <%= offer.seller.name %>
+                    </h3>
+
+                    <p>
+                        Product:
+                        <%= offer.tradeRequest.product %>
+                    </p>
+
+                    <p>
+                        Offered Price:
+                        R<%= offer.amount %>
+                    </p>
+
+                    <p>
+                        Quantity:
+                        <%= offer.quantity %>
+                    </p>
+
+                    <p>
+                        Status:
+                        <%= offer.status %>
+                    </p>
+
+                    <a href="/offers/<%= offer._id %>">
+                        View Offer
+                    </a>
+
+                </div>
+
+                <hr>
+
+                <% }) %>
+
+
+
+                    <h2>Offers Sent</h2>
+
+
+                    <% if (sentOffers.length===0) { %>
+
+                        <p>
+                            You haven't sent any offers.
+                        </p>
+
+                        <% } %>
+
+
+                            <% sentOffers.forEach(offer=> { %>
+
+                                <div>
+
+                                    <h3>
+                                        <%= offer.tradeRequest.product %>
+                                    </h3>
+
+                                    <p>
+                                        Buyer:
+                                        <%= offer.buyer.name %>
+                                    </p>
+
+                                    <p>
+                                        Your Price:
+                                        R<%= offer.amount %>
+                                    </p>
+
+                                    <p>
+                                        Status:
+                                        <%= offer.status %>
+                                    </p>
+                                    <a href="/offers/<%= offer._id %>">
+                                        View Offer
+                                    </a>
+                                </div>
+
+                                <hr>
+
+                                <% }) %>
+
+
+                                    <a href="/trade">
+                                        Browse Trade Requests
+                                    </a>
+
+</body>
+
+</html>

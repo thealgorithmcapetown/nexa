@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NEXA Trade</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>NEXA Trade</h1>
+
+    <a href="/trade/create">
+        + Post a Need
+    </a>
+
+
+    <hr>
+
+
+    <% if (requestsWithDistance.length === 0) { %>
+
+    <p>No trade requests available.</p>
+
+<% } %>
+
+
+<% requestsWithDistance.forEach(item => { %>
+
+    <div>
+
+        <h2>
+            <%= item.request.shop.name %>
+        </h2>
+
+        <h3>
+            Needs:
+            <%= item.request.quantity %>
+            ×
+            <%= item.request.unit %>
+            <%= item.request.product %>
+        </h3>
+
+        <p>
+            Budget:
+            R<%= item.request.budget %>
+        </p>
+
+
+        <% if (item.distance !== null) { %>
+
+            <p>
+                📍 <%= item.distance.toFixed(1) %> km away
+            </p>
+
+        <% } else { %>
+
+            <p>
+                📍 Distance unavailable
+            </p>
+
+        <% } %>
+
+
+        <p>
+            Fulfilment:
+            <%= item.request.fulfilment %>
+        </p>
+
+
+        <% if (item.request.description) { %>
+
+            <p>
+                <%= item.request.description %>
+            </p>
+
+        <% } %>
+
+
+        <a href="/trade/<%= item.request._id %>">
+            View Request
+        </a>
+
+    </div>
+
+    <hr>
+
+<% }) %>
+
+    <a href="/dashboard">
+        Dashboard
+    </a>
+
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Trade Request - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>
+        <%= request.shop.name %>
+    </h1>
+
+
+    <h2>
+        <%= request.product %>
+    </h2>
+
+
+    <p>
+        Quantity:
+        <%= request.quantity %>
+            ×
+            <%= request.unit %>
+    </p>
+
+
+    <p>
+        Maximum Budget:
+        R<%= request.budget %>
+    </p>
+
+
+    <p>
+        Fulfilment:
+        <%= request.fulfilment %>
+    </p>
+
+
+    <p>
+        📍
+        <%= request.address %>
+    </p>
+
+
+    <p>
+        Maximum Distance:
+        <%= request.maxDistance %> km
+    </p>
+
+
+    <% if (request.description) { %>
+
+        <h3>
+            Additional Details
+        </h3>
+
+        <p>
+            <%= request.description %>
+        </p>
+
+        <% } %>
+
+
+            <hr>
+
+
+            <h3>
+                About this shop
+            </h3>
+
+            <p>
+                ⭐ <%= request.shop.rating %>
+            </p>
+
+            <p>
+                <%= request.shop.description || "No description available." %>
+            </p>
+
+
+            <hr>
+
+            <a href="/trade/<%= request._id %>/offer">
+                Make Offer
+            </a>
+
+            <a href="/messages/<%= request.shop._id %>?trade=<%= request._id %>">
+    Chat With Vendor
+</a>
+
+
+            <br><br>
+
+            <a href="/trade">
+                ← Back to Trade
+            </a>
+
+</body>
+
+</html>

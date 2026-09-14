@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Make Offer - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>Make an Offer</h1>
+
+
+    <h2>
+        <%= tradeRequest.product %>
+    </h2>
+
+
+    <p>
+        Requested:
+        <%= tradeRequest.quantity %>
+        ×
+        <%= tradeRequest.unit %>
+    </p>
+
+
+    <p>
+        Buyer's Budget:
+        R<%= tradeRequest.budget %>
+    </p>
+
+
+    <form
+        action="/trade/<%= tradeRequest._id %>/offer"
+        method="POST"
+    >
+
+        <label>
+            Your Price
+        </label>
+
+        <input
+            type="number"
+            name="amount"
+            min="0"
+            step="0.01"
+            required
+        >
+
+
+        <label>
+            Quantity You Can Supply
+        </label>
+
+        <input
+            type="number"
+            name="quantity"
+            min="1"
+            required
+        >
+
+
+        <label>
+
+            <input
+                type="checkbox"
+                name="delivery"
+            >
+
+            I can deliver
+
+        </label>
+
+
+        <label>
+            Message
+        </label>
+
+        <textarea
+            name="message"
+            placeholder="Add details about your offer..."
+        ></textarea>
+
+
+        <button type="submit">
+            Send Offer
+        </button>
+
+    </form>
+
+
+    <a href="/trade/<%= tradeRequest._id %>">
+        Cancel
+    </a>
+
+</body>
+
+</html>

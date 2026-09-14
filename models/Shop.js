@@ -1,0 +1,54 @@
+import mongoose from "mongoose";
+
+const shopSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required: true
+    },
+
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+
+    category: {
+        type: String
+    },
+
+    description: {
+        type: String
+    },
+
+    address: {
+        type: String,
+        required: true
+    },
+
+    coordinates: {
+        latitude: {
+            type: Number
+        },
+
+        longitude: {
+            type: Number
+        }
+    },
+
+    paymentEndpoint: {
+        type: String
+    },
+
+    rating: {
+        type: Number,
+        default: 0
+    }
+
+}, {
+    timestamps: true
+});
+
+const Shop = mongoose.model("Shop", shopSchema);
+
+export default Shop;

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Requests - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>My Requests</h1>
+
+    <nav>
+
+        <a href="/trade">
+            Browse Needs
+        </a>
+
+        <a href="/trade/my-requests">
+            My Requests
+        </a>
+
+        <a href="/trade/create">
+            + Post a Need
+        </a>
+
+    </nav>
+
+    <hr>
+
+
+    <% if (requests.length === 0) { %>
+
+        <p>
+            You haven't posted any requests yet.
+        </p>
+
+    <% } %>
+
+
+    <% requests.forEach(request => { %>
+
+        <div>
+
+            <h2>
+                <%= request.product %>
+            </h2>
+
+            <p>
+                <%= request.quantity %>
+                ×
+                <%= request.unit %>
+            </p>
+
+            <p>
+                Budget:
+                R<%= request.budget %>
+            </p>
+
+            <p>
+                Status:
+                <%= request.status %>
+            </p>
+
+            <a href="/trade/<%= request._id %>">
+                View Request
+            </a>
+
+        </div>
+
+        <hr>
+
+    <% }) %>
+
+</body>
+
+</html>

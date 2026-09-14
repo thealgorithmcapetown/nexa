@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NEXA - Sign Up</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+    <h1>Create your NEXA account</h1>
+
+    <form action="/signup" method="POST">
+
+        <h2>Your Details</h2>
+
+        <input
+            type="text"
+            name="name"
+            placeholder="Your name"
+            required
+        >
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+        >
+
+        <input
+            type="text"
+            name="phone"
+            placeholder="Phone"
+            required
+        >
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+        >
+
+
+        <h2>Your Business</h2>
+
+        <input
+            type="text"
+            name="shopName"
+            placeholder="Shop name"
+            required
+        >
+
+        <input
+            type="text"
+            name="category"
+            placeholder="Business category"
+            required
+        >
+
+        <input
+            type="text"
+            name="address"
+            placeholder="Business address"
+            required
+        >
+
+        <input
+            type="text"
+            name="location"
+            placeholder="Location e.g Capetown"
+            required
+        >
+
+
+        <button type="submit">
+            Create Account
+        </button>
+
+    </form>
+
+
+    <p>
+        Already have an account?
+        <a href="/login">Login</a>
+    </p>
+
+</body>
+
+</html>

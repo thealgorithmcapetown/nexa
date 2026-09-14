@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Chat with <%= otherShop.name %> - NEXA
+    </title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>
+        Chat with <%= otherShop.name %>
+    </h1>
+    <% if (tradeRequest) { %>
+
+        <div>
+
+            <h3>
+                Trade Discussion
+            </h3>
+
+            <p>
+                Product:
+                <strong>
+                    <%= tradeRequest.product %>
+                </strong>
+            </p>
+
+            <p>
+                Quantity:
+                <%= tradeRequest.quantity %>
+                    <%= tradeRequest.unit %>
+            </p>
+
+            <p>
+                Budget:
+                R<%= tradeRequest.budget %>
+            </p>
+
+            <a href="/trade/<%= tradeRequest._id %>">
+                View Trade Request
+            </a>
+
+        </div>
+
+        <hr>
+
+        <% } %>
+
+
+            <div id="messages-container">
+
+                <% if (messages.length===0) { %>
+                    <p id="no-messages">
+                        No messages yet.
+                    </p>
+                    <% } %>
+
+                        <% messages.forEach(message=> { %>
+
+                            <% const isMine=message.sender._id.toString()===currentShopId.toString(); %>
+
+                                <div class="message-row <%= isMine ? 'mine' : 'theirs' %>">
+
+                                    <div class="message-bubble">
+
+                                        <strong>
+                                            <%= isMine ? "You" : message.sender.name %>
+                                        </strong>
+
+                                        <p>
+                                            <%= message.content %>
+                                        </p>
+
+                                        <small>
+                                            <%= message.createdAt.toLocaleTimeString([], { hour: "2-digit" ,
+                                                minute: "2-digit" }) %>
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                                <% }) %>
+
+            </div>
+
+
+            <form id="chat-form"
+                action="/messages/<%= otherShop._id %><%= tradeRequest ? '?trade=' + tradeRequest._id : '' %>"
+                method="POST">
+
+                <textarea id="message-input" name="content" placeholder="Type your message..." required></textarea>
+
+                <button type="submit">
+                    Send
+                </button>
+
+            </form>
+
+
+            <br>
+
+
+            <a href="/messages">
+                Back to Messages
+            </a>
+            <script src="/socket.io/socket.io.js"></script>
+            <script>
+
+                window.chatData = {
+
+                    currentShopId:
+                        "<%= currentShopId %>",
+
+                    otherShopId:
+                        "<%= otherShop._id %>",
+
+                    otherShopName:
+                        "<%= otherShop.name %>",
+
+                    tradeId:
+                        "<%= tradeRequest ? tradeRequest._id : '' %>"
+
+                };
+
+            </script>
+            <script src="/js/chat.js"></script>
+
+</body>
+
+</html>

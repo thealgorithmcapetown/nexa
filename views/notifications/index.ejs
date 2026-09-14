@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notifications - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+
+    <h1>Notifications</h1>
+
+
+    <% if (notifications.length===0) { %>
+
+        <p>
+            You have no notifications.
+        </p>
+
+        <% } %>
+
+
+            <% notifications.forEach(notification=> { %>
+
+                <div>
+
+                    <p>
+                        <a href="/notifications/<%= notification._id %>">
+                            <%= notification.message %>
+                        </a>
+                    </p>
+                    <small>
+                        <%= notification.createdAt.toLocaleString() %>
+                    </small>
+
+                    <% if (!notification.read) { %>
+
+                        <strong>
+                            New
+                        </strong>
+
+                        <% } %>
+
+                </div>
+
+                <hr>
+
+                <% }) %>
+
+
+                    <a href="/dashboard">
+                        Back to Dashboard
+                    </a>
+
+</body>
+
+</html>

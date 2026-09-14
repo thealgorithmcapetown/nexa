@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Payment Successful - NEXA
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Payment Successful
+    </h1>
+
+
+    <p>
+        R<%= payment.amount %>
+        has been sent successfully.
+    </p>
+
+
+    <h2>
+        Payment Details
+    </h2>
+
+
+    <p>
+        From:
+        <strong>
+            <%= payment.payer.name %>
+        </strong>
+    </p>
+
+
+    <p>
+        To:
+        <strong>
+            <%= payment.payee.name %>
+        </strong>
+    </p>
+
+
+    <p>
+        Product:
+        <strong>
+            <%= payment.tradeRequest.product %>
+        </strong>
+    </p>
+
+
+    <p>
+        Status:
+        <strong>
+            <%= payment.status %>
+        </strong>
+    </p>
+
+
+    <% if (transaction) { %>
+
+        <p>
+            Reference:
+            <strong>
+                <%= transaction.reference %>
+            </strong>
+        </p>
+
+    <% } %>
+
+
+    <a href="/dashboard">
+        Back to Dashboard
+    </a>
+
+
+</body>
+
+</html>

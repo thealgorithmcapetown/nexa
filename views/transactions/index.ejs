@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Transactions - NEXA
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Transactions
+    </h1>
+
+
+    <% if (transactions.length === 0) { %>
+
+        <p>
+            No transactions yet.
+        </p>
+
+    <% } %>
+
+
+    <% transactions.forEach(transaction => { %>
+
+        <%
+
+            const sent =
+                transaction.fromShop._id
+                    .toString() ===
+                currentShopId.toString();
+
+        %>
+
+
+        <div>
+
+            <h3>
+
+                <%= sent
+                    ? "Payment Sent"
+                    : "Payment Received"
+                %>
+
+            </h3>
+
+
+            <p>
+
+                <strong>
+                    <%= transaction.tradeRequest.product %>
+                </strong>
+
+            </p>
+
+
+            <p>
+
+                <%= sent ? "To:" : "From:" %>
+
+                <strong>
+
+                    <%= sent
+                        ? transaction.toShop.name
+                        : transaction.fromShop.name
+                    %>
+
+                </strong>
+
+            </p>
+
+
+            <p>
+
+                Amount:
+
+                <strong>
+                    R<%= transaction.amount %>
+                </strong>
+
+            </p>
+
+
+            <p>
+                Status:
+                <%= transaction.status %>
+            </p>
+
+
+            <p>
+
+                <%= transaction.createdAt.toLocaleString() %>
+
+            </p>
+
+
+            <a href="/transactions/<%= transaction._id %>">
+
+                View Receipt
+
+            </a>
+
+        </div>
+
+
+        <hr>
+
+    <% }) %>
+
+
+    <a href="/dashboard">
+        Back to Dashboard
+    </a>
+
+
+</body>
+
+</html>

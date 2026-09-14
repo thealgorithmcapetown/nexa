@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NEXA Dashboard</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>NEXA Dashboard</h1>
+
+    <h2>
+        Welcome, <%= user.name %> 👋
+    </h2>
+
+    <h3>
+        <%= shop.name %>
+    </h3>
+
+    <p>
+        <%= shop.category %>
+    </p>
+
+    <p>
+        📍 <%= shop.address %>
+    </p>
+
+
+    <nav>
+
+        <a href="/trade">
+            Trade
+        </a>
+
+        <a href="/messages">
+            Messages
+            <span id="message-count" style="display: none;"></span>
+        </a>
+        <a href="/transactions">
+            Transactions
+        </a>
+        <a href="/payments">
+            Payments
+        </a>
+
+        <a href="/transactions">
+            Transactions
+        </a>
+
+        <a href="/notifications">
+            Notifications
+            <span id="notification-count" style="display: none;"></span>
+        </a>
+
+        <a href="/shop">
+            My Shop
+        </a>
+
+        <a href="/logout">
+            Logout
+        </a>
+
+    </nav>
+    <script>
+        window.dashboardData = {
+            currentShopId:
+                "<%= shop._id %>"
+        };
+    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/messages.js"></script>
+</body>
+
+</html>

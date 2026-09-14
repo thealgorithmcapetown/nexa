@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Payments - NEXA
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Payments
+    </h1>
+
+
+    <section>
+
+        <h2>
+            Payment Actions
+        </h2>
+
+
+        <a href="/payments/send">
+            Send Money
+        </a>
+
+        <br><br>
+
+        <a href="/payments/receive">
+            Receive Money
+        </a>
+
+    </section>
+
+
+    <hr>
+
+
+    <section>
+
+        <h2>
+            Recent Transactions
+        </h2>
+
+
+        <% if (recentTransactions.length === 0) { %>
+
+            <p>
+                No transactions yet.
+            </p>
+
+        <% } %>
+
+
+        <% recentTransactions.forEach(transaction => { %>
+
+            <%
+
+                const sent =
+                    transaction.fromShop._id
+                        .toString() ===
+                    currentShopId.toString();
+
+            %>
+
+
+            <div>
+
+                <strong>
+
+                    <%= sent
+                        ? "Sent"
+                        : "Received"
+                    %>
+
+                </strong>
+
+
+                <p>
+
+                    <%= transaction.tradeRequest
+                        ? transaction.tradeRequest.product
+                        : "Payment"
+                    %>
+
+                </p>
+
+
+                <p>
+
+                    <%= sent ? "To:" : "From:" %>
+
+                    <%= sent
+                        ? transaction.toShop.name
+                        : transaction.fromShop.name
+                    %>
+
+                </p>
+
+
+                <p>
+
+                    R<%= transaction.amount %>
+
+                </p>
+
+
+                <a href="/transactions/<%= transaction._id %>">
+
+                    View Receipt
+
+                </a>
+
+            </div>
+
+            <hr>
+
+        <% }) %>
+
+
+        <a href="/transactions">
+            View All Transactions
+        </a>
+
+    </section>
+
+
+    <br>
+
+
+    <a href="/dashboard">
+        Back to Dashboard
+    </a>
+
+
+</body>
+
+</html>

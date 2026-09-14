@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Transaction Receipt - NEXA
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Transaction Receipt
+    </h1>
+
+
+    <p>
+        Reference:
+        <strong>
+            <%= transaction.reference %>
+        </strong>
+    </p>
+
+
+    <p>
+        From:
+        <strong>
+            <%= transaction.fromShop.name %>
+        </strong>
+    </p>
+
+
+    <p>
+        To:
+        <strong>
+            <%= transaction.toShop.name %>
+        </strong>
+    </p>
+
+
+    <p>
+        Product:
+        <strong>
+            <%= transaction.tradeRequest.product %>
+        </strong>
+    </p>
+
+
+    <p>
+        Amount:
+        <strong>
+            R<%= transaction.amount %>
+        </strong>
+    </p>
+
+
+    <p>
+        Currency:
+        <%= transaction.currency %>
+    </p>
+
+
+    <p>
+        Type:
+        <%= transaction.type %>
+    </p>
+
+
+    <p>
+        Status:
+        <strong>
+            <%= transaction.status %>
+        </strong>
+    </p>
+
+
+    <p>
+        Date:
+        <%= transaction.createdAt.toLocaleString() %>
+    </p>
+
+
+    <% if (transaction.payment) { %>
+
+        <p>
+            Payment Method:
+            <%= transaction.payment.method %>
+        </p>
+
+    <% } %>
+
+
+    <a href="/transactions">
+        Back to Transactions
+    </a>
+
+
+</body>
+
+</html>

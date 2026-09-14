@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Offer Details - NEXA</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+
+</head>
+
+<body>
+
+    <h1>Offer Details</h1>
+
+
+    <h2>
+        <%= offer.tradeRequest.product %>
+    </h2>
+
+
+    <p>
+        Seller:
+        <%= offer.seller.name %>
+    </p>
+
+
+    <p>
+        Buyer:
+        <%= offer.buyer.name %>
+    </p>
+
+
+    <p>
+        Offer:
+        R<%= offer.amount %>
+    </p>
+
+
+    <p>
+        Quantity:
+        <%= offer.quantity %>
+    </p>
+
+
+    <p>
+        Delivery:
+        <%= offer.delivery ? "Yes" : "No" %>
+    </p>
+
+
+    <% if (offer.message) { %>
+
+        <p>
+            Message:
+            <%= offer.message %>
+        </p>
+
+    <% } %>
+
+
+    <p>
+        Status:
+        <strong>
+            <%= offer.status %>
+        </strong>
+    </p>
+    <% if (offer.status === "accepted") { %>
+
+    <a href="/payments/offer/<%= offer._id %>">
+        Proceed to Payment
+    </a>
+
+<% } %>
+
+
+    <% if (isBuyer && offer.status === "pending") { %>
+
+        <form
+            action="/offers/<%= offer._id %>/accept"
+            method="POST"
+        >
+
+            <button type="submit">
+                Accept Offer
+            </button>
+
+        </form>
+
+
+        <form
+            action="/offers/<%= offer._id %>/decline"
+            method="POST"
+        >
+
+            <button type="submit">
+                Decline Offer
+            </button>
+
+        </form>
+
+    <% } %>
+
+
+    <% if (offer.status === "accepted") { %>
+
+        <p>
+            Deal agreed.
+        </p>
+
+        
+    <% } %>
+
+
+    <br>
+
+    <a href="/offers">
+        ← Back to Offers
+    </a>
+
+</body>
+
+</html>
