@@ -6,6 +6,11 @@ const shopSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    walletAddress: {
+        type: String,
+        trim: true,
+        default: ""
+    },
 
     owner: {
         type: mongoose.Schema.Types.ObjectId,

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Payment Request - NEXA
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Payment Request
+    </h1>
+
+
+    <p>
+        Customer pays:
+    </p>
+
+
+    <h2>
+        R<%= paymentRequest.amount %>
+    </h2>
+
+
+    <p>
+        To:
+        <strong>
+            <%= paymentRequest.shop.name %>
+        </strong>
+    </p>
+
+
+    <p>
+        Reference:
+        <strong>
+            <%= paymentRequest.reference %>
+        </strong>
+    </p>
+
+
+    <p>
+        Status:
+        <strong>
+            <%= paymentRequest.status %>
+        </strong>
+    </p>
+
+
+    <h2>
+        Scan to Pay
+    </h2>
+
+
+    <img
+        src="<%= qrCode %>"
+        alt="NEXA payment QR code"
+        width="280"
+    >
+
+
+    <p>
+        Payment URL:
+    </p>
+
+
+    <p>
+        <%= paymentUrl %>
+    </p>
+
+
+    <br>
+
+
+    <a href="/payments/receive">
+        Create Another Payment Request
+    </a>
+
+
+</body>
+
+</html>

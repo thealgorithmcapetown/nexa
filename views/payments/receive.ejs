@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Receive Money - NEXA
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Receive Money
+    </h1>
+
+
+    <% if (!currentShop.walletAddress) { %>
+
+        <p>
+            This shop does not have an
+            Open Payments wallet connected.
+        </p>
+
+    <% } else { %>
+
+
+        <p>
+            Create a payment request for
+            your customer.
+        </p>
+
+
+        <form
+            action="/payments/receive"
+            method="POST"
+        >
+
+
+            <div>
+
+                <label>
+                    Amount
+                </label>
+
+                <br>
+
+                <input
+                    type="number"
+                    name="amount"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="50.00"
+                    required
+                >
+
+            </div>
+
+
+            <br>
+
+
+            <div>
+
+                <label>
+                    Reference
+                </label>
+
+                <br>
+
+                <input
+                    type="text"
+                    name="reference"
+                    placeholder="Customer purchase"
+                    required
+                >
+
+            </div>
+
+
+            <br>
+
+
+            <button type="submit">
+
+                Generate Payment QR
+
+            </button>
+
+
+        </form>
+
+
+    <% } %>
+
+
+    <br>
+
+
+    <a href="/payments">
+        Back to Payments
+    </a>
+
+
+</body>
+
+</html>

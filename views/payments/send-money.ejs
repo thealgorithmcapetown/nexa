@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Send Money - NEXA
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Send Money
+    </h1>
+
+
+    <p>
+        Send money to another
+        Open Payments wallet.
+    </p>
+
+
+    <form>
+
+        <div>
+
+            <label>
+                Recipient Wallet Address
+            </label>
+
+            <br>
+
+            <input
+                type="url"
+                name="walletAddress"
+                placeholder="https://wallet.example/user"
+                required
+            >
+
+        </div>
+
+
+        <br>
+
+
+        <div>
+
+            <label>
+                Amount
+            </label>
+
+            <br>
+
+            <input
+                type="number"
+                name="amount"
+                min="0.01"
+                step="0.01"
+                placeholder="100.00"
+                required
+            >
+
+        </div>
+
+
+        <br>
+
+
+        <div>
+
+            <label>
+                Reference
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                name="reference"
+                placeholder="Stock payment"
+                required
+            >
+
+        </div>
+
+
+        <br>
+
+
+        <button
+            type="button"
+            disabled
+        >
+            Send with Open Payments
+        </button>
+
+    </form>
+
+
+    <p>
+        Open Payments connection coming next.
+    </p>
+
+
+    <a href="/payments">
+        Back to Payments
+    </a>
+
+
+</body>
+
+</html>

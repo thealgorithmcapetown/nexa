@@ -3,7 +3,8 @@ import Payment from "../models/Payment.js";
 import Transaction from "../models/Transaction.js";
 import Shop from "../models/Shop.js";
 import Notification from "../models/Notification.js";
-
+import QRCode from "qrcode";
+import PaymentRequest from "../models/PaymentRequest.js";
 
 export const showOfferPayment = async (req, res) => {
 
@@ -401,3 +402,339 @@ export const showPayments = async (req, res) => {
     }
 
 };
+
+export const showSendMoney = async (req, res) => {
+
+    try {
+
+        const currentShop =
+            await Shop.findById(
+                req.session.shopId
+            );
+
+        if (!currentShop) {
+
+            return res.status(404).send(
+                "Shop not found"
+            );
+
+        }
+
+
+        return res.render(
+            "payments/send-money",
+            {
+                currentShop
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "SHOW SEND MONEY ERROR:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to load send money page"
+        );
+
+    }
+
+};
+
+export const showReceiveMoney = async (req, res) => {
+
+    try {
+
+        const currentShop =
+            await Shop.findById(
+                req.session.shopId
+            );
+
+
+        if (!currentShop) {
+
+            return res.status(404).send(
+                "Shop not found"
+            );
+
+        }
+
+
+        return res.render(
+            "payments/receive",
+            {
+                currentShop
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "SHOW RECEIVE MONEY ERROR:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to load receive money page"
+        );
+
+    }
+
+};
+export const createPaymentRequest = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const currentShop =
+            await Shop.findById(
+                req.session.shopId
+            );
+
+
+        if (!currentShop) {
+
+            return res.status(404).send(
+                "Shop not found"
+            );
+
+        }
+
+
+        if (!currentShop.walletAddress) {
+
+            return res.status(400).send(
+                "This shop does not have a wallet address"
+            );
+
+        }
+
+
+        const {
+            amount,
+            reference
+        } = req.body;
+
+
+        if (
+            !amount ||
+            Number(amount) <= 0
+        ) {
+
+            return res.status(400).send(
+                "Enter a valid payment amount"
+            );
+
+        }
+
+
+        if (
+            !reference ||
+            reference.trim() === ""
+        ) {
+
+            return res.status(400).send(
+                "Reference is required"
+            );
+
+        }
+
+
+        const expiresAt =
+            new Date(
+                Date.now() +
+                30 * 60 * 1000
+            );
+
+
+        const paymentRequest =
+            await PaymentRequest.create({
+
+                shop:
+                    currentShop._id,
+
+                walletAddress:
+                    currentShop.walletAddress,
+
+                amount:
+                    Number(amount),
+
+                currency:
+                    "ZAR",
+
+                reference:
+                    reference.trim(),
+
+                expiresAt
+
+            });
+
+
+        return res.redirect(
+            `/payments/receive/${paymentRequest._id}`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "CREATE PAYMENT REQUEST ERROR:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to create payment request"
+        );
+
+    }
+
+};
+export const showGeneratedPaymentRequest =
+    async (req, res) => {
+
+        try {
+
+            const paymentRequest =
+                await PaymentRequest.findById(
+                    req.params.paymentRequestId
+                )
+                    .populate("shop");
+
+
+            if (!paymentRequest) {
+
+                return res.status(404).send(
+                    "Payment request not found"
+                );
+
+            }
+
+
+            if (
+                paymentRequest.shop._id
+                    .toString() !==
+                req.session.shopId.toString()
+            ) {
+
+                return res.status(403).send(
+                    "You cannot view this payment request"
+                );
+
+            }
+
+
+            const paymentUrl =
+                `${req.protocol}://${req.get("host")}` +
+                `/pay/${paymentRequest._id}`;
+
+
+            const qrCode =
+                await QRCode.toDataURL(
+                    paymentUrl
+                );
+
+
+            return res.render(
+                "payments/payment-request",
+                {
+                    paymentRequest,
+                    paymentUrl,
+                    qrCode
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "SHOW PAYMENT REQUEST ERROR:",
+                error
+            );
+
+            return res.status(500).send(
+                "Unable to load payment request"
+            );
+
+        }
+
+    };
+    export const showCustomerPayment =
+    async (req, res) => {
+
+        try {
+
+            const paymentRequest =
+                await PaymentRequest.findById(
+                    req.params.paymentRequestId
+                )
+                    .populate("shop");
+
+
+            if (!paymentRequest) {
+
+                return res.status(404).send(
+                    "Payment request not found"
+                );
+
+            }
+
+
+            if (
+                paymentRequest.status !==
+                "pending"
+            ) {
+
+                return res.status(400).send(
+                    "This payment request is no longer active"
+                );
+
+            }
+
+
+            if (
+                paymentRequest.expiresAt &&
+                new Date() >
+                paymentRequest.expiresAt
+            ) {
+
+                paymentRequest.status =
+                    "expired";
+
+                await paymentRequest.save();
+
+
+                return res.status(400).send(
+                    "This payment request has expired"
+                );
+
+            }
+
+
+            return res.render(
+                "payments/customer-pay",
+                {
+                    paymentRequest
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "CUSTOMER PAYMENT ERROR:",
+                error
+            );
+
+            return res.status(500).send(
+                "Unable to load payment request"
+            );
+
+        }
+
+    };

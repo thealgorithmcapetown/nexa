@@ -4,7 +4,12 @@ import {
     showPayments,
     showOfferPayment,
     processOfferPayment,
-    showPaymentSuccess
+    showPaymentSuccess,
+    showSendMoney,
+    showReceiveMoney,
+    createPaymentRequest,
+    showGeneratedPaymentRequest,
+    showCustomerPayment
 } from "../controllers/paymentController.js";
 
 import {
@@ -19,7 +24,30 @@ router.get(
     showPayments
 );
 
+router.get(
+    "/payments/send",
+    requireAuth,
+    showSendMoney
+);
 
+
+router.get(
+    "/payments/receive",
+    requireAuth,
+    showReceiveMoney
+);
+router.post(
+    "/payments/receive",
+    requireAuth,
+    createPaymentRequest
+);
+
+
+router.get(
+    "/payments/receive/:paymentRequestId",
+    requireAuth,
+    showGeneratedPaymentRequest
+);
 router.get(
     "/payments/offer/:offerId",
     requireAuth,
@@ -39,6 +67,9 @@ router.get(
     requireAuth,
     showPaymentSuccess
 );
-
+router.get(
+    "/pay/:paymentRequestId",
+    showCustomerPayment
+);
 
 export default router;
