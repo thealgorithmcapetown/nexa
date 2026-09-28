@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const notificationSchema = new mongoose.Schema(
     {
         user: {
@@ -15,13 +16,17 @@ const notificationSchema = new mongoose.Schema(
                 "offer_accepted",
                 "offer_declined",
                 "new_message",
-                "payment_received"
+                "payment_received",
+                "trade_fulfilled",
+                "trade_completed"
             ],
+            required: true
         },
 
         message: {
             type: String,
-            required: true
+            required: true,
+            trim: true
         },
 
         relatedTrade: {
@@ -44,6 +49,11 @@ const notificationSchema = new mongoose.Schema(
             ref: "Payment"
         },
 
+        relatedTransaction: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Transaction"
+        },
+
         read: {
             type: Boolean,
             default: false
@@ -54,9 +64,34 @@ const notificationSchema = new mongoose.Schema(
     }
 );
 
+
+// --------------------------------
+// INDEXES
+// --------------------------------
+
+// Fast notification list:
+// Notification.find({ user }).sort({ createdAt: -1 })
+notificationSchema.index({
+    user: 1,
+    createdAt: -1
+});
+
+
+// Fast unread notification count:
+// Notification.countDocuments({
+//     user,
+//     read: false
+// })
+notificationSchema.index({
+    user: 1,
+    read: 1
+});
+
+
 const Notification = mongoose.model(
     "Notification",
     notificationSchema
 );
+
 
 export default Notification;

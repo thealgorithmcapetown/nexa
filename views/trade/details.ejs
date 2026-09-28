@@ -5,15 +5,22 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Trade Request - NEXA</title>
 
-    <link rel="stylesheet" href="/css/main.css">
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
 
 </head>
 
 <body>
+
 
     <h1>
         <%= request.shop.name %>
@@ -26,10 +33,18 @@
 
 
     <p>
+        Status:
+        <strong>
+            <%= request.status.toUpperCase() %>
+        </strong>
+    </p>
+
+
+    <p>
         Quantity:
         <%= request.quantity %>
-            ×
-            <%= request.unit %>
+        ×
+        <%= request.unit %>
     </p>
 
 
@@ -67,41 +82,300 @@
             <%= request.description %>
         </p>
 
-        <% } %>
+    <% } %>
 
 
-            <hr>
+    <hr>
 
 
-            <h3>
-                About this shop
-            </h3>
-
-            <p>
-                ⭐ <%= request.shop.rating %>
-            </p>
-
-            <p>
-                <%= request.shop.description || "No description available." %>
-            </p>
+    <h3>
+        About this shop
+    </h3>
 
 
-            <hr>
+    <p>
+        ⭐ <%= request.shop.rating %>
+    </p>
+
+
+    <p>
+        <%= request.shop.description || "No description available." %>
+    </p>
+
+
+    <hr>
+
+
+    <!-- ================================= -->
+    <!-- OPEN TRADE -->
+    <!-- ================================= -->
+
+    <% if (request.status === "open") { %>
+
+        <h3>
+            Trade Actions
+        </h3>
+
+
+        <% if (
+            request.shop._id.toString() !==
+            currentShopId.toString()
+        ) { %>
 
             <a href="/trade/<%= request._id %>/offer">
                 Make Offer
             </a>
 
-            <a href="/messages/<%= request.shop._id %>?trade=<%= request._id %>">
-    Chat With Vendor
-</a>
-
 
             <br><br>
 
-            <a href="/trade">
-                ← Back to Trade
+
+            <a href="/messages/<%= request.shop._id %>?trade=<%= request._id %>">
+                Chat With Vendor
             </a>
+
+        <% } else { %>
+
+            <p>
+                This is your trade request.
+            </p>
+
+        <% } %>
+
+    <% } %>
+
+
+
+    <!-- ================================= -->
+    <!-- ACCEPTED / PAID TRADE -->
+    <!-- ================================= -->
+
+    <% if (request.status === "accepted") { %>
+
+        <h3>
+            Trade In Progress
+        </h3>
+
+
+        <p>
+            An offer has been accepted.
+        </p>
+
+
+        <!-- SELLER -->
+
+        <% if (
+            acceptedOffer &&
+            acceptedOffer.seller &&
+            acceptedOffer.seller.toString() ===
+            currentShopId.toString()
+        ) { %>
+
+
+            <% if (successfulPayment) { %>
+
+                <p>
+                    Payment received.
+                </p>
+
+
+                <form
+                    action="/trade/<%= request._id %>/fulfill"
+                    method="POST"
+                >
+
+                    <button type="submit">
+                        Mark as Fulfilled
+                    </button>
+
+                </form>
+
+            <% } else { %>
+
+                <p>
+                    Waiting for payment from buyer.
+                </p>
+
+            <% } %>
+
+        <% } %>
+
+
+        <!-- BUYER -->
+
+        <% if (
+            acceptedOffer &&
+            acceptedOffer.buyer &&
+            acceptedOffer.buyer.toString() ===
+            currentShopId.toString()
+        ) { %>
+
+
+            <% if (successfulPayment) { %>
+
+                <p>
+                    Payment successful.
+                    Waiting for the seller to fulfil the trade.
+                </p>
+
+            <% } else { %>
+
+                <p>
+                    Payment is still required.
+                </p>
+
+
+                <a href="/payments/offer/<%= acceptedOffer._id %>">
+                    Proceed to Payment
+                </a>
+
+            <% } %>
+
+        <% } %>
+
+    <% } %>
+
+
+
+    <!-- ================================= -->
+    <!-- FULFILLED -->
+    <!-- ================================= -->
+
+    <% if (request.status === "fulfilled") { %>
+
+        <h3>
+            Trade Fulfilled
+        </h3>
+
+
+        <p>
+            The seller has marked this trade as fulfilled.
+        </p>
+
+
+        <% if (request.fulfilledAt) { %>
+
+            <p>
+                Fulfilled:
+                <%= request.fulfilledAt.toLocaleString() %>
+            </p>
+
+        <% } %>
+
+
+        <% if (
+            acceptedOffer &&
+            acceptedOffer.buyer &&
+            acceptedOffer.buyer.toString() ===
+            currentShopId.toString()
+        ) { %>
+
+            <p>
+                If you have received the goods,
+                confirm the trade below.
+            </p>
+
+
+            <form
+                action="/trade/<%= request._id %>/complete"
+                method="POST"
+            >
+
+                <button type="submit">
+                    Confirm Received
+                </button>
+
+            </form>
+
+        <% } else { %>
+
+            <p>
+                Waiting for the buyer to confirm receipt.
+            </p>
+
+        <% } %>
+
+    <% } %>
+
+
+
+    <!-- ================================= -->
+    <!-- COMPLETED -->
+    <!-- ================================= -->
+
+    <% if (request.status === "completed") { %>
+
+        <h3>
+            ✓ Trade Completed
+        </h3>
+
+
+        <p>
+            This trade has been successfully completed.
+        </p>
+
+
+        <% if (request.completedAt) { %>
+
+            <p>
+                Completed:
+                <%= request.completedAt.toLocaleString() %>
+            </p>
+
+        <% } %>
+
+    <% } %>
+
+
+
+    <!-- ================================= -->
+    <!-- CANCELLED -->
+    <!-- ================================= -->
+
+    <% if (request.status === "cancelled") { %>
+
+        <h3>
+            Trade Cancelled
+        </h3>
+
+
+        <p>
+            This trade is no longer active.
+        </p>
+
+    <% } %>
+
+
+    <br><br>
+
+
+    <!-- ================================= -->
+    <!-- BACK NAVIGATION -->
+    <!-- ================================= -->
+
+    <% if (
+        request.shop &&
+        request.shop._id.toString() ===
+        currentShopId.toString()
+    ) { %>
+
+        <a href="/trade/my-requests">
+            ← Back to My Requests
+        </a>
+
+
+        <br><br>
+
+    <% } %>
+
+
+    <a href="/trade">
+        ← Back to Trade Board
+    </a>
+
+
+    
+
 
 </body>
 

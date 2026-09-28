@@ -71,7 +71,8 @@ export const showTransactionDetails = async (
                 .populate("toShop")
                 .populate("tradeRequest")
                 .populate("payment")
-                .populate("offer");
+                .populate("offer")
+                .populate("paymentRequest");
 
 
         if (!transaction) {
@@ -83,17 +84,45 @@ export const showTransactionDetails = async (
         }
 
 
+        if (!req.session.shopId) {
+
+            return res.status(401).send(
+                "Shop session not found"
+            );
+
+        }
+
+
         const currentShopId =
             req.session.shopId.toString();
 
 
+        // --------------------------------
+        // CUSTOMER QR PAYMENT
+        // --------------------------------
+
+        const isCustomerPayment =
+            transaction.type ===
+            "customer_payment";
+
+
+        // Customer payments have no
+        // fromShop because the customer
+        // does not need a NEXA account.
+
         const isSender =
+            !isCustomerPayment &&
+            transaction.fromShop &&
             transaction.fromShop._id
                 .toString() ===
             currentShopId;
 
 
+        // Both trade payments and customer
+        // payments have a receiving shop.
+
         const isReceiver =
+            transaction.toShop &&
             transaction.toShop._id
                 .toString() ===
             currentShopId;
@@ -115,7 +144,10 @@ export const showTransactionDetails = async (
             "transactions/details",
             {
                 transaction,
-                currentShopId
+                currentShopId,
+                isCustomerPayment,
+                isSender,
+                isReceiver
             }
         );
 

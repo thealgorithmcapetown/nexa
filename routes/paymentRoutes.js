@@ -1,75 +1,206 @@
 import express from "express";
 
 import {
+
     showPayments,
+
     showOfferPayment,
+
     processOfferPayment,
+
+    finishOfferOpenPayment,
+
     showPaymentSuccess,
+
     showSendMoney,
+
     showReceiveMoney,
+
     createPaymentRequest,
+
     showGeneratedPaymentRequest,
-    showCustomerPayment
+
+    showCustomerPayment,
+
+    startCustomerOpenPayment,
+
+    finishCustomerOpenPayment,
+
+    getPaymentRequestStatus
+
 } from "../controllers/paymentController.js";
 
+
 import {
+
     requireAuth
+
 } from "../middleware/authMiddleware.js";
 
 
-const router = express.Router();
+const router =
+    express.Router();
+
+
+// --------------------------------
+// PAYMENT DASHBOARD
+// --------------------------------
+
 router.get(
+
     "/payments",
+
     requireAuth,
+
     showPayments
+
 );
 
+
+// --------------------------------
+// CUSTOMER PAYMENT STATUS
+// --------------------------------
+
 router.get(
+
+    "/payments/requests/:paymentRequestId/status",
+
+    requireAuth,
+
+    getPaymentRequestStatus
+
+);
+
+
+// --------------------------------
+// SEND / RECEIVE
+// --------------------------------
+
+router.get(
+
     "/payments/send",
+
     requireAuth,
+
     showSendMoney
+
 );
 
 
 router.get(
+
     "/payments/receive",
+
     requireAuth,
+
     showReceiveMoney
+
 );
+
+
 router.post(
+
     "/payments/receive",
+
     requireAuth,
+
     createPaymentRequest
+
 );
 
 
 router.get(
+
     "/payments/receive/:paymentRequestId",
+
     requireAuth,
+
     showGeneratedPaymentRequest
+
 );
+
+
+// --------------------------------
+// CUSTOMER OPEN PAYMENTS
+// --------------------------------
+
+router.post(
+
+    "/pay/:paymentRequestId/open-payments",
+
+    startCustomerOpenPayment
+
+);
+
+
 router.get(
+
+    "/pay/:paymentRequestId/open-payments/callback",
+
+    finishCustomerOpenPayment
+
+);
+
+
+router.get(
+
+    "/pay/:paymentRequestId",
+
+    showCustomerPayment
+
+);
+
+
+// --------------------------------
+// VENDOR → VENDOR PAYMENT
+// --------------------------------
+
+router.get(
+
     "/payments/offer/:offerId",
+
     requireAuth,
+
     showOfferPayment
+
 );
 
 
 router.post(
+
     "/payments/offer/:offerId",
+
     requireAuth,
+
     processOfferPayment
+
 );
 
 
 router.get(
-    "/payments/:paymentId/success",
+
+    "/payments/offer/:offerId/open-payments/callback",
+
     requireAuth,
-    showPaymentSuccess
+
+    finishOfferOpenPayment
+
 );
+
+
+// --------------------------------
+// PAYMENT SUCCESS
+// --------------------------------
+
 router.get(
-    "/pay/:paymentRequestId",
-    showCustomerPayment
+
+    "/payments/:paymentId/success",
+
+    requireAuth,
+
+    showPaymentSuccess
+
 );
+
 
 export default router;

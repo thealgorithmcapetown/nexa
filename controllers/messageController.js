@@ -3,45 +3,93 @@ import Shop from "../models/Shop.js";
 import Notification from "../models/Notification.js";
 import TradeRequest from "../models/TradeRequest.js";
 
+
+// ========================================
 // SHOW ALL CONVERSATIONS
+// ========================================
+
 export const showMessages = async (req, res) => {
 
     try {
 
-        const currentShopId = req.session.shopId;
+        const currentShopId =
+            req.session.shopId;
 
 
-        const messages = await Message.find({
+        const messages =
+            await Message.find({
 
-            $or: [
-                { sender: currentShopId },
-                { receiver: currentShopId }
-            ]
+                $or: [
+                    {
+                        sender:
+                            currentShopId
+                    },
+                    {
+                        receiver:
+                            currentShopId
+                    }
+                ]
 
-        })
-            .populate("sender")
-            .populate("receiver")
-            .sort({ createdAt: -1 });
+            })
+                .populate("sender")
+                .populate("receiver")
+                .populate("tradeRequest")
+                .sort({
+                    createdAt: -1
+                });
 
 
-        const conversationsMap = new Map();
+        const conversationsMap =
+            new Map();
 
 
         messages.forEach(message => {
 
+            if (
+                !message.sender ||
+                !message.receiver
+            ) {
+                return;
+            }
+
+
             const otherShop =
-                message.sender._id.toString() === currentShopId.toString()
+                message.sender._id.toString() ===
+                currentShopId.toString()
                     ? message.receiver
                     : message.sender;
 
 
-            if (!conversationsMap.has(otherShop._id.toString())) {
+            // Keep different trade conversations
+            // with the same shop separate.
+
+            const tradeId =
+                message.tradeRequest?._id
+                    ?.toString() ||
+                "general";
+
+
+            const conversationKey =
+                `${otherShop._id}-${tradeId}`;
+
+
+            if (
+                !conversationsMap.has(
+                    conversationKey
+                )
+            ) {
 
                 conversationsMap.set(
-                    otherShop._id.toString(),
+                    conversationKey,
                     {
-                        shop: otherShop,
-                        lastMessage: message
+                        shop:
+                            otherShop,
+
+                        tradeRequest:
+                            message.tradeRequest,
+
+                        lastMessage:
+                            message
                     }
                 );
 
@@ -50,19 +98,27 @@ export const showMessages = async (req, res) => {
         });
 
 
-        const conversations = Array.from(
-            conversationsMap.values()
+        const conversations =
+            Array.from(
+                conversationsMap.values()
+            );
+
+
+        return res.render(
+            "messages/index",
+            {
+                conversations
+            }
         );
-
-
-        return res.render("messages/index", {
-            conversations
-        });
 
 
     } catch (error) {
 
-        console.error("SHOW MESSAGES ERROR:", error);
+        console.error(
+            "SHOW MESSAGES ERROR:",
+            error
+        );
+
 
         return res.status(500).send(
             "Unable to load messages"
@@ -73,21 +129,28 @@ export const showMessages = async (req, res) => {
 };
 
 
+// ========================================
 // SHOW ONE CHAT
+// ========================================
+
 export const showChat = async (req, res) => {
 
     try {
 
-        const currentShopId = req.session.shopId;
+        const currentShopId =
+            req.session.shopId;
 
-        const otherShopId = req.params.shopId;
+        const otherShopId =
+            req.params.shopId;
 
-        const tradeId = req.query.trade;
+        const tradeId =
+            req.query.trade;
 
 
-        const otherShop = await Shop.findById(
-            otherShopId
-        );
+        const otherShop =
+            await Shop.findById(
+                otherShopId
+            );
 
 
         if (!otherShop) {
@@ -111,14 +174,16 @@ export const showChat = async (req, res) => {
         }
 
 
-        let tradeRequest = null;
+        let tradeRequest =
+            null;
 
 
         if (tradeId) {
 
-            tradeRequest = await TradeRequest.findById(
-                tradeId
-            );
+            tradeRequest =
+                await TradeRequest.findById(
+                    tradeId
+                );
 
 
             if (!tradeRequest) {
@@ -134,9 +199,14 @@ export const showChat = async (req, res) => {
                 tradeRequest.shop.toString();
 
 
+            // One of these two shops MUST own
+            // the trade request.
+
             if (
-                tradeOwnerId !== currentShopId.toString() &&
-                tradeOwnerId !== otherShopId.toString()
+                tradeOwnerId !==
+                    currentShopId.toString() &&
+                tradeOwnerId !==
+                    otherShopId.toString()
             ) {
 
                 return res.status(403).send(
@@ -151,17 +221,21 @@ export const showChat = async (req, res) => {
         const messageFilter = {
 
             $or: [
-
                 {
-                    sender: currentShopId,
-                    receiver: otherShopId
+                    sender:
+                        currentShopId,
+
+                    receiver:
+                        otherShopId
                 },
 
                 {
-                    sender: otherShopId,
-                    receiver: currentShopId
-                }
+                    sender:
+                        otherShopId,
 
+                    receiver:
+                        currentShopId
+                }
             ]
 
         };
@@ -169,62 +243,82 @@ export const showChat = async (req, res) => {
 
         if (tradeId) {
 
-            messageFilter.tradeRequest = tradeId;
+            messageFilter.tradeRequest =
+                tradeId;
+
+        } else {
+
+            // General chat should not accidentally
+            // include trade-specific messages.
+
+            messageFilter.tradeRequest =
+                null;
 
         }
 
 
-        const messages = await Message.find(
-            messageFilter
-        )
-            .populate("sender")
-            .populate("receiver")
-            .populate("tradeRequest")
-            .sort({ createdAt: 1 });
+        const messages =
+            await Message.find(
+                messageFilter
+            )
+                .populate("sender")
+                .populate("receiver")
+                .populate("tradeRequest")
+                .sort({
+                    createdAt: 1
+                });
 
+
+        // --------------------------------
+        // MARK RECEIVED MESSAGES AS READ
+        // --------------------------------
 
         const unreadFilter = {
 
-            sender: otherShopId,
+            sender:
+                otherShopId,
 
-            receiver: currentShopId,
+            receiver:
+                currentShopId,
 
-            read: false
+            read:
+                false
 
         };
 
 
         if (tradeId) {
 
-            unreadFilter.tradeRequest = tradeId;
+            unreadFilter.tradeRequest =
+                tradeId;
+
+        } else {
+
+            unreadFilter.tradeRequest =
+                null;
 
         }
 
 
         await Message.updateMany(
-
             unreadFilter,
-
             {
                 $set: {
                     read: true
                 }
             }
-
         );
 
 
-        return res.render("messages/chat", {
-
-            messages,
-
-            otherShop,
-
-            currentShopId,
-
-            tradeRequest
-
-        });
+        return res.render(
+            "messages/chat",
+            {
+                messages,
+                otherShop,
+                currentShopId,
+                tradeRequest
+            }
+        );
 
 
     } catch (error) {
@@ -234,6 +328,7 @@ export const showChat = async (req, res) => {
             error
         );
 
+
         return res.status(500).send(
             "Unable to load chat"
         );
@@ -242,21 +337,37 @@ export const showChat = async (req, res) => {
 
 };
 
+
+// ========================================
 // SEND MESSAGE
+// ========================================
+
 export const sendMessage = async (req, res) => {
 
     try {
 
-        const currentShopId = req.session.shopId;
+        const currentShopId =
+            req.session.shopId;
 
-        const otherShopId = req.params.shopId;
+        const otherShopId =
+            req.params.shopId;
 
-        const tradeId = req.query.trade;
+        const tradeId =
+            req.query.trade;
 
-        const { content } = req.body;
+        const {
+            content
+        } = req.body;
 
 
-        if (!content || content.trim() === "") {
+        // --------------------------------
+        // VALIDATE MESSAGE
+        // --------------------------------
+
+        if (
+            !content ||
+            content.trim() === ""
+        ) {
 
             return res.status(400).send(
                 "Message cannot be empty"
@@ -265,14 +376,16 @@ export const sendMessage = async (req, res) => {
         }
 
 
-        const senderShop = await Shop.findById(
-            currentShopId
-        );
+        const senderShop =
+            await Shop.findById(
+                currentShopId
+            );
 
 
-        const receiverShop = await Shop.findById(
-            otherShopId
-        );
+        const receiverShop =
+            await Shop.findById(
+                otherShopId
+            );
 
 
         if (!senderShop) {
@@ -305,14 +418,20 @@ export const sendMessage = async (req, res) => {
         }
 
 
-        let tradeRequest = null;
+        // --------------------------------
+        // VALIDATE TRADE CONTEXT
+        // --------------------------------
+
+        let tradeRequest =
+            null;
 
 
         if (tradeId) {
 
-            tradeRequest = await TradeRequest.findById(
-                tradeId
-            );
+            tradeRequest =
+                await TradeRequest.findById(
+                    tradeId
+                );
 
 
             if (!tradeRequest) {
@@ -323,47 +442,94 @@ export const sendMessage = async (req, res) => {
 
             }
 
+
+            const tradeOwnerId =
+                tradeRequest.shop.toString();
+
+
+            // IMPORTANT:
+            // Either sender or receiver must own
+            // the trade request.
+
+            if (
+                tradeOwnerId !==
+                    senderShop._id.toString() &&
+                tradeOwnerId !==
+                    receiverShop._id.toString()
+            ) {
+
+                return res.status(403).send(
+                    "This trade is not related to this conversation"
+                );
+
+            }
+
         }
 
 
+        // --------------------------------
+        // CREATE MESSAGE
+        // --------------------------------
+
         await Message.create({
 
-            sender: senderShop._id,
+            sender:
+                senderShop._id,
 
-            receiver: receiverShop._id,
+            receiver:
+                receiverShop._id,
 
-            tradeRequest: tradeRequest
-                ? tradeRequest._id
-                : undefined,
+            tradeRequest:
+                tradeRequest
+                    ? tradeRequest._id
+                    : null,
 
-            content: content.trim()
+            content:
+                content.trim()
 
         });
 
 
-        if (receiverShop?.owner) {
+        // --------------------------------
+        // NOTIFY RECEIVER
+        // --------------------------------
+
+        if (receiverShop.owner) {
 
             await Notification.create({
 
-                user: receiverShop.owner,
+                user:
+                    receiverShop.owner,
 
-                type: "new_message",
+                type:
+                    "new_message",
 
                 message:
                     `${senderShop.name} sent you a message`,
 
-                relatedShop: senderShop._id,
+                relatedShop:
+                    senderShop._id,
 
-                relatedTrade: tradeRequest
-                    ? tradeRequest._id
-                    : undefined
+                relatedTrade:
+                    tradeRequest
+                        ? tradeRequest._id
+                        : undefined
 
             });
 
         }
 
 
-        if (req.headers.accept?.includes("application/json")) {
+        // --------------------------------
+        // JSON RESPONSE
+        // --------------------------------
+
+        if (
+            req.headers.accept
+                ?.includes(
+                    "application/json"
+                )
+        ) {
 
             return res.json({
                 success: true
@@ -371,6 +537,10 @@ export const sendMessage = async (req, res) => {
 
         }
 
+
+        // --------------------------------
+        // REDIRECT BACK TO CHAT
+        // --------------------------------
 
         if (tradeRequest) {
 
@@ -385,12 +555,14 @@ export const sendMessage = async (req, res) => {
             `/messages/${receiverShop._id}`
         );
 
+
     } catch (error) {
 
         console.error(
             "SEND MESSAGE ERROR:",
             error
         );
+
 
         return res.status(500).send(
             "Unable to send message"
@@ -399,69 +571,119 @@ export const sendMessage = async (req, res) => {
     }
 
 };
-//unrd msg count 
-export const getUnreadMessageCount = async (req, res) => {
 
-    try {
 
-        const unreadCount = await Message.countDocuments({
-            receiver: req.session.shopId,
-            read: false
-        });
+// ========================================
+// GET UNREAD MESSAGE COUNT
+// ========================================
 
-        return res.json({
-            unreadCount
-        });
+export const getUnreadMessageCount =
+    async (req, res) => {
 
-    } catch (error) {
+        try {
 
-        console.error(
-            "UNREAD MESSAGE COUNT ERROR:",
-            error
-        );
+            const unreadCount =
+                await Message.countDocuments({
 
-        return res.status(500).json({
-            unreadCount: 0
-        });
+                    receiver:
+                        req.session.shopId,
 
-    }
+                    read:
+                        false
 
-};
-export const markChatAsRead = async (req, res) => {
+                });
 
-    try {
 
-        const currentShopId = req.session.shopId;
-        const otherShopId = req.params.shopId;
+            return res.json({
+                unreadCount
+            });
 
-        await Message.updateMany(
-            {
-                sender: otherShopId,
-                receiver: currentShopId,
-                read: false
-            },
-            {
-                $set: {
-                    read: true
-                }
+
+        } catch (error) {
+
+            console.error(
+                "UNREAD MESSAGE COUNT ERROR:",
+                error
+            );
+
+
+            return res.status(500).json({
+                unreadCount: 0
+            });
+
+        }
+
+    };
+
+
+// ========================================
+// MARK CHAT AS READ
+// ========================================
+
+export const markChatAsRead =
+    async (req, res) => {
+
+        try {
+
+            const currentShopId =
+                req.session.shopId;
+
+            const otherShopId =
+                req.params.shopId;
+
+            const tradeId =
+                req.query.trade;
+
+
+            const filter = {
+
+                sender:
+                    otherShopId,
+
+                receiver:
+                    currentShopId,
+
+                read:
+                    false
+
+            };
+
+
+            if (tradeId) {
+
+                filter.tradeRequest =
+                    tradeId;
+
             }
-        );
 
-        return res.json({
-            success: true
-        });
 
-    } catch (error) {
+            await Message.updateMany(
+                filter,
+                {
+                    $set: {
+                        read: true
+                    }
+                }
+            );
 
-        console.error(
-            "MARK CHAT AS READ ERROR:",
-            error
-        );
 
-        return res.status(500).json({
-            success: false
-        });
+            return res.json({
+                success: true
+            });
 
-    }
 
-};
+        } catch (error) {
+
+            console.error(
+                "MARK CHAT AS READ ERROR:",
+                error
+            );
+
+
+            return res.status(500).json({
+                success: false
+            });
+
+        }
+
+    };

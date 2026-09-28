@@ -35,7 +35,7 @@
 
 
     <h2>
-        R<%= paymentRequest.amount %>
+        R<%= Number(paymentRequest.amount).toFixed(2) %>
     </h2>
 
 
@@ -55,12 +55,38 @@
     </p>
 
 
-    <p>
-        Status:
-        <strong>
-            <%= paymentRequest.status %>
-        </strong>
-    </p>
+    <!-- ============================== -->
+    <!-- LIVE PAYMENT STATUS -->
+    <!-- ============================== -->
+
+    <div id="payment-status">
+
+        <% if (paymentRequest.status === "paid") { %>
+
+            <h2>
+                ✓ PAYMENT RECEIVED
+            </h2>
+
+            <p>
+                R<%= Number(paymentRequest.amount).toFixed(2) %>
+            </p>
+
+        <% } else { %>
+
+            <p>
+                Status:
+                <strong>
+                    Waiting for payment...
+                </strong>
+            </p>
+
+            <p>
+                Keep this page open.
+            </p>
+
+        <% } %>
+
+    </div>
 
 
     <h2>
@@ -91,6 +117,129 @@
     <a href="/payments/receive">
         Create Another Payment Request
     </a>
+
+
+    <!-- ============================== -->
+    <!-- LIVE PAYMENT CHECKER -->
+    <!-- ============================== -->
+
+    <script>
+
+        const paymentRequestId =
+            "<%= paymentRequest._id %>";
+
+
+        let paymentFound =
+            <%= paymentRequest.status === "paid"
+                ? "true"
+                : "false"
+            %>;
+
+
+        async function checkPaymentStatus() {
+
+            if (paymentFound) {
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/payments/requests/${paymentRequestId}/status`
+                    );
+
+
+                if (!response.ok) {
+
+                    console.error(
+                        "Unable to check payment status"
+                    );
+
+                    return;
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "PAYMENT STATUS:",
+                    data.status
+                );
+
+
+                if (data.status === "paid") {
+
+                    paymentFound =
+                        true;
+
+
+                    const statusBox =
+                        document.getElementById(
+                            "payment-status"
+                        );
+
+
+                    statusBox.innerHTML = `
+
+                        <h2>
+                            ✓ PAYMENT RECEIVED
+                        </h2>
+
+                        <p>
+                            R${Number(data.amount).toFixed(2)}
+                        </p>
+
+                        ${
+                            data.transactionId
+                                ? `
+                                    <a
+                                        href="/transactions/${data.transactionId}"
+                                    >
+                                        View Receipt
+                                    </a>
+                                `
+                                : ""
+                        }
+
+                    `;
+
+
+                    clearInterval(
+                        paymentChecker
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "PAYMENT STATUS CHECK ERROR:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        const paymentChecker =
+            setInterval(
+                checkPaymentStatus,
+                2000
+            );
+
+
+        checkPaymentStatus();
+
+    </script>
 
 
 </body>

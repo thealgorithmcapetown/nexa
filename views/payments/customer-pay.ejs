@@ -73,12 +73,36 @@
     </p>
 
 
-    <button
-        type="button"
-        disabled
-    >
+    <form
+    action="/pay/<%= paymentRequest._id %>/open-payments"
+    method="POST"
+>
+
+    <div>
+
+        <label for="payerWalletAddress">
+            Your Open Payments Wallet Address
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="payerWalletAddress"
+            name="payerWalletAddress"
+            placeholder="$ilp.interledger-test.dev/devante-zar"
+            required
+        >
+
+    </div>
+
+    <br>
+
+    <button type="submit">
         Continue with Open Payments
     </button>
+
+</form>
 
 
     <p>

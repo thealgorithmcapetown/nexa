@@ -45,7 +45,11 @@ const tradeRequestSchema = new mongoose.Schema({
 
     fulfilment: {
         type: String,
-        enum: ["pickup", "delivery", "either"],
+        enum: [
+            "pickup",
+            "delivery",
+            "either"
+        ],
         default: "either"
     },
 
@@ -55,8 +59,22 @@ const tradeRequestSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["open", "accepted", "completed", "cancelled"],
+        enum: [
+            "open",
+            "accepted",
+            "fulfilled",
+            "completed",
+            "cancelled"
+        ],
         default: "open"
+    },
+
+    fulfilledAt: {
+        type: Date
+    },
+
+    completedAt: {
+        type: Date
     },
 
     expiresAt: {
@@ -67,9 +85,11 @@ const tradeRequestSchema = new mongoose.Schema({
     timestamps: true
 });
 
+
 const TradeRequest = mongoose.model(
     "TradeRequest",
     tradeRequestSchema
 );
+
 
 export default TradeRequest;

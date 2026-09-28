@@ -43,7 +43,21 @@
 
         <%
 
+            // --------------------------------
+            // TRANSACTION TYPE
+            // --------------------------------
+
+            const isCustomerPayment =
+                transaction.type ===
+                "customer_payment";
+
+
+            // Customer payments do NOT have
+            // a fromShop.
+
             const sent =
+                !isCustomerPayment &&
+                transaction.fromShop &&
                 transaction.fromShop._id
                     .toString() ===
                 currentShopId.toString();
@@ -53,57 +67,170 @@
 
         <div>
 
+
+            <!-- ============================== -->
+            <!-- SENT / RECEIVED -->
+            <!-- ============================== -->
+
             <h3>
 
-                <%= sent
-                    ? "Payment Sent"
-                    : "Payment Received"
-                %>
+                <% if (isCustomerPayment) { %>
+
+                    Payment Received
+
+                <% } else { %>
+
+                    <%= sent
+                        ? "Payment Sent"
+                        : "Payment Received"
+                    %>
+
+                <% } %>
 
             </h3>
 
 
+            <!-- ============================== -->
+            <!-- PAYMENT TYPE / PRODUCT -->
+            <!-- ============================== -->
+
             <p>
 
                 <strong>
-                    <%= transaction.tradeRequest.product %>
+
+                    <% if (isCustomerPayment) { %>
+
+                        Customer Payment
+
+                    <% } else if (transaction.tradeRequest) { %>
+
+                        <%= transaction.tradeRequest.product %>
+
+                    <% } else { %>
+
+                        Trade Payment
+
+                    <% } %>
+
                 </strong>
 
             </p>
 
 
+            <!-- ============================== -->
+            <!-- FROM / TO -->
+            <!-- ============================== -->
+
             <p>
 
-                <%= sent ? "To:" : "From:" %>
+                <% if (isCustomerPayment) { %>
 
-                <strong>
+                    From:
 
-                    <%= sent
-                        ? transaction.toShop.name
-                        : transaction.fromShop.name
-                    %>
+                    <strong>
+                        External Customer
+                    </strong>
 
-                </strong>
+                <% } else if (sent) { %>
+
+                    To:
+
+                    <strong>
+
+                        <%= transaction.toShop
+                            ? transaction.toShop.name
+                            : "Unknown Shop"
+                        %>
+
+                    </strong>
+
+                <% } else { %>
+
+                    From:
+
+                    <strong>
+
+                        <%= transaction.fromShop
+                            ? transaction.fromShop.name
+                            : "Unknown Shop"
+                        %>
+
+                    </strong>
+
+                <% } %>
 
             </p>
 
+
+            <!-- ============================== -->
+            <!-- AMOUNT -->
+            <!-- ============================== -->
 
             <p>
 
                 Amount:
 
                 <strong>
-                    R<%= transaction.amount %>
+                    R<%= Number(transaction.amount).toFixed(2) %>
                 </strong>
 
             </p>
 
 
+            <!-- ============================== -->
+            <!-- REFERENCE -->
+            <!-- ============================== -->
+
+            <% if (transaction.reference) { %>
+
+                <p>
+
+                    Reference:
+
+                    <strong>
+                        <%= transaction.reference %>
+                    </strong>
+
+                </p>
+
+            <% } %>
+
+
+            <!-- ============================== -->
+            <!-- PAYMENT METHOD -->
+            <!-- ============================== -->
+
+            <% if (isCustomerPayment) { %>
+
+                <p>
+                    Method:
+
+                    <strong>
+                        Open Payments + Interledger
+                    </strong>
+                </p>
+
+            <% } %>
+
+
+            <!-- ============================== -->
+            <!-- STATUS -->
+            <!-- ============================== -->
+
             <p>
+
                 Status:
-                <%= transaction.status %>
+
+                <strong>
+                    <%= transaction.status %>
+                </strong>
+
             </p>
 
+
+            <!-- ============================== -->
+            <!-- DATE -->
+            <!-- ============================== -->
 
             <p>
 
@@ -112,16 +239,22 @@
             </p>
 
 
+            <!-- ============================== -->
+            <!-- RECEIPT -->
+            <!-- ============================== -->
+
             <a href="/transactions/<%= transaction._id %>">
 
                 View Receipt
 
             </a>
 
+
         </div>
 
 
         <hr>
+
 
     <% }) %>
 

@@ -5,25 +5,31 @@ const transactionSchema = new mongoose.Schema(
         payment: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Payment",
-            required: true
+            required: false
         },
 
         offer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Offer",
-            required: true
+            required: false
         },
 
         tradeRequest: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "TradeRequest",
-            required: true
+            required: false
         },
-
+        paymentRequest: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "PaymentRequest",
+    required: false,
+    unique: true,
+    sparse: true
+},
         fromShop: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Shop",
-            required: true
+            required: false
         },
 
         toShop: {
@@ -63,7 +69,12 @@ const transactionSchema = new mongoose.Schema(
         reference: {
             type: String,
             required: true,
-            unique: true
+        },
+
+        providerTransactionId: {
+            type: String,
+            unique: true,
+            sparse: true
         }
     },
     {

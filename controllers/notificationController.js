@@ -32,14 +32,18 @@ export const openNotification = async (req, res) => {
 
     try {
 
-        const notification = await Notification.findById(
-            req.params.id
-        );
+        const notification =
+            await Notification.findById(
+                req.params.id
+            );
+
 
         if (!notification) {
+
             return res.status(404).send(
                 "Notification not found"
             );
+
         }
 
 
@@ -47,42 +51,102 @@ export const openNotification = async (req, res) => {
             notification.user.toString() !==
             req.session.userId.toString()
         ) {
+
             return res.status(403).send(
                 "Not authorized"
             );
+
         }
 
+
+        // Mark notification as read
 
         notification.read = true;
 
         await notification.save();
 
-        if (notification.type === "new_message" && notification.relatedShop) {
+
+        // ========================================
+        // NEW MESSAGE
+        // ========================================
+
+        if (
+            notification.type === "new_message" &&
+            notification.relatedShop
+        ) {
 
             return res.redirect(
                 `/messages/${notification.relatedShop}`
             );
 
         }
-        if (notification.relatedOffer) {
-            return res.redirect(
-                `/offers/${notification.relatedOffer}`
-            );
-        }
 
+
+        // ========================================
+        // TRADE-RELATED NOTIFICATION
+        //
+        // IMPORTANT:
+        // Check relatedTrade BEFORE transaction.
+        //
+        // Vendor trade payments should open the
+        // trade so the seller can fulfil it.
+        // ========================================
 
         if (notification.relatedTrade) {
+
             return res.redirect(
                 `/trade/${notification.relatedTrade}`
             );
+
         }
 
 
-        return res.redirect("/notifications");
+        // ========================================
+        // CUSTOMER PAYMENT
+        //
+        // Customer QR payments don't have a trade,
+        // so take the vendor to the receipt.
+        // ========================================
+
+        if (
+            notification.type === "payment_received" &&
+            notification.relatedTransaction
+        ) {
+
+            return res.redirect(
+                `/transactions/${notification.relatedTransaction}`
+            );
+
+        }
+
+
+        // ========================================
+        // OFFER
+        // ========================================
+
+        if (notification.relatedOffer) {
+
+            return res.redirect(
+                `/offers/${notification.relatedOffer}`
+            );
+
+        }
+
+
+        // Nothing related — return to notifications
+
+        return res.redirect(
+            "/notifications"
+        );
+
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "OPEN NOTIFICATION ERROR:",
+            error
+        );
+
 
         return res.status(500).send(
             "Unable to open notification"

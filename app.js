@@ -15,6 +15,7 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
+import openPaymentsTestRoutes from "./routes/openPaymentsTestRoutes.js";
 
 dotenv.config();
 
@@ -147,6 +148,10 @@ app.use("/", notificationRoutes);
 app.use("/", messageRoutes);
 app.use("/", paymentRoutes);
 app.use("/", transactionRoutes);
+app.use(
+    "/",
+    openPaymentsTestRoutes
+);
 
 
 

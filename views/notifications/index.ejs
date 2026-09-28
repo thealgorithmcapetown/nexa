@@ -2,13 +2,21 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Notifications - NEXA</title>
 
-    <link rel="stylesheet" href="/css/main.css">
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
 </head>
 
 <body>
@@ -16,46 +24,93 @@
     <h1>Notifications</h1>
 
 
-    <% if (notifications.length===0) { %>
+    <% if (notifications.length === 0) { %>
 
         <p>
             You have no notifications.
         </p>
 
-        <% } %>
+    <% } %>
 
 
-            <% notifications.forEach(notification=> { %>
+    <% notifications.forEach(notification => { %>
 
-                <div>
+        <div>
 
-                    <p>
-                        <a href="/notifications/<%= notification._id %>">
-                            <%= notification.message %>
-                        </a>
-                    </p>
-                    <small>
-                        <%= notification.createdAt.toLocaleString() %>
-                    </small>
+            <p>
 
-                    <% if (!notification.read) { %>
+                <% if (!notification.read) { %>
 
-                        <strong>
-                            New
-                        </strong>
+                    <strong>
+                        NEW
+                    </strong>
 
-                        <% } %>
+                    <br>
 
-                </div>
-
-                <hr>
-
-                <% }) %>
+                <% } %>
 
 
-                    <a href="/dashboard">
-                        Back to Dashboard
-                    </a>
+                <a href="/notifications/<%= notification._id %>">
+
+                    <%= notification.message %>
+
+                </a>
+
+            </p>
+
+
+            <p>
+
+                <% if (notification.type === "new_offer") { %>
+
+                    New Offer
+
+                <% } else if (notification.type === "offer_accepted") { %>
+
+                    Offer Accepted
+
+                <% } else if (notification.type === "offer_declined") { %>
+
+                    Offer Declined
+
+                <% } else if (notification.type === "new_message") { %>
+
+                    New Message
+
+                <% } else if (notification.type === "payment_received") { %>
+
+                    Payment Received
+
+                <% } else if (notification.type === "trade_fulfilled") { %>
+
+                    Trade Fulfilled
+
+                <% } else if (notification.type === "trade_completed") { %>
+
+                    Trade Completed
+
+                <% } %>
+
+            </p>
+
+
+            <small>
+
+                <%= notification.createdAt.toLocaleString() %>
+
+            </small>
+
+        </div>
+
+
+        <hr>
+
+    <% }) %>
+
+
+    <a href="/dashboard">
+        Back to Dashboard
+    </a>
 
 </body>
 

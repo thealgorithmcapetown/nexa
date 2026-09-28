@@ -1,76 +1,63 @@
-const messageCount =
-    document.getElementById(
-        "message-count"
-    );
+import mongoose from "mongoose";
 
 
-const socket = io();
+const messageSchema = new mongoose.Schema(
+    {
+        sender: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Shop",
+            required: true
+        },
 
+        receiver: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Shop",
+            required: true
+        },
 
-const currentShopId =
-    window.dashboardData
-        ?.currentShopId;
+        tradeRequest: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "TradeRequest",
+            default: null
+        },
 
+        content: {
+            type: String,
+            required: true,
+            trim: true
+        },
 
-const loadMessageCount = async () => {
-
-    try {
-
-        const response = await fetch(
-            "/api/messages/unread-count"
-        );
-
-        const data =
-            await response.json();
-
-
-        if (!messageCount) {
-            return;
+        read: {
+            type: Boolean,
+            default: false
         }
-
-
-        if (data.unreadCount > 0) {
-
-            messageCount.textContent =
-                data.unreadCount;
-
-            messageCount.style.display =
-                "inline";
-
-        } else {
-
-            messageCount.style.display =
-                "none";
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Unable to load unread message count",
-            error
-        );
-
-    }
-
-};
-
-
-socket.on(
-    "messageUnreadChanged",
-    (data) => {
-
-        if (
-            data.receiverShopId ===
-            currentShopId
-        ) {
-
-            loadMessageCount();
-
-        }
-
+    },
+    {
+        timestamps: true
     }
 );
 
 
-loadMessageCount();
+// Fast conversation loading
+messageSchema.index({
+    sender: 1,
+    receiver: 1,
+    tradeRequest: 1,
+    createdAt: 1
+});
+
+
+// Fast unread-message counting
+messageSchema.index({
+    receiver: 1,
+    read: 1
+});
+
+
+const Message = mongoose.model(
+    "Message",
+    messageSchema
+);
+
+
+export default Message;

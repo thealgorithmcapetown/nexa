@@ -5,19 +5,13 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
         Payments - NEXA
     </title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
 
 </head>
 
@@ -59,84 +53,113 @@
         </h2>
 
 
-        <% if (recentTransactions.length === 0) { %>
+        <% if (recentTransactions.length===0) { %>
 
             <p>
                 No transactions yet.
             </p>
 
-        <% } %>
+            <% } %>
 
 
-        <% recentTransactions.forEach(transaction => { %>
+                <% recentTransactions.forEach(transaction=> { %>
 
-            <%
-
-                const sent =
-                    transaction.fromShop._id
-                        .toString() ===
-                    currentShopId.toString();
-
-            %>
+                    <% // Customer QR payments do not have a fromShop. // Trade payments do. const
+                        isCustomerPayment=transaction.type==="customer_payment" ; const sent=!isCustomerPayment &&
+                        transaction.fromShop && transaction.fromShop._id.toString()===currentShopId.toString(); %>
 
 
-            <div>
+                        <div>
 
-                <strong>
+                            <strong>
 
-                    <%= sent
-                        ? "Sent"
-                        : "Received"
-                    %>
+                                <% if (isCustomerPayment) { %>
 
-                </strong>
+                                    Received
 
+                                    <% } else { %>
 
-                <p>
+                                        <%= sent ? "Sent" : "Received" %>
 
-                    <%= transaction.tradeRequest
-                        ? transaction.tradeRequest.product
-                        : "Payment"
-                    %>
+                                            <% } %>
 
-                </p>
+                            </strong>
 
 
-                <p>
+                            <p>
 
-                    <%= sent ? "To:" : "From:" %>
+                                <% if (isCustomerPayment) { %>
 
-                    <%= sent
-                        ? transaction.toShop.name
-                        : transaction.fromShop.name
-                    %>
+                                    Customer Payment
 
-                </p>
+                                    <% } else { %>
 
+                                        <%= transaction.tradeRequest ? transaction.tradeRequest.product
+                                            : "Trade Payment" %>
 
-                <p>
+                                            <% } %>
 
-                    R<%= transaction.amount %>
-
-                </p>
+                            </p>
 
 
-                <a href="/transactions/<%= transaction._id %>">
+                            <p>
 
-                    View Receipt
+                                <% if (isCustomerPayment) { %>
 
-                </a>
+                                    From:
+                                    Customer
 
-            </div>
+                                    <% } else if (sent) { %>
 
-            <hr>
+                                        To:
 
-        <% }) %>
+                                        <%= transaction.toShop ? transaction.toShop.name : "Unknown Shop" %>
+
+                                            <% } else { %>
+
+                                                From:
+
+                                                <%= transaction.fromShop ? transaction.fromShop.name : "Unknown Shop" %>
+
+                                                    <% } %>
+
+                            </p>
 
 
-        <a href="/transactions">
-            View All Transactions
-        </a>
+                            <p>
+
+                                R<%= Number(transaction.amount).toFixed(2) %>
+
+                            </p>
+
+
+                            <% if (transaction.reference) { %>
+
+                                <p>
+
+                                    Reference:
+                                    <%= transaction.reference %>
+
+                                </p>
+
+                                <% } %>
+
+
+                                    <a href="/transactions/<%= transaction._id %>">
+
+                                        View Receipt
+
+                                    </a>
+
+                        </div>
+
+                        <hr>
+
+                        <% }) %>
+
+                            <a href="/transactions">
+                                View All Transactions
+                            </a>
 
     </section>
 

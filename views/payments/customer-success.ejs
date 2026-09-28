@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Payment Successful - NEXA</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+    <main>
+
+        <h1>Payment Successful ✓</h1>
+
+        <h2>
+            R<%= Number(paymentRequest.amount).toFixed(2) %>
+        </h2>
+
+        <% if (paymentRequest.shop) { %>
+
+            <p>
+                Paid to:
+                <strong>
+                    <%= paymentRequest.shop.name %>
+                </strong>
+            </p>
+
+        <% } %>
+
+
+        <% if (paymentRequest.reference) { %>
+
+            <p>
+                Reference:
+                <strong>
+                    <%= paymentRequest.reference %>
+                </strong>
+            </p>
+
+        <% } %>
+
+
+        <p>
+            Status:
+            <strong>PAID</strong>
+        </p>
+
+
+        <p>
+            Payment completed through
+            Open Payments + Interledger.
+        </p>
+
+    </main>
+
+</body>
+
+</html>

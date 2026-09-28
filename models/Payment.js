@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 
+
 const paymentSchema = new mongoose.Schema(
     {
         offer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Offer",
-            required: true
+            required: true,
+            unique: true
         },
 
         tradeRequest: {
@@ -28,7 +30,8 @@ const paymentSchema = new mongoose.Schema(
 
         amount: {
             type: Number,
-            required: true
+            required: true,
+            min: 0.01
         },
 
         currency: {
@@ -48,11 +51,21 @@ const paymentSchema = new mongoose.Schema(
 
         method: {
             type: String,
-            default: "mock"
+            enum: [
+                "open_payments"
+            ],
+            default: "open_payments"
+        },
+
+        providerTransactionId: {
+            type: String,
+            unique: true,
+            sparse: true
         },
 
         completedAt: {
-            type: Date
+            type: Date,
+            default: null
         }
     },
     {
@@ -60,9 +73,11 @@ const paymentSchema = new mongoose.Schema(
     }
 );
 
+
 const Payment = mongoose.model(
     "Payment",
     paymentSchema
 );
+
 
 export default Payment;

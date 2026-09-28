@@ -12,7 +12,10 @@
 
     <title>Messages - NEXA</title>
 
-    <link rel="stylesheet" href="/css/main.css">
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
 
 </head>
 
@@ -38,19 +41,55 @@
                 <%= conversation.shop.name %>
             </h3>
 
+
+            <% if (conversation.tradeRequest) { %>
+
+                <p>
+                    Trade:
+                    <strong>
+                        <%= conversation.tradeRequest.product %>
+                    </strong>
+                </p>
+
+            <% } else { %>
+
+                <p>
+                    General conversation
+                </p>
+
+            <% } %>
+
+
             <p>
                 <%= conversation.lastMessage.content %>
             </p>
+
 
             <small>
                 <%= conversation.lastMessage.createdAt.toLocaleString() %>
             </small>
 
-            <br>
 
-            <a href="/messages/<%= conversation.shop._id %>">
-                Open Chat
-            </a>
+            <br><br>
+
+
+            <% if (conversation.tradeRequest) { %>
+
+                <a
+                    href="/messages/<%= conversation.shop._id %>?trade=<%= conversation.tradeRequest._id %>"
+                >
+                    Open Chat
+                </a>
+
+            <% } else { %>
+
+                <a
+                    href="/messages/<%= conversation.shop._id %>"
+                >
+                    Open Chat
+                </a>
+
+            <% } %>
 
         </div>
 

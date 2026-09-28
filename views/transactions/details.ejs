@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -24,86 +23,244 @@
 
 <body>
 
-
     <h1>
         Transaction Receipt
     </h1>
 
 
+    <!-- ============================== -->
+    <!-- TRANSACTION TYPE -->
+    <!-- ============================== -->
+
+    <p>
+        Transaction Type:
+
+        <strong>
+
+            <% if (isCustomerPayment) { %>
+
+                Customer Payment
+
+            <% } else { %>
+
+                Trade Payment
+
+            <% } %>
+
+        </strong>
+    </p>
+
+
+    <!-- ============================== -->
+    <!-- REFERENCE -->
+    <!-- ============================== -->
+
     <p>
         Reference:
+
         <strong>
             <%= transaction.reference %>
         </strong>
     </p>
 
 
+    <!-- ============================== -->
+    <!-- FROM -->
+    <!-- ============================== -->
+
     <p>
         From:
+
         <strong>
-            <%= transaction.fromShop.name %>
+
+            <% if (isCustomerPayment) { %>
+
+                External Customer
+
+            <% } else if (transaction.fromShop) { %>
+
+                <%= transaction.fromShop.name %>
+
+            <% } else { %>
+
+                Unknown
+
+            <% } %>
+
         </strong>
     </p>
 
+
+    <!-- ============================== -->
+    <!-- TO -->
+    <!-- ============================== -->
 
     <p>
         To:
+
         <strong>
-            <%= transaction.toShop.name %>
+
+            <% if (transaction.toShop) { %>
+
+                <%= transaction.toShop.name %>
+
+            <% } else { %>
+
+                Unknown Shop
+
+            <% } %>
+
         </strong>
     </p>
 
 
-    <p>
-        Product:
-        <strong>
-            <%= transaction.tradeRequest.product %>
-        </strong>
-    </p>
+    <!-- ============================== -->
+    <!-- PRODUCT -->
+    <!-- TRADE PAYMENTS ONLY -->
+    <!-- ============================== -->
 
+    <% if (
+        !isCustomerPayment &&
+        transaction.tradeRequest
+    ) { %>
+
+        <p>
+            Product:
+
+            <strong>
+                <%= transaction.tradeRequest.product %>
+            </strong>
+        </p>
+
+    <% } %>
+
+
+    <!-- ============================== -->
+    <!-- AMOUNT -->
+    <!-- ============================== -->
 
     <p>
         Amount:
+
         <strong>
-            R<%= transaction.amount %>
+            R<%= Number(transaction.amount).toFixed(2) %>
         </strong>
     </p>
 
 
+    <!-- ============================== -->
+    <!-- CURRENCY -->
+    <!-- ============================== -->
+
     <p>
         Currency:
-        <%= transaction.currency %>
+
+        <strong>
+            <%= transaction.currency %>
+        </strong>
     </p>
 
 
-    <p>
-        Type:
-        <%= transaction.type %>
-    </p>
-
+    <!-- ============================== -->
+    <!-- STATUS -->
+    <!-- ============================== -->
 
     <p>
         Status:
+
         <strong>
             <%= transaction.status %>
         </strong>
     </p>
 
 
+    <!-- ============================== -->
+    <!-- PAYMENT METHOD -->
+    <!-- ============================== -->
+
     <p>
-        Date:
-        <%= transaction.createdAt.toLocaleString() %>
+        Payment Method:
+
+        <strong>
+
+            <% if (isCustomerPayment) { %>
+
+                Open Payments + Interledger
+
+            <% } else if (
+                transaction.payment &&
+                transaction.payment.method === "open_payments"
+            ) { %>
+
+                Open Payments + Interledger
+
+            <% } else if (transaction.payment) { %>
+
+                <%= transaction.payment.method %>
+
+            <% } else { %>
+
+                Unknown
+
+            <% } %>
+
+        </strong>
     </p>
 
 
-    <% if (transaction.payment) { %>
+    <!-- ============================== -->
+    <!-- OPEN PAYMENTS PROVIDER ID -->
+    <!-- ============================== -->
+
+    <% if (transaction.providerTransactionId) { %>
 
         <p>
-            Payment Method:
-            <%= transaction.payment.method %>
+            Open Payments Transaction:
+        </p>
+
+        <p>
+            <small>
+                <%= transaction.providerTransactionId %>
+            </small>
         </p>
 
     <% } %>
+
+
+    <!-- ============================== -->
+    <!-- TRADE LINK -->
+    <!-- ============================== -->
+
+    <% if (
+        !isCustomerPayment &&
+        transaction.tradeRequest
+    ) { %>
+
+        <p>
+
+            <a href="/trade/<%= transaction.tradeRequest._id %>">
+                View Trade
+            </a>
+
+        </p>
+
+    <% } %>
+
+
+    <!-- ============================== -->
+    <!-- DATE -->
+    <!-- ============================== -->
+
+    <p>
+        Date:
+
+        <strong>
+            <%= transaction.createdAt.toLocaleString() %>
+        </strong>
+    </p>
+
+
+    <hr>
 
 
     <a href="/transactions">

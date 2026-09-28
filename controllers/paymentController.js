@@ -5,6 +5,31 @@ import Shop from "../models/Shop.js";
 import Notification from "../models/Notification.js";
 import QRCode from "qrcode";
 import PaymentRequest from "../models/PaymentRequest.js";
+import crypto from "crypto";
+
+import {
+    createIncomingPayment,
+    createQuote,
+    requestOutgoingPaymentGrant,
+    continueOutgoingPaymentGrant,
+    createOutgoingPayment
+} from "../services/openPaymentsService.js";
+const normalizeWalletAddress = (walletAddress) => {
+
+    const value =
+        walletAddress.trim();
+
+
+    if (value.startsWith("$")) {
+
+        return `https://${value.slice(1)}`;
+
+    }
+
+
+    return value;
+
+};
 
 export const showOfferPayment = async (req, res) => {
 
@@ -89,16 +114,24 @@ export const showOfferPayment = async (req, res) => {
 
 
 
-export const processOfferPayment = async (req, res) => {
+export const processOfferPayment = async (
+    req,
+    res
+) => {
 
     try {
 
-        const offer = await Offer.findById(
-            req.params.offerId
-        )
-            .populate("buyer")
-            .populate("seller")
-            .populate("tradeRequest");
+        // --------------------------------
+        // 1. GET OFFER
+        // --------------------------------
+
+        const offer =
+            await Offer.findById(
+                req.params.offerId
+            )
+                .populate("buyer")
+                .populate("seller")
+                .populate("tradeRequest");
 
 
         if (!offer) {
@@ -110,6 +143,10 @@ export const processOfferPayment = async (req, res) => {
         }
 
 
+        // --------------------------------
+        // 2. OFFER MUST BE ACCEPTED
+        // --------------------------------
+
         if (offer.status !== "accepted") {
 
             return res.status(400).send(
@@ -118,6 +155,10 @@ export const processOfferPayment = async (req, res) => {
 
         }
 
+
+        // --------------------------------
+        // 3. ONLY BUYER CAN PAY
+        // --------------------------------
 
         if (
             offer.buyer._id.toString() !==
@@ -131,146 +172,722 @@ export const processOfferPayment = async (req, res) => {
         }
 
 
-        const existingPayment =
+        // --------------------------------
+        // 4. CHECK EXISTING PAYMENT
+        // --------------------------------
+
+        let payment =
             await Payment.findOne({
-                offer: offer._id,
-                status: "successful"
+                offer:
+                    offer._id
             });
 
 
-        if (existingPayment) {
+        if (
+            payment &&
+            payment.status === "successful"
+        ) {
 
             return res.redirect(
-                `/payments/${existingPayment._id}/success`
+                `/payments/${payment._id}/success`
             );
 
         }
 
 
-        const payment = await Payment.create({
+        // --------------------------------
+        // 5. VALIDATE WALLETS
+        // --------------------------------
 
-            offer: offer._id,
+        if (!offer.buyer.walletAddress) {
 
-            tradeRequest:
-                offer.tradeRequest._id,
+            return res.status(400).send(
+                "Your shop does not have an Open Payments wallet address"
+            );
 
-            payer:
-                offer.buyer._id,
-
-            payee:
-                offer.seller._id,
-
-            amount:
-                offer.amount,
-
-            currency:
-                "ZAR",
-
-            status:
-                "successful",
-
-            method:
-                "mock",
-
-            completedAt:
-                new Date()
-
-        });
+        }
 
 
-        const reference =
-            `NEXA-${Date.now()}-${payment._id
-                .toString()
-                .slice(-6)
-                .toUpperCase()}`;
+        if (!offer.seller.walletAddress) {
+
+            return res.status(400).send(
+                "The seller does not have an Open Payments wallet address"
+            );
+
+        }
 
 
-        await Transaction.create({
-
-            payment:
-                payment._id,
-
-            offer:
-                offer._id,
-
-            tradeRequest:
-                offer.tradeRequest._id,
-
-            fromShop:
-                offer.buyer._id,
-
-            toShop:
-                offer.seller._id,
-
-            amount:
-                offer.amount,
-
-            currency:
-                "ZAR",
-
-            type:
-                "trade_payment",
-
-            status:
-                "successful",
-
-            reference
-
-        });
-
-
-        const sellerShop =
-            await Shop.findById(
-                offer.seller._id
+        const senderWalletAddress =
+            normalizeWalletAddress(
+                offer.buyer.walletAddress
             );
 
 
-        if (sellerShop?.owner) {
+        const receiverWalletAddress =
+            normalizeWalletAddress(
+                offer.seller.walletAddress
+            );
 
-            await Notification.create({
 
-                user:
-                    sellerShop.owner,
+        if (
+            !senderWalletAddress.startsWith(
+                "https://"
+            )
+        ) {
 
-                type:
-                    "payment_received",
+            return res.status(400).send(
+                "Buyer wallet address is invalid"
+            );
 
-                message:
-                    `Payment of R${offer.amount} received for ${offer.tradeRequest.product}`,
+        }
 
-                relatedTrade:
-                    offer.tradeRequest._id,
 
-                relatedOffer:
-                    offer._id,
+        if (
+            !receiverWalletAddress.startsWith(
+                "https://"
+            )
+        ) {
 
-                relatedPayment:
-                    payment._id
+            return res.status(400).send(
+                "Seller wallet address is invalid"
+            );
+
+        }
+
+
+        // --------------------------------
+        // 6. VALIDATE AMOUNT
+        // --------------------------------
+
+        const amount =
+            Number(offer.amount);
+
+
+        if (
+            !Number.isFinite(amount) ||
+            amount <= 0
+        ) {
+
+            return res.status(400).send(
+                "Offer has an invalid payment amount"
+            );
+
+        }
+
+
+        // --------------------------------
+        // 7. CREATE/REUSE PAYMENT
+        // --------------------------------
+
+        if (!payment) {
+
+            payment =
+                await Payment.create({
+
+                    offer:
+                        offer._id,
+
+                    tradeRequest:
+                        offer.tradeRequest._id,
+
+                    payer:
+                        offer.buyer._id,
+
+                    payee:
+                        offer.seller._id,
+
+                    amount,
+
+                    currency:
+                        "ZAR",
+
+                    status:
+                        "pending",
+
+                    method:
+                        "open_payments"
+
+                });
+
+        }
+
+
+        console.log(
+            "\nSTARTING NEXA VENDOR PAYMENT"
+        );
+
+
+        console.log(
+            "Buyer:",
+            senderWalletAddress
+        );
+
+
+        console.log(
+            "Seller:",
+            receiverWalletAddress
+        );
+
+
+        console.log(
+            "Amount:",
+            amount,
+            "ZAR"
+        );
+
+
+        // --------------------------------
+        // 8. CREATE SELLER INCOMING PAYMENT
+        // --------------------------------
+
+        const incomingResult =
+            await createIncomingPayment({
+
+                receiverWalletAddress,
+
+                amount
 
             });
 
-        }
+
+        console.log(
+            "Vendor incoming payment created:",
+            incomingResult.incomingPayment.id
+        );
 
 
-        return res.redirect(
-            `/payments/${payment._id}/success`
+        // --------------------------------
+        // 9. CREATE BUYER QUOTE
+        // --------------------------------
+
+        const quoteResult =
+            await createQuote({
+
+                senderWalletAddress,
+
+                incomingPaymentUrl:
+                    incomingResult
+                        .incomingPayment
+                        .id
+
+            });
+
+
+        console.log(
+            "Vendor quote created:",
+            quoteResult.quote.id
+        );
+
+
+        // --------------------------------
+        // 10. REQUEST AUTHORIZATION
+        // --------------------------------
+
+        const nonce =
+            crypto.randomUUID();
+
+
+        const finishUri =
+            `${req.protocol}://${req.get("host")}` +
+            `/payments/offer/${offer._id}` +
+            `/open-payments/callback`;
+
+
+        const outgoingGrantResult =
+            await requestOutgoingPaymentGrant({
+
+                senderWalletAddress,
+
+                quote:
+                    quoteResult.quote,
+
+                finishUri,
+
+                nonce
+
+            });
+
+
+        const grant =
+            outgoingGrantResult.grant;
+
+
+        // --------------------------------
+        // 11. SAVE TEMPORARY STATE
+        // --------------------------------
+
+        req.session.vendorOpenPayment = {
+
+            paymentId:
+                payment._id.toString(),
+
+            offerId:
+                offer._id.toString(),
+
+            incomingPaymentUrl:
+                incomingResult
+                    .incomingPayment
+                    .id,
+
+            quoteUrl:
+                quoteResult.quote.id,
+
+            senderWalletAddress,
+
+            continueUri:
+                grant.continue.uri,
+
+            continueAccessToken:
+                grant.continue
+                    .access_token
+                    .value,
+
+            nonce
+
+        };
+
+
+        // --------------------------------
+        // 12. SAVE SESSION + REDIRECT
+        // --------------------------------
+
+        req.session.save(
+            (error) => {
+
+                if (error) {
+
+                    console.error(
+                        "VENDOR PAYMENT SESSION SAVE ERROR:",
+                        error
+                    );
+
+                    return res.status(500).send(
+                        "Unable to save payment session"
+                    );
+
+                }
+
+
+                return res.redirect(
+                    grant.interact.redirect
+                );
+
+            }
         );
 
 
     } catch (error) {
 
         console.error(
-            "PROCESS PAYMENT ERROR:",
-            error
+            "START VENDOR OPEN PAYMENT ERROR:"
         );
 
+        console.error(error);
+
+
         return res.status(500).send(
-            "Unable to process payment"
+            "Unable to start vendor Open Payments transaction"
         );
 
     }
 
 };
+export const finishOfferOpenPayment =
+    async (req, res) => {
+
+        try {
+
+            console.log(
+                "\nVENDOR RETURNED TO NEXA"
+            );
+
+
+            // --------------------------------
+            // 1. GET TEMPORARY SESSION
+            // --------------------------------
+
+            const paymentSession =
+                req.session.vendorOpenPayment;
+
+
+            if (!paymentSession) {
+
+                return res.status(400).send(
+                    "Vendor payment session not found"
+                );
+
+            }
+
+
+            if (
+                paymentSession.offerId !==
+                req.params.offerId
+            ) {
+
+                return res.status(400).send(
+                    "Vendor payment session does not match offer"
+                );
+
+            }
+
+
+            const interactRef =
+                req.query.interact_ref;
+
+
+            if (!interactRef) {
+
+                return res.status(400).send(
+                    "Missing interact_ref"
+                );
+
+            }
+
+
+            // --------------------------------
+            // 2. GET PAYMENT
+            // --------------------------------
+
+            const payment =
+                await Payment.findById(
+                    paymentSession.paymentId
+                )
+                    .populate("payer")
+                    .populate("payee")
+                    .populate("tradeRequest")
+                    .populate("offer");
+
+
+            if (!payment) {
+
+                return res.status(404).send(
+                    "Payment not found"
+                );
+
+            }
+
+
+            // --------------------------------
+            // 3. SECURITY
+            // --------------------------------
+
+            if (
+                payment.payer._id.toString() !==
+                req.session.shopId?.toString()
+            ) {
+
+                return res.status(403).send(
+                    "You cannot complete this payment"
+                );
+
+            }
+
+
+            // --------------------------------
+            // 4. DUPLICATE CALLBACK
+            // --------------------------------
+
+            if (
+                payment.status === "successful"
+            ) {
+
+                console.log(
+                    "VENDOR PAYMENT ALREADY COMPLETED:",
+                    payment._id
+                );
+
+
+                delete req.session.vendorOpenPayment;
+
+
+                return res.redirect(
+                    `/payments/${payment._id}/success`
+                );
+
+            }
+
+
+            // --------------------------------
+            // 5. FINALIZE GRANT
+            // --------------------------------
+
+            const finalizedGrant =
+                await continueOutgoingPaymentGrant({
+
+                    continueUri:
+                        paymentSession.continueUri,
+
+                    continueAccessToken:
+                        paymentSession
+                            .continueAccessToken,
+
+                    interactRef
+
+                });
+
+
+            console.log(
+                "Vendor outgoing grant finalized"
+            );
+
+
+            // --------------------------------
+            // 6. EXECUTE PAYMENT
+            // --------------------------------
+
+            const outgoingPayment =
+                await createOutgoingPayment({
+
+                    senderWalletAddress:
+                        paymentSession
+                            .senderWalletAddress,
+
+                    quoteUrl:
+                        paymentSession.quoteUrl,
+
+                    outgoingAccessToken:
+                        finalizedGrant
+                            .access_token
+                            .value
+
+                });
+
+
+            console.log(
+                "Vendor outgoing payment created:",
+                outgoingPayment.id
+            );
+
+
+            console.log(
+                "Sent:",
+                outgoingPayment.sentAmount
+            );
+
+
+            console.log(
+                "Received:",
+                outgoingPayment.receiveAmount
+            );
+
+
+            console.log(
+                "Failed:",
+                outgoingPayment.failed
+            );
+
+
+            // --------------------------------
+            // 7. HANDLE FAILED PAYMENT
+            // --------------------------------
+
+            if (outgoingPayment.failed) {
+
+                payment.status =
+                    "failed";
+
+
+                await payment.save();
+
+
+                delete req.session.vendorOpenPayment;
+
+
+                return res.status(400).send(
+                    "Open Payments transaction failed"
+                );
+
+            }
+
+
+            // --------------------------------
+            // 8. MARK PAYMENT SUCCESSFUL
+            // --------------------------------
+
+            payment.status =
+                "successful";
+
+
+            payment.method =
+                "open_payments";
+
+
+            payment.providerTransactionId =
+                outgoingPayment.id;
+
+
+            payment.completedAt =
+                new Date();
+
+
+            await payment.save();
+
+
+            // --------------------------------
+            // 9. CREATE TRANSACTION ONCE
+            // --------------------------------
+
+            let transaction =
+                await Transaction.findOne({
+
+                    payment:
+                        payment._id
+
+                });
+
+
+            if (!transaction) {
+
+                const reference =
+                    `NEXA-${Date.now()}-${payment._id
+                        .toString()
+                        .slice(-6)
+                        .toUpperCase()}`;
+
+
+                transaction =
+                    await Transaction.create({
+
+                        payment:
+                            payment._id,
+
+                        offer:
+                            payment.offer._id,
+
+                        tradeRequest:
+                            payment.tradeRequest._id,
+
+                        fromShop:
+                            payment.payer._id,
+
+                        toShop:
+                            payment.payee._id,
+
+                        amount:
+                            payment.amount,
+
+                        currency:
+                            payment.currency,
+
+                        type:
+                            "trade_payment",
+
+                        status:
+                            "successful",
+
+                        reference,
+
+                        providerTransactionId:
+                            outgoingPayment.id
+
+                    });
+
+
+                console.log(
+                    "VENDOR TRANSACTION CREATED:",
+                    transaction._id
+                );
+
+            } else {
+
+                console.log(
+                    "VENDOR TRANSACTION ALREADY EXISTS:",
+                    transaction._id
+                );
+
+            }
+
+
+            // --------------------------------
+            // 10. NOTIFY SELLER ONCE
+            // --------------------------------
+
+            if (payment.payee?.owner) {
+
+                const existingNotification =
+                    await Notification.findOne({
+
+                        type:
+                            "payment_received",
+
+                        relatedTransaction:
+                            transaction._id
+
+                    });
+
+
+                if (!existingNotification) {
+
+                    await Notification.create({
+
+                        user:
+                            payment.payee.owner,
+
+                        type:
+                            "payment_received",
+
+                        message:
+                            `Payment of R${Number(payment.amount).toFixed(2)} received for ${payment.tradeRequest.product}`,
+
+                        relatedTrade:
+                            payment.tradeRequest._id,
+
+                        relatedOffer:
+                            payment.offer._id,
+
+                        relatedShop:
+                            payment.payer._id,
+
+                        relatedPayment:
+                            payment._id,
+
+                        relatedTransaction:
+                            transaction._id
+
+                    });
+
+
+                    console.log(
+                        "SELLER PAYMENT NOTIFICATION CREATED"
+                    );
+
+                }
+
+            }
+
+
+            // --------------------------------
+            // 11. CLEAR TEMPORARY SESSION
+            // --------------------------------
+
+            delete req.session.vendorOpenPayment;
+
+
+            // --------------------------------
+            // 12. SUCCESS
+            // --------------------------------
+
+            return res.redirect(
+                `/payments/${payment._id}/success`
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "FINISH VENDOR OPEN PAYMENT ERROR:"
+            );
+
+            console.error(error);
+
+
+            return res.status(500).send(
+                "Unable to complete vendor Open Payments transaction"
+            );
+
+        }
+
+    };
 
 
 
@@ -664,7 +1281,7 @@ export const showGeneratedPaymentRequest =
         }
 
     };
-    export const showCustomerPayment =
+export const showCustomerPayment =
     async (req, res) => {
 
         try {
@@ -734,6 +1351,767 @@ export const showGeneratedPaymentRequest =
             return res.status(500).send(
                 "Unable to load payment request"
             );
+
+        }
+
+    };
+export const startCustomerOpenPayment =
+    async (req, res) => {
+
+        try {
+
+            const paymentRequest =
+                await PaymentRequest.findById(
+                    req.params.paymentRequestId
+                )
+                    .populate("shop");
+
+
+            if (!paymentRequest) {
+
+                return res.status(404).send(
+                    "Payment request not found"
+                );
+
+            }
+
+
+            if (
+                paymentRequest.status !==
+                "pending"
+            ) {
+
+                return res.status(400).send(
+                    "This payment request is no longer active"
+                );
+
+            }
+
+
+            if (
+                paymentRequest.expiresAt &&
+                new Date() >
+                paymentRequest.expiresAt
+            ) {
+
+                paymentRequest.status =
+                    "expired";
+
+                await paymentRequest.save();
+
+
+                return res.status(400).send(
+                    "This payment request has expired"
+                );
+
+            }
+
+
+            // --------------------------------
+            // PAYER WALLET
+            // --------------------------------
+
+            const payerWalletAddress =
+                normalizeWalletAddress(
+                    req.body.payerWalletAddress
+                );
+            const receiverWalletAddress =
+                normalizeWalletAddress(
+                    paymentRequest.walletAddress
+                );
+
+            if (
+                !payerWalletAddress.startsWith(
+                    "https://"
+                )
+            ) {
+
+                return res.status(400).send(
+                    "Enter a valid Open Payments wallet address"
+                );
+
+            }
+
+
+            console.log(
+                "\nSTARTING NEXA CUSTOMER PAYMENT"
+            );
+
+            console.log(
+                "Payer:",
+                payerWalletAddress
+            );
+
+            console.log(
+                "Recipient:",
+                receiverWalletAddress
+            );
+            console.log(
+                "Amount:",
+                paymentRequest.amount,
+                paymentRequest.currency
+            );
+
+
+            // --------------------------------
+            // 1. RECIPIENT INCOMING PAYMENT
+            // --------------------------------
+
+            const incomingResult =
+                await createIncomingPayment({
+
+                    receiverWalletAddress:
+                        receiverWalletAddress,
+
+                    amount:
+                        paymentRequest.amount
+
+                });
+
+
+            console.log(
+                "Incoming payment created:",
+                incomingResult.incomingPayment.id
+            );
+
+
+            // --------------------------------
+            // 2. PAYER QUOTE
+            // --------------------------------
+
+            const quoteResult =
+                await createQuote({
+
+                    senderWalletAddress:
+                        payerWalletAddress,
+
+                    incomingPaymentUrl:
+                        incomingResult
+                            .incomingPayment
+                            .id
+
+                });
+
+
+            console.log(
+                "Quote created:",
+                quoteResult.quote.id
+            );
+
+
+            // --------------------------------
+            // 3. INTERACTIVE AUTHORIZATION
+            // --------------------------------
+
+            const nonce =
+                crypto.randomUUID();
+
+
+            const finishUri =
+                `${req.protocol}://${req.get("host")}` +
+                `/pay/${paymentRequest._id}` +
+                `/open-payments/callback`;
+
+
+            const outgoingGrantResult =
+                await requestOutgoingPaymentGrant({
+
+                    senderWalletAddress:
+                        payerWalletAddress,
+
+                    quote:
+                        quoteResult.quote,
+
+                    finishUri,
+
+                    nonce
+
+                });
+
+
+            const grant =
+                outgoingGrantResult.grant;
+
+
+            // --------------------------------
+            // 4. SAVE TEMPORARY PAYMENT STATE
+            // --------------------------------
+
+            req.session.customerOpenPayment = {
+
+                paymentRequestId:
+                    paymentRequest._id.toString(),
+
+                incomingPaymentUrl:
+                    incomingResult
+                        .incomingPayment
+                        .id,
+
+                quoteUrl:
+                    quoteResult.quote.id,
+
+                senderWalletAddress:
+                    payerWalletAddress,
+
+                continueUri:
+                    grant.continue.uri,
+
+                continueAccessToken:
+                    grant.continue
+                        .access_token
+                        .value,
+
+                nonce
+
+            };
+
+
+            // Save BEFORE redirecting away.
+
+            req.session.save(
+                (error) => {
+
+                    if (error) {
+
+                        console.error(
+                            "PAYMENT SESSION SAVE ERROR:",
+                            error
+                        );
+
+                        return res.status(500).send(
+                            "Unable to save payment session"
+                        );
+
+                    }
+
+
+                    return res.redirect(
+                        grant.interact.redirect
+                    );
+
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "START CUSTOMER OPEN PAYMENT ERROR:"
+            );
+
+            console.error(error);
+
+
+            return res.status(500).send(
+                "Unable to start Open Payments transaction"
+            );
+
+        }
+
+    };
+export const finishCustomerOpenPayment =
+    async (req, res) => {
+
+        try {
+
+            console.log(
+                "\nCUSTOMER RETURNED TO NEXA"
+            );
+            console.log(
+                "CALLBACK QUERY:",
+                req.query
+            );
+
+            console.log(
+                "CALLBACK URL:",
+                req.originalUrl
+            );
+
+            // --------------------------------
+            // 1. GET PAYMENT SESSION
+            // --------------------------------
+
+            const paymentSession =
+                req.session.customerOpenPayment;
+
+
+            if (!paymentSession) {
+
+                return res.status(400).send(
+                    "Payment session not found"
+                );
+
+            }
+
+
+            if (
+                paymentSession.paymentRequestId !==
+                req.params.paymentRequestId
+            ) {
+
+                return res.status(400).send(
+                    "Payment session does not match request"
+                );
+
+            }
+
+
+            const interactRef =
+                req.query.interact_ref;
+
+
+            if (!interactRef) {
+
+                return res.status(400).send(
+                    "Missing interact_ref"
+                );
+
+            }
+
+
+            // --------------------------------
+            // 2. DUPLICATE PAYMENT PROTECTION
+            // --------------------------------
+
+            const existingPaymentRequest =
+                await PaymentRequest.findById(
+                    paymentSession.paymentRequestId
+                )
+                    .populate("shop");
+
+
+            if (!existingPaymentRequest) {
+
+                return res.status(404).send(
+                    "Payment request not found"
+                );
+
+            }
+
+
+            // If already paid, do NOT attempt
+            // another Open Payments transfer.
+
+            if (
+                existingPaymentRequest.status ===
+                "paid"
+            ) {
+
+                console.log(
+                    "PAYMENT ALREADY COMPLETED:",
+                    existingPaymentRequest._id
+                );
+
+
+                const existingTransaction =
+                    await Transaction.findOne({
+
+                        paymentRequest:
+                            existingPaymentRequest._id
+
+                    });
+
+
+                delete req.session.customerOpenPayment;
+
+
+                return res.render(
+                    "payments/customer-success",
+                    {
+                        paymentRequest:
+                            existingPaymentRequest,
+
+                        outgoingPayment:
+                            existingTransaction
+                                ? {
+                                    id:
+                                        existingTransaction
+                                            .providerTransactionId
+                                }
+                                : null
+                    }
+                );
+
+            }
+
+
+            // --------------------------------
+            // 3. FINALIZE AUTHORIZATION
+            // --------------------------------
+
+            const finalizedGrant =
+                await continueOutgoingPaymentGrant({
+
+                    continueUri:
+                        paymentSession.continueUri,
+
+                    continueAccessToken:
+                        paymentSession
+                            .continueAccessToken,
+
+                    interactRef
+
+                });
+
+
+            console.log(
+                "Outgoing grant finalized"
+            );
+
+
+            // --------------------------------
+            // 4. EXECUTE OPEN PAYMENT
+            // --------------------------------
+
+            const outgoingPayment =
+                await createOutgoingPayment({
+
+                    senderWalletAddress:
+                        paymentSession
+                            .senderWalletAddress,
+
+                    quoteUrl:
+                        paymentSession.quoteUrl,
+
+                    outgoingAccessToken:
+                        finalizedGrant
+                            .access_token
+                            .value
+
+                });
+
+
+            console.log(
+                "Outgoing payment created:",
+                outgoingPayment.id
+            );
+
+
+            console.log(
+                "Sent:",
+                outgoingPayment.sentAmount
+            );
+
+
+            console.log(
+                "Received:",
+                outgoingPayment.receiveAmount
+            );
+
+
+            console.log(
+                "Failed:",
+                outgoingPayment.failed
+            );
+
+
+            // --------------------------------
+            // 5. CHECK PAYMENT RESULT
+            // --------------------------------
+
+            if (outgoingPayment.failed) {
+
+                return res.status(400).send(
+                    "Open Payments transaction failed"
+                );
+
+            }
+
+
+            // --------------------------------
+            // 6. GET PAYMENT REQUEST
+            // --------------------------------
+
+            const paymentRequest =
+                await PaymentRequest.findById(
+                    paymentSession.paymentRequestId
+                )
+                    .populate("shop");
+
+
+            if (!paymentRequest) {
+
+                return res.status(404).send(
+                    "Payment request not found"
+                );
+
+            }
+
+
+            // --------------------------------
+            // 7. MARK REQUEST AS PAID
+            // --------------------------------
+
+            paymentRequest.status =
+                "paid";
+
+
+            await paymentRequest.save();
+
+
+            console.log(
+                "PAYMENT REQUEST MARKED AS PAID"
+            );
+
+
+            // --------------------------------
+            // 8. CREATE NEXA TRANSACTION
+            // --------------------------------
+
+            let transaction =
+                await Transaction.findOne({
+
+                    paymentRequest:
+                        paymentRequest._id
+
+                });
+
+
+            if (!transaction) {
+
+                transaction =
+                    await Transaction.create({
+
+                        paymentRequest:
+                            paymentRequest._id,
+
+                        toShop:
+                            paymentRequest.shop._id,
+
+                        amount:
+                            paymentRequest.amount,
+
+                        currency:
+                            paymentRequest.currency,
+
+                        type:
+                            "customer_payment",
+
+                        status:
+                            "successful",
+
+                        reference:
+                            paymentRequest.reference,
+
+                        providerTransactionId:
+                            outgoingPayment.id
+
+                    });
+
+
+                console.log(
+                    "CUSTOMER TRANSACTION CREATED:",
+                    transaction._id
+                );
+
+            } else {
+
+                console.log(
+                    "CUSTOMER TRANSACTION ALREADY EXISTS:",
+                    transaction._id
+                );
+
+            }
+
+
+            // --------------------------------
+            // 9. NOTIFY VENDOR
+            // --------------------------------
+
+            const vendorShop =
+                paymentRequest.shop;
+
+
+            if (vendorShop?.owner) {
+
+                const existingNotification =
+                    await Notification.findOne({
+
+                        type:
+                            "payment_received",
+
+                        relatedTransaction:
+                            transaction._id
+
+                    });
+
+
+                if (!existingNotification) {
+
+                    await Notification.create({
+
+                        user:
+                            vendorShop.owner,
+
+                        type:
+                            "payment_received",
+
+                        message:
+                            `R${Number(paymentRequest.amount).toFixed(2)} received via Open Payments`,
+
+                        relatedShop:
+                            vendorShop._id,
+
+                        relatedTransaction:
+                            transaction._id
+
+                    });
+
+
+                    console.log(
+                        "VENDOR PAYMENT NOTIFICATION CREATED"
+                    );
+
+                } else {
+
+                    console.log(
+                        "PAYMENT NOTIFICATION ALREADY EXISTS"
+                    );
+
+                }
+
+            }
+
+
+            // --------------------------------
+            // 10. CLEAR TEMPORARY SESSION
+            // --------------------------------
+
+            delete req.session.customerOpenPayment;
+
+
+            // --------------------------------
+            // 11. SHOW SUCCESS PAGE
+            // --------------------------------
+
+            return res.render(
+                "payments/customer-success",
+                {
+                    paymentRequest,
+                    outgoingPayment
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "FINISH CUSTOMER OPEN PAYMENT ERROR:"
+            );
+
+            console.error(error);
+
+
+            return res.status(500).send(
+                "Unable to complete Open Payments transaction"
+            );
+
+        }
+
+    };
+export const getPaymentRequestStatus =
+    async (req, res) => {
+
+        try {
+
+            const paymentRequest =
+                await PaymentRequest.findById(
+                    req.params.paymentRequestId
+                );
+
+
+            if (!paymentRequest) {
+
+                return res.status(404).json({
+                    success: false,
+                    message:
+                        "Payment request not found"
+                });
+
+            }
+
+
+            // --------------------------------
+            // SECURITY
+            // Only the shop that created the
+            // request can monitor it.
+            // --------------------------------
+
+            if (
+                paymentRequest.shop.toString() !==
+                req.session.shopId?.toString()
+            ) {
+
+                return res.status(403).json({
+                    success: false,
+                    message:
+                        "Not authorized"
+                });
+
+            }
+
+
+            // --------------------------------
+            // FIND TRANSACTION IF PAID
+            // --------------------------------
+
+            let transactionId =
+                null;
+
+
+            if (
+                paymentRequest.status ===
+                "paid"
+            ) {
+
+                const transaction =
+                    await Transaction.findOne({
+                        paymentRequest:
+                            paymentRequest._id
+                    });
+
+
+                if (transaction) {
+
+                    transactionId =
+                        transaction._id;
+
+                }
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                status:
+                    paymentRequest.status,
+
+                amount:
+                    paymentRequest.amount,
+
+                currency:
+                    paymentRequest.currency,
+
+                transactionId
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "PAYMENT STATUS ERROR:",
+                error
+            );
+
+
+            return res.status(500).json({
+                success: false,
+                message:
+                    "Unable to check payment status"
+            });
 
         }
 
