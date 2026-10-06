@@ -6,7 +6,8 @@ import {
     showOffers,
     showOfferDetails,
     acceptOffer,
-    declineOffer
+    declineOffer,
+    withdrawOffer
 } from "../controllers/offerController.js";
 import { requireAuth } from "../middleware/authMiddleware.js";
 
@@ -48,6 +49,11 @@ router.post(
     "/offers/:id/decline",
     requireAuth,
     declineOffer
+);
+router.post(
+    "/offers/:id/withdraw",
+    requireAuth,
+    withdrawOffer
 );
 
 export default router;

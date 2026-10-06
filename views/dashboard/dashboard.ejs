@@ -5,22 +5,20 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>NEXA Dashboard</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
 
 </head>
 
 <body>
 
+
+    <!-- ================================= -->
+    <!-- HEADER -->
+    <!-- ================================= -->
 
     <h1>
         NEXA Dashboard
@@ -50,100 +48,9 @@
     <hr>
 
 
-    <!-- ============================== -->
-    <!-- NAVIGATION -->
-    <!-- ============================== -->
-
-    <nav>
-
-        <a href="/trade">
-            Trade
-        </a>
-
-        <a href="/trade/my-requests">
-            My Requests
-        </a>
-
-        <a href="/offers">
-            Offers
-
-            <% if (pendingOffers > 0) { %>
-
-                (<%= pendingOffers %>)
-
-            <% } %>
-
-        </a>
-
-
-        <a href="/messages">
-
-            Messages
-
-            <span
-                id="message-count"
-                <%= unreadMessages === 0
-                    ? 'style="display: none;"'
-                    : ''
-                %>
-            >
-                <%= unreadMessages > 0
-                    ? unreadMessages
-                    : ""
-                %>
-            </span>
-
-        </a>
-
-
-        <a href="/payments">
-            Payments
-        </a>
-
-
-        <a href="/transactions">
-            Transactions
-        </a>
-
-
-        <a href="/notifications">
-
-            Notifications
-
-            <span
-                id="notification-count"
-                <%= unreadNotifications === 0
-                    ? 'style="display: none;"'
-                    : ''
-                %>
-            >
-                <%= unreadNotifications > 0
-                    ? unreadNotifications
-                    : ""
-                %>
-            </span>
-
-        </a>
-
-
-        <a href="/shop">
-            My Shop
-        </a>
-
-
-        <a href="/logout">
-            Logout
-        </a>
-
-    </nav>
-
-
-    <hr>
-
-
-    <!-- ============================== -->
+    <!-- ================================= -->
     <!-- QUICK ACTIONS -->
-    <!-- ============================== -->
+    <!-- ================================= -->
 
     <h2>
         Quick Actions
@@ -154,244 +61,316 @@
         Create Trade Request
     </a>
 
-    <br>
+    <br><br>
+
 
     <a href="/trade">
-        Browse Trade Requests
+        Browse Trade Board
     </a>
 
-    <br>
-
-    <a href="/payments/send">
-        Send Money
-    </a>
-
-    <br>
-
-    <a href="/payments/receive">
-        Receive Money
-    </a>
-
-
-    <hr>
-
-
-    <!-- ============================== -->
-    <!-- TRADE ACTIVITY -->
-    <!-- ============================== -->
-
-    <h2>
-        Trade Activity
-    </h2>
-
-
-    <% if (activeTrades.length === 0) { %>
-
-        <p>
-            No active trade requests.
-        </p>
-
-    <% } %>
-
-
-    <% activeTrades.forEach(trade => { %>
-
-        <div>
-
-            <strong>
-                <%= trade.product %>
-            </strong>
-
-
-            <p>
-                <%= trade.quantity %>
-                ×
-                <%= trade.unit %>
-            </p>
-
-
-            <p>
-                Budget:
-                R<%= Number(trade.budget).toFixed(2) %>
-            </p>
-
-
-            <p>
-                Status:
-
-                <strong>
-                    <%= trade.status.toUpperCase() %>
-                </strong>
-
-            </p>
-
-
-            <a href="/trade/<%= trade._id %>">
-                View Trade
-            </a>
-
-        </div>
-
-        <hr>
-
-    <% }) %>
+    <br><br>
 
 
     <a href="/trade/my-requests">
-        View All My Requests
+        My Requests
+    </a>
+
+    <br><br>
+
+
+    <a href="/payments/receive">
+        Receive Payment
     </a>
 
 
     <hr>
 
 
-    <!-- ============================== -->
+    <!-- ================================= -->
+    <!-- ACTIVITY -->
+    <!-- ================================= -->
+
+    <h2>
+        Activity
+    </h2>
+
+
+    <p>
+
+        Active Trades:
+
+        <strong>
+            <%= activeTrades %>
+        </strong>
+
+    </p>
+
+
+    <p>
+
+        Pending Offers:
+
+        <strong>
+            <%= pendingOffers %>
+        </strong>
+
+    </p>
+
+
+    <p>
+
+        Unread Messages:
+
+        <strong>
+            <%= unreadMessages %>
+        </strong>
+
+    </p>
+
+
+    <p>
+
+        Notifications:
+
+        <strong>
+            <%= unreadNotifications %>
+        </strong>
+
+    </p>
+
+
+    <hr>
+
+
+    <!-- ================================= -->
+    <!-- MONEY -->
+    <!-- ================================= -->
+
+    <h2>
+        Payment Summary
+    </h2>
+
+
+    <p>
+
+        Total Received:
+
+        <strong>
+            R<%= Number(totalReceived).toFixed(2) %>
+        </strong>
+
+    </p>
+
+
+    <p>
+
+        Total Sent:
+
+        <strong>
+            R<%= Number(totalSent).toFixed(2) %>
+        </strong>
+
+    </p>
+
+
+    <hr>
+
+
+    <!-- ================================= -->
     <!-- RECENT TRANSACTIONS -->
-    <!-- ============================== -->
+    <!-- ================================= -->
 
     <h2>
         Recent Transactions
     </h2>
 
 
-    <% if (recentTransactions.length === 0) { %>
+    <% if (recentTransactions.length===0) { %>
 
         <p>
             No transactions yet.
         </p>
 
-    <% } %>
+        <% } %>
 
 
-    <% recentTransactions.forEach(transaction => { %>
+            <% recentTransactions.forEach(transaction=> { %>
 
-        <%
-
-            const isCustomerPayment =
-                transaction.type ===
-                "customer_payment";
+                <div>
 
 
-            const sent =
-                !isCustomerPayment &&
-                transaction.fromShop &&
-                transaction.fromShop._id
-                    .toString() ===
-                shop._id.toString();
+                    <p>
 
-        %>
+                        <strong>
 
+                            <% if ( transaction.fromShop && transaction.fromShop._id.toString()===shop._id.toString() )
+                                { %>
 
-        <div>
+                                Payment Sent
 
+                                <% } else { %>
 
-            <strong>
+                                    Payment Received
 
-                <% if (isCustomerPayment) { %>
+                                    <% } %>
 
-                    Payment Received
+                        </strong>
 
-                <% } else { %>
-
-                    <%= sent
-                        ? "Payment Sent"
-                        : "Payment Received"
-                    %>
-
-                <% } %>
-
-            </strong>
+                    </p>
 
 
-            <% if (transaction.tradeRequest) { %>
+                    <% if (transaction.tradeRequest) { %>
 
-                <p>
-                    <%= transaction.tradeRequest.product %>
-                </p>
+                        <p>
+                            <%= transaction.tradeRequest.product %>
+                        </p>
 
-            <% } else if (isCustomerPayment) { %>
+                        <% } else if ( transaction.type==="customer_payment" ) { %>
 
-                <p>
-                    Customer Payment
-                </p>
+                            <p>
+                                Customer Payment
+                            </p>
 
-            <% } %>
-
-
-            <p>
-
-                <% if (isCustomerPayment) { %>
-
-                    From:
-                    External Customer
-
-                <% } else if (sent) { %>
-
-                    To:
-                    <%= transaction.toShop
-                        ? transaction.toShop.name
-                        : "Unknown Shop"
-                    %>
-
-                <% } else { %>
-
-                    From:
-                    <%= transaction.fromShop
-                        ? transaction.fromShop.name
-                        : "Unknown Shop"
-                    %>
-
-                <% } %>
-
-            </p>
+                            <% } %>
 
 
-            <p>
+                                <p>
 
-                <strong>
-                    R<%= Number(transaction.amount).toFixed(2) %>
-                </strong>
+                                    R<%= Number(transaction.amount).toFixed(2) %>
 
-            </p>
+                                </p>
 
 
-            <a href="/transactions/<%= transaction._id %>">
-                View Receipt
-            </a>
+                                <p>
 
-        </div>
+                                    <%= transaction.createdAt.toLocaleString() %>
 
-        <hr>
-
-    <% }) %>
+                                </p>
 
 
-    <a href="/transactions">
-        View All Transactions
-    </a>
+                                <a href="/transactions/<%= transaction._id %>">
+                                    View Receipt
+                                </a>
 
 
-    <!-- ============================== -->
-    <!-- SOCKET / LIVE COUNTS -->
-    <!-- ============================== -->
-
-    <script>
-
-        window.dashboardData = {
-
-            currentShopId:
-                "<%= shop._id %>"
-
-        };
-
-    </script>
+                </div>
 
 
-    <script src="/socket.io/socket.io.js"></script>
+                <hr>
 
-    <script src="/js/notifications.js"></script>
+                <% }) %>
 
-    <script src="/js/messages.js"></script>
+
+                    <!-- ================================= -->
+                    <!-- NAVIGATION -->
+                    <!-- ================================= -->
+
+                    <h2>
+                        Navigation
+                    </h2>
+
+
+                    <nav>
+
+
+                        <a href="/trade">
+                            Trade
+                        </a>
+
+
+                        <br><br>
+
+
+                        <a href="/offers">
+                            Offers
+                        </a>
+
+
+                        <br><br>
+
+
+                        <a href="/messages">
+
+                            Messages
+
+                            <span id="message-count" style="display: none;"></span>
+
+                        </a>
+
+
+                        <br><br>
+
+
+                        <a href="/payments">
+                            Payments
+                        </a>
+
+
+                        <br><br>
+
+
+                        <a href="/transactions">
+                            Transactions
+                        </a>
+
+
+                        <br><br>
+
+
+                        <a href="/notifications">
+
+                            Notifications
+
+                            <span id="notification-count" style="display: none;"></span>
+
+                        </a>
+
+
+                        <br><br>
+
+
+                        <a href="/shop">
+                            My Shop
+                        </a>
+
+
+                        <br><br>
+                        <a href="/settings">
+                            Settings
+                        </a>
+
+                        <br><br>
+
+
+                        <a href="/logout">
+                            Logout
+                        </a>
+
+
+                    </nav>
+
+
+                    <!-- ================================= -->
+                    <!-- SOCKET DATA -->
+                    <!-- ================================= -->
+
+                    <script>
+
+                        window.dashboardData = {
+
+                            currentShopId:
+                                "<%= shop._id %>"
+
+                        };
+
+                    </script>
+
+
+                    <script src="/socket.io/socket.io.js"></script>
+
+                    <script src="/js/notifications.js"></script>
+
+                    <script src="/js/messages.js"></script>
 
 
 </body>

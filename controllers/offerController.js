@@ -1055,3 +1055,85 @@ export const declineOffer = async (req, res) => {
     }
 
 };
+// ========================================
+// WITHDRAW OFFER
+// Seller only
+// ========================================
+
+export const withdrawOffer = async (req, res) => {
+
+    try {
+
+        const offer =
+            await Offer.findById(
+                req.params.id
+            );
+
+
+        if (!offer) {
+
+            return res.status(404).send(
+                "Offer not found"
+            );
+
+        }
+
+
+        // Only seller who created
+        // the offer can withdraw it
+
+        if (
+            offer.seller.toString() !==
+            req.session.shopId.toString()
+        ) {
+
+            return res.status(403).send(
+                "You cannot withdraw this offer"
+            );
+
+        }
+
+
+        // Accepted/declined offers
+        // cannot be withdrawn
+
+        if (offer.status !== "pending") {
+
+            return res.status(400).send(
+                "Only pending offers can be withdrawn"
+            );
+
+        }
+
+
+        offer.status = "withdrawn";
+
+        await offer.save();
+
+
+        console.log(
+            "OFFER WITHDRAWN:",
+            offer._id
+        );
+
+
+        return res.redirect(
+            "/offers"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "WITHDRAW OFFER ERROR:",
+            error
+        );
+
+
+        return res.status(500).send(
+            "Unable to withdraw offer"
+        );
+
+    }
+
+};

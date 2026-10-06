@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import TradeRequest from "../models/TradeRequest.js";
 import Shop from "../models/Shop.js";
 import Offer from "../models/Offer.js";
-import Payment from "../models/Payment.js";
+import Payment from "../models/Payment.js"; 
 import Notification from "../models/Notification.js";
 
 import {
@@ -34,70 +34,264 @@ export const showTradeBoard = async (req, res) => {
         }
 
 
+        // --------------------------------
+        // GET FILTERS FROM URL
+        // --------------------------------
+
+        const search =
+            typeof req.query.search === "string"
+                ? req.query.search.trim()
+                : "";
+
+
+        const fulfilment =
+            typeof req.query.fulfilment === "string"
+                ? req.query.fulfilment
+                : "";
+
+
+        const maxBudget =
+            req.query.maxBudget
+                ? Number(req.query.maxBudget)
+                : null;
+
+
+        const distanceFilter =
+            req.query.distance
+                ? Number(req.query.distance)
+                : null;
+
+
+        // --------------------------------
+        // BUILD DATABASE FILTER
+        // --------------------------------
+
+        const query = {
+
+            status: "open",
+
+            shop: {
+                $ne: currentShop._id
+            }
+
+        };
+
+
+        // Product search
+
+        if (search) {
+
+            query.product = {
+
+                $regex: search,
+
+                $options: "i"
+
+            };
+
+        }
+
+
+        // Fulfilment filter
+
+        if (
+            fulfilment === "pickup" ||
+            fulfilment === "delivery"
+        ) {
+
+            query.fulfilment = {
+
+                $in: [
+                    fulfilment,
+                    "either"
+                ]
+
+            };
+
+        }
+
+
+        // Maximum budget filter
+
+        if (
+            maxBudget !== null &&
+            Number.isFinite(maxBudget) &&
+            maxBudget > 0
+        ) {
+
+            query.budget = {
+                $lte: maxBudget
+            };
+
+        }
+
+
+        // --------------------------------
+        // GET OPEN REQUESTS
+        // --------------------------------
+
         const requests =
             await TradeRequest
-                .find({
-                    status: "open",
-
-                    shop: {
-                        $ne: currentShop._id
-                    }
-                })
+                .find(query)
                 .populate("shop")
                 .sort({
                     createdAt: -1
                 });
 
 
+        // --------------------------------
+        // CALCULATE DISTANCE
+        // --------------------------------
+
         const requestsWithDistance =
-            requests.map(request => {
+            requests
+                .map(request => {
 
-                let distance = null;
-
-
-                const currentCoordinates =
-                    currentShop.coordinates;
-
-                const requestCoordinates =
-                    request.coordinates;
+                    let distance = null;
 
 
-                if (
-                    currentCoordinates?.latitude != null &&
-                    currentCoordinates?.longitude != null &&
-                    requestCoordinates?.latitude != null &&
-                    requestCoordinates?.longitude != null
-                ) {
+                    const currentCoordinates =
+                        currentShop.coordinates;
 
-                    distance =
-                        calculateDistance(
 
-                            currentCoordinates.latitude,
+                    const requestCoordinates =
+                        request.coordinates;
 
-                            currentCoordinates.longitude,
 
-                            requestCoordinates.latitude,
+                    if (
+                        currentCoordinates?.latitude != null &&
+                        currentCoordinates?.longitude != null &&
+                        requestCoordinates?.latitude != null &&
+                        requestCoordinates?.longitude != null
+                    ) {
 
-                            requestCoordinates.longitude
+                        distance =
+                            calculateDistance(
 
+                                currentCoordinates.latitude,
+
+                                currentCoordinates.longitude,
+
+                                requestCoordinates.latitude,
+
+                                requestCoordinates.longitude
+
+                            );
+
+                    }
+
+
+                    return {
+
+                        request,
+
+                        distance
+
+                    };
+
+                })
+
+                // --------------------------------
+                // ENFORCE DISTANCE
+                // --------------------------------
+
+                .filter(item => {
+
+                    /*
+                        If distance cannot be calculated,
+                        keep the request visible.
+
+                        We do not want missing coordinates
+                        to silently hide a trade request.
+                    */
+
+                    if (item.distance === null) {
+
+                        return true;
+
+                    }
+
+
+                    // Respect the request owner's
+                    // maximum trading distance.
+
+                    const requestMaxDistance =
+                        Number(
+                            item.request.maxDistance
                         );
+
+
+                    if (
+                        Number.isFinite(
+                            requestMaxDistance
+                        ) &&
+                        requestMaxDistance > 0 &&
+                        item.distance >
+                        requestMaxDistance
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    // Respect the viewing vendor's
+                    // selected distance filter.
+
+                    if (
+                        distanceFilter !== null &&
+                        Number.isFinite(
+                            distanceFilter
+                        ) &&
+                        distanceFilter > 0 &&
+                        item.distance >
+                        distanceFilter
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    return true;
+
+                });
+
+
+        // --------------------------------
+        // RENDER
+        // --------------------------------
+
+        return res.render(
+
+            "trade/index",
+
+            {
+
+                requestsWithDistance,
+
+                filters: {
+
+                    search,
+
+                    fulfilment,
+
+                    maxBudget:
+                        Number.isFinite(maxBudget)
+                            ? maxBudget
+                            : "",
+
+                    distance:
+                        Number.isFinite(
+                            distanceFilter
+                        )
+                            ? distanceFilter
+                            : ""
 
                 }
 
-
-                return {
-                    request,
-                    distance
-                };
-
-            });
-
-
-        return res.render(
-            "trade/index",
-            {
-                requestsWithDistance
             }
+
         );
 
 
@@ -999,6 +1193,104 @@ export const completeTrade = async (req, res) => {
 
         return res.status(500).send(
             "Unable to complete trade"
+        );
+
+    }
+
+};
+// ========================================
+// CANCEL TRADE REQUEST
+// Trade owner only
+// ========================================
+
+export const cancelTrade = async (req, res) => {
+
+    try {
+
+        const tradeRequest =
+            await TradeRequest.findById(
+                req.params.id
+            );
+
+
+        if (!tradeRequest) {
+
+            return res.status(404).send(
+                "Trade request not found"
+            );
+
+        }
+
+
+        // Only the shop that created
+        // the request can cancel it
+
+        if (
+            tradeRequest.shop.toString() !==
+            req.session.shopId.toString()
+        ) {
+
+            return res.status(403).send(
+                "You cannot cancel this trade request"
+            );
+
+        }
+
+
+        // Once accepted/payment process begins,
+        // it cannot simply be cancelled
+
+        if (tradeRequest.status !== "open") {
+
+            return res.status(400).send(
+                "Only open trade requests can be cancelled"
+            );
+
+        }
+
+
+        tradeRequest.status = "cancelled";
+
+        await tradeRequest.save();
+
+
+        // Withdraw every pending offer
+        // attached to this request
+
+        await Offer.updateMany(
+            {
+                tradeRequest: tradeRequest._id,
+                status: "pending"
+            },
+            {
+                $set: {
+                    status: "withdrawn"
+                }
+            }
+        );
+
+
+        console.log(
+            "TRADE CANCELLED:",
+            tradeRequest._id
+        );
+
+
+        return res.redirect(
+            "/trade/my-requests"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "CANCEL TRADE ERROR:",
+            error
+        );
+
+
+        return res.status(500).send(
+            "Unable to cancel trade request"
         );
 
     }

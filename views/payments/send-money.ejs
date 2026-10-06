@@ -30,25 +30,47 @@
 
 
     <p>
-        Send money to another
-        Open Payments wallet.
+        Send money to another NEXA vendor
+        using Open Payments + Interledger.
     </p>
 
 
-    <form>
+    <p>
+        <strong>
+            From:
+        </strong>
+
+        <%= currentShop.name %>
+    </p>
+
+
+    <p>
+        <strong>
+            Your wallet:
+        </strong>
+
+        <%= currentShop.walletAddress || "No wallet configured" %>
+    </p>
+
+
+    <form
+        action="/payments/send"
+        method="POST"
+    >
 
         <div>
 
-            <label>
+            <label for="walletAddress">
                 Recipient Wallet Address
             </label>
 
             <br>
 
             <input
-                type="url"
+                id="walletAddress"
+                type="text"
                 name="walletAddress"
-                placeholder="https://wallet.example/user"
+                placeholder="https://ilp.interledger-test.dev/vendor"
                 required
             >
 
@@ -60,13 +82,14 @@
 
         <div>
 
-            <label>
+            <label for="amount">
                 Amount
             </label>
 
             <br>
 
             <input
+                id="amount"
                 type="number"
                 name="amount"
                 min="0.01"
@@ -83,15 +106,17 @@
 
         <div>
 
-            <label>
+            <label for="reference">
                 Reference
             </label>
 
             <br>
 
             <input
+                id="reference"
                 type="text"
                 name="reference"
+                maxlength="100"
                 placeholder="Stock payment"
                 required
             >
@@ -102,19 +127,14 @@
         <br>
 
 
-        <button
-            type="button"
-            disabled
-        >
+        <button type="submit">
             Send with Open Payments
         </button>
 
     </form>
 
 
-    <p>
-        Open Payments connection coming next.
-    </p>
+    <br>
 
 
     <a href="/payments">

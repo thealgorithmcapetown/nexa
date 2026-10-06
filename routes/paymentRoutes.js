@@ -13,7 +13,8 @@ import {
     showPaymentSuccess,
 
     showSendMoney,
-
+    processSendMoney,
+    finishSendMoney,
     showReceiveMoney,
 
     createPaymentRequest,
@@ -116,6 +117,26 @@ router.get(
     requireAuth,
 
     showGeneratedPaymentRequest
+
+);
+router.post(
+
+    "/payments/send",
+
+    requireAuth,
+
+    processSendMoney
+
+);
+
+
+router.get(
+
+    "/payments/send/open-payments/callback",
+
+    requireAuth,
+
+    finishSendMoney
 
 );
 

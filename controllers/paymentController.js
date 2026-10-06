@@ -59,6 +59,16 @@ export const showOfferPayment = async (req, res) => {
             );
 
         }
+        if (
+            !offer.tradeRequest ||
+            offer.tradeRequest.status !== "accepted"
+        ) {
+
+            return res.status(400).send(
+                "This trade is no longer available for payment"
+            );
+
+        }
 
 
         if (
@@ -175,11 +185,9 @@ export const processOfferPayment = async (
         // --------------------------------
         // 4. CHECK EXISTING PAYMENT
         // --------------------------------
-
         let payment =
             await Payment.findOne({
-                offer:
-                    offer._id
+                offer: offer._id
             });
 
 
@@ -191,6 +199,24 @@ export const processOfferPayment = async (
             return res.redirect(
                 `/payments/${payment._id}/success`
             );
+
+        }
+
+
+        // Allow a failed payment to be retried
+
+        if (
+            payment &&
+            payment.status === "failed"
+        ) {
+
+            payment.status = "pending";
+
+            payment.providerTransactionId = undefined;
+
+            payment.completedAt = undefined;
+
+            await payment.save();
 
         }
 
@@ -537,12 +563,17 @@ export const finishOfferOpenPayment =
 
             if (!interactRef) {
 
-                return res.status(400).send(
-                    "Missing interact_ref"
+                console.log(
+                    "VENDOR PAYMENT AUTHORIZATION CANCELLED"
+                );
+
+                delete req.session.vendorOpenPayment;
+
+                return res.redirect(
+                    `/payments/offer/${req.params.offerId}`
                 );
 
             }
-
 
             // --------------------------------
             // 2. GET PAYMENT
@@ -1060,7 +1091,513 @@ export const showSendMoney = async (req, res) => {
     }
 
 };
+export const processSendMoney = async (req, res) => {
 
+    try {
+
+        const currentShop =
+            await Shop.findById(
+                req.session.shopId
+            );
+
+        if (!currentShop) {
+            return res.status(404).send(
+                "Shop not found"
+            );
+        }
+
+        if (!currentShop.walletAddress) {
+            return res.status(400).send(
+                "Your shop does not have an Open Payments wallet address"
+            );
+        }
+
+
+        const {
+            walletAddress,
+            amount,
+            reference
+        } = req.body;
+
+
+        const senderWalletAddress =
+            normalizeWalletAddress(
+                currentShop.walletAddress
+            );
+
+        const receiverWalletAddress =
+            normalizeWalletAddress(
+                walletAddress
+            );
+
+
+        if (
+            !senderWalletAddress.startsWith("https://")
+        ) {
+            return res.status(400).send(
+                "Your shop wallet address is invalid"
+            );
+        }
+
+
+        if (
+            !receiverWalletAddress.startsWith("https://")
+        ) {
+            return res.status(400).send(
+                "Enter a valid recipient wallet address"
+            );
+        }
+
+
+        const paymentAmount =
+            Number(amount);
+
+
+        if (
+            !Number.isFinite(paymentAmount) ||
+            paymentAmount <= 0
+        ) {
+            return res.status(400).send(
+                "Enter a valid payment amount"
+            );
+        }
+
+
+        if (
+            !reference ||
+            reference.trim() === ""
+        ) {
+            return res.status(400).send(
+                "Reference is required"
+            );
+        }
+
+
+        // --------------------------------
+        // FIND RECIPIENT NEXA SHOP
+        // --------------------------------
+
+        const shops =
+            await Shop.find({
+                walletAddress: {
+                    $exists: true,
+                    $ne: null
+                }
+            });
+
+
+        const recipientShop =
+            shops.find((shop) => {
+
+                return (
+                    normalizeWalletAddress(
+                        shop.walletAddress
+                    ) === receiverWalletAddress
+                );
+
+            });
+
+
+        if (!recipientShop) {
+            return res.status(404).send(
+                "No NEXA shop uses this wallet address"
+            );
+        }
+
+
+        if (
+            recipientShop._id.toString() ===
+            currentShop._id.toString()
+        ) {
+            return res.status(400).send(
+                "You cannot send money to your own shop"
+            );
+        }
+
+
+        console.log(
+            "\nSTARTING NEXA DIRECT PAYMENT"
+        );
+
+        console.log(
+            "Sender:",
+            senderWalletAddress
+        );
+
+        console.log(
+            "Recipient:",
+            receiverWalletAddress
+        );
+
+        console.log(
+            "Amount:",
+            paymentAmount,
+            "ZAR"
+        );
+
+
+        // --------------------------------
+        // CREATE RECIPIENT INCOMING PAYMENT
+        // --------------------------------
+
+        const incomingResult =
+            await createIncomingPayment({
+
+                receiverWalletAddress,
+
+                amount:
+                    paymentAmount
+
+            });
+
+
+        // --------------------------------
+        // CREATE SENDER QUOTE
+        // --------------------------------
+
+        const quoteResult =
+            await createQuote({
+
+                senderWalletAddress,
+
+                incomingPaymentUrl:
+                    incomingResult
+                        .incomingPayment
+                        .id
+
+            });
+
+
+        // --------------------------------
+        // REQUEST AUTHORIZATION
+        // --------------------------------
+
+        const nonce =
+            crypto.randomUUID();
+
+
+        const finishUri =
+            `${req.protocol}://${req.get("host")}` +
+            `/payments/send/open-payments/callback`;
+
+
+        const outgoingGrantResult =
+            await requestOutgoingPaymentGrant({
+
+                senderWalletAddress,
+
+                quote:
+                    quoteResult.quote,
+
+                finishUri,
+
+                nonce
+
+            });
+
+
+        const grant =
+            outgoingGrantResult.grant;
+
+
+        // --------------------------------
+        // SAVE TEMPORARY STATE
+        // --------------------------------
+
+        req.session.directOpenPayment = {
+
+            senderShopId:
+                currentShop._id.toString(),
+
+            recipientShopId:
+                recipientShop._id.toString(),
+
+            amount:
+                paymentAmount,
+
+            reference:
+                reference.trim(),
+
+            senderWalletAddress,
+
+            quoteUrl:
+                quoteResult.quote.id,
+
+            continueUri:
+                grant.continue.uri,
+
+            continueAccessToken:
+                grant.continue
+                    .access_token
+                    .value,
+
+            nonce
+
+        };
+
+
+        req.session.save((error) => {
+
+            if (error) {
+
+                console.error(
+                    "DIRECT PAYMENT SESSION SAVE ERROR:",
+                    error
+                );
+
+                return res.status(500).send(
+                    "Unable to save payment session"
+                );
+
+            }
+
+
+            return res.redirect(
+                grant.interact.redirect
+            );
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "START DIRECT PAYMENT ERROR:"
+        );
+
+        console.error(error);
+
+        return res.status(500).send(
+            "Unable to start direct Open Payments transaction"
+        );
+
+    }
+
+};
+
+
+export const finishSendMoney = async (req, res) => {
+
+    try {
+
+        const paymentSession =
+            req.session.directOpenPayment;
+
+
+        if (!paymentSession) {
+
+            return res.status(400).send(
+                "Direct payment session not found"
+            );
+
+        }
+
+
+        // --------------------------------
+        // SECURITY
+        // --------------------------------
+
+        if (
+            paymentSession.senderShopId !==
+            req.session.shopId.toString()
+        ) {
+
+            return res.status(403).send(
+                "You cannot complete this payment"
+            );
+
+        }
+
+
+        const interactRef =
+            req.query.interact_ref;
+
+
+        // User cancelled authorization
+
+        if (!interactRef) {
+
+            console.log(
+                "DIRECT PAYMENT AUTHORIZATION CANCELLED"
+            );
+
+            delete req.session.directOpenPayment;
+
+            return res.redirect(
+                "/payments/send"
+            );
+
+        }
+
+
+        const senderShop =
+            await Shop.findById(
+                paymentSession.senderShopId
+            );
+
+
+        const recipientShop =
+            await Shop.findById(
+                paymentSession.recipientShopId
+            );
+
+
+        if (
+            !senderShop ||
+            !recipientShop
+        ) {
+
+            delete req.session.directOpenPayment;
+
+            return res.status(404).send(
+                "Sender or recipient shop no longer exists"
+            );
+
+        }
+
+
+        // --------------------------------
+        // FINALIZE AUTHORIZATION
+        // --------------------------------
+
+        const finalizedGrant =
+            await continueOutgoingPaymentGrant({
+
+                continueUri:
+                    paymentSession.continueUri,
+
+                continueAccessToken:
+                    paymentSession
+                        .continueAccessToken,
+
+                interactRef
+
+            });
+
+
+        // --------------------------------
+        // EXECUTE PAYMENT
+        // --------------------------------
+
+        const outgoingPayment =
+            await createOutgoingPayment({
+
+                senderWalletAddress:
+                    paymentSession
+                        .senderWalletAddress,
+
+                quoteUrl:
+                    paymentSession.quoteUrl,
+
+                outgoingAccessToken:
+                    finalizedGrant
+                        .access_token
+                        .value
+
+            });
+
+
+        if (outgoingPayment.failed) {
+
+            delete req.session.directOpenPayment;
+
+            return res.status(400).send(
+                "Open Payments transaction failed"
+            );
+
+        }
+
+
+        // --------------------------------
+        // CREATE TRANSACTION
+        // --------------------------------
+
+        const transaction =
+            await Transaction.create({
+
+                fromShop:
+                    senderShop._id,
+
+                toShop:
+                    recipientShop._id,
+
+                amount:
+                    paymentSession.amount,
+
+                currency:
+                    "ZAR",
+
+                type: "direct_payment",
+
+                status:
+                    "successful",
+
+                reference:
+                    paymentSession.reference,
+
+                providerTransactionId:
+                    outgoingPayment.id
+
+            });
+
+
+        // --------------------------------
+        // NOTIFY RECIPIENT
+        // --------------------------------
+
+        if (recipientShop.owner) {
+
+            await Notification.create({
+
+                user:
+                    recipientShop.owner,
+
+                type:
+                    "payment_received",
+
+                message:
+                    `R${Number(paymentSession.amount).toFixed(2)} received from ${senderShop.name}`,
+
+                relatedShop:
+                    senderShop._id,
+
+                relatedTransaction:
+                    transaction._id
+
+            });
+
+        }
+
+
+        console.log(
+            "DIRECT PAYMENT SUCCESS:",
+            transaction._id
+        );
+
+
+        delete req.session.directOpenPayment;
+
+
+        return res.redirect(
+            `/transactions/${transaction._id}`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "FINISH DIRECT PAYMENT ERROR:"
+        );
+
+        console.error(error);
+
+        return res.status(500).send(
+            "Unable to complete direct Open Payments transaction"
+        );
+
+    }
+
+};
 export const showReceiveMoney = async (req, res) => {
 
     try {
@@ -1662,12 +2199,17 @@ export const finishCustomerOpenPayment =
 
             if (!interactRef) {
 
-                return res.status(400).send(
-                    "Missing interact_ref"
+                console.log(
+                    "CUSTOMER PAYMENT AUTHORIZATION CANCELLED"
+                );
+
+                delete req.session.customerOpenPayment;
+
+                return res.redirect(
+                    `/pay/${req.params.paymentRequestId}`
                 );
 
             }
-
 
             // --------------------------------
             // 2. DUPLICATE PAYMENT PROTECTION

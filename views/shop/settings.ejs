@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Settings - NEXA</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Account Settings
+    </h1>
+
+
+    <!-- ================================= -->
+    <!-- ACCOUNT DETAILS -->
+    <!-- ================================= -->
+
+
+    <h2>
+        Account Details
+    </h2>
+
+
+    <form
+        action="/settings"
+        method="POST"
+    >
+
+
+        <label for="name">
+            Name
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="name"
+            name="name"
+            value="<%= user.name %>"
+            required
+        >
+
+
+        <br><br>
+
+
+        <label for="email">
+            Email
+        </label>
+
+        <br>
+
+        <input
+            type="email"
+            id="email"
+            name="email"
+            value="<%= user.email %>"
+            required
+        >
+
+
+        <br><br>
+
+
+        <label for="phone">
+            Phone
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="phone"
+            name="phone"
+            value="<%= user.phone || '' %>"
+            placeholder="Phone number"
+        >
+
+
+        <br><br>
+
+
+        <button type="submit">
+            Save Settings
+        </button>
+
+
+    </form>
+
+
+    <hr>
+
+
+    <!-- ================================= -->
+    <!-- PASSWORD -->
+    <!-- ================================= -->
+
+
+    <h2>
+        Change Password
+    </h2>
+
+
+    <form
+        action="/settings/password"
+        method="POST"
+    >
+
+
+        <label for="currentPassword">
+            Current Password
+        </label>
+
+        <br>
+
+        <input
+            type="password"
+            id="currentPassword"
+            name="currentPassword"
+            autocomplete="current-password"
+            required
+        >
+
+
+        <br><br>
+
+
+        <label for="newPassword">
+            New Password
+        </label>
+
+        <br>
+
+        <input
+            type="password"
+            id="newPassword"
+            name="newPassword"
+            minlength="8"
+            autocomplete="new-password"
+            required
+        >
+
+
+        <br><br>
+
+
+        <label for="confirmPassword">
+            Confirm New Password
+        </label>
+
+        <br>
+
+        <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            minlength="8"
+            autocomplete="new-password"
+            required
+        >
+
+
+        <br><br>
+
+
+        <button type="submit">
+            Change Password
+        </button>
+
+
+    </form>
+
+
+    <hr>
+
+
+    <a href="/shop">
+        My Shop
+    </a>
+
+
+    <br><br>
+
+
+    <a href="/dashboard">
+        ← Dashboard
+    </a>
+
+
+</body>
+
+</html>

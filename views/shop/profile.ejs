@@ -5,41 +5,83 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title><%= shop.name %> - NEXA</title>
 
-    <link rel="stylesheet" href="/css/main.css">
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
 
 </head>
 
 <body>
 
-    <h1><%= shop.name %></h1>
+
+    <h1>
+        <%= shop.name %>
+    </h1>
+
 
     <p>
-        <%= shop.category %>
+        <strong>Category:</strong>
+        <%= shop.category || "Not set" %>
     </p>
 
+
     <p>
+        <strong>Address:</strong>
         📍 <%= shop.address %>
     </p>
 
+
     <p>
+        <strong>Rating:</strong>
         ⭐ <%= shop.rating %>
     </p>
 
+
     <p>
+        <strong>Description:</strong>
         <%= shop.description || "No description yet." %>
     </p>
+
+
+    <p>
+        <strong>Open Payments Wallet:</strong>
+
+        <% if (shop.walletAddress) { %>
+
+            <%= shop.walletAddress %>
+
+        <% } else { %>
+
+            Not configured
+
+        <% } %>
+
+    </p>
+
+
+    <hr>
+
 
     <a href="/shop/edit">
         Edit Shop
     </a>
 
+
+    <br><br>
+
+
     <a href="/dashboard">
-        Dashboard
+        ← Dashboard
     </a>
+
 
 </body>
 

@@ -72,16 +72,16 @@
             <%= offer.status %>
         </strong>
     </p>
-    <% if (offer.status === "accepted") { %>
-
-    <a href="/payments/offer/<%= offer._id %>">
-        Proceed to Payment
-    </a>
-
-<% } %>
 
 
-    <% if (isBuyer && offer.status === "pending") { %>
+    <!-- ================================= -->
+    <!-- BUYER ACTIONS -->
+    <!-- ================================= -->
+
+    <% if (
+        isBuyer &&
+        offer.status === "pending"
+    ) { %>
 
         <form
             action="/offers/<%= offer._id %>/accept"
@@ -109,17 +109,94 @@
     <% } %>
 
 
+    <!-- ================================= -->
+    <!-- SELLER ACTIONS -->
+    <!-- ================================= -->
+
+    <% if (
+        isSeller &&
+        offer.status === "pending"
+    ) { %>
+
+        <form
+            action="/offers/<%= offer._id %>/withdraw"
+            method="POST"
+        >
+
+            <button type="submit">
+                Withdraw Offer
+            </button>
+
+        </form>
+
+    <% } %>
+
+
+    <!-- ================================= -->
+    <!-- ACCEPTED OFFER -->
+    <!-- ================================= -->
+
     <% if (offer.status === "accepted") { %>
 
         <p>
             Deal agreed.
         </p>
 
-        
+
+        <!-- Only buyer should pay -->
+
+        <% if (isBuyer) { %>
+
+            <a href="/payments/offer/<%= offer._id %>">
+                Proceed to Payment
+            </a>
+
+        <% } %>
+
+    <% } %>
+
+
+    <!-- ================================= -->
+    <!-- DECLINED OFFER -->
+    <!-- ================================= -->
+
+    <% if (offer.status === "declined") { %>
+
+        <p>
+            This offer was declined.
+        </p>
+
+    <% } %>
+
+
+    <!-- ================================= -->
+    <!-- WITHDRAWN OFFER -->
+    <!-- ================================= -->
+
+    <% if (offer.status === "withdrawn") { %>
+
+        <p>
+            This offer has been withdrawn.
+        </p>
+
+    <% } %>
+
+
+    <!-- ================================= -->
+    <!-- EXPIRED OFFER -->
+    <!-- ================================= -->
+
+    <% if (offer.status === "expired") { %>
+
+        <p>
+            This offer has expired.
+        </p>
+
     <% } %>
 
 
     <br>
+
 
     <a href="/offers">
         ← Back to Offers

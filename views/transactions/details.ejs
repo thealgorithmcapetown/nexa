@@ -37,9 +37,13 @@
 
         <strong>
 
-            <% if (isCustomerPayment) { %>
+            <% if (transaction.type === "customer_payment") { %>
 
                 Customer Payment
+
+            <% } else if (transaction.type === "direct_payment") { %>
+
+                Direct Payment
 
             <% } else { %>
 
@@ -73,7 +77,7 @@
 
         <strong>
 
-            <% if (isCustomerPayment) { %>
+            <% if (transaction.type === "customer_payment") { %>
 
                 External Customer
 
@@ -120,7 +124,7 @@
     <!-- ============================== -->
 
     <% if (
-        !isCustomerPayment &&
+        transaction.type === "trade_payment" &&
         transaction.tradeRequest
     ) { %>
 
@@ -183,7 +187,10 @@
 
         <strong>
 
-            <% if (isCustomerPayment) { %>
+            <% if (
+                transaction.type === "customer_payment" ||
+                transaction.type === "direct_payment"
+            ) { %>
 
                 Open Payments + Interledger
 
@@ -232,7 +239,7 @@
     <!-- ============================== -->
 
     <% if (
-        !isCustomerPayment &&
+        transaction.type === "trade_payment" &&
         transaction.tradeRequest
     ) { %>
 

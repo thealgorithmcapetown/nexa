@@ -11,9 +11,9 @@ export const showDashboard = async (req, res) => {
 
     try {
 
-        // --------------------------------
-        // USER
-        // --------------------------------
+        // ========================================
+        // USER + SHOP
+        // ========================================
 
         const user =
             await User.findById(
@@ -23,16 +23,10 @@ export const showDashboard = async (req, res) => {
 
         if (!user) {
 
-            return res.redirect(
-                "/login"
-            );
+            return res.redirect("/login");
 
         }
 
-
-        // --------------------------------
-        // SHOP
-        // --------------------------------
 
         const shop =
             await Shop.findById(
@@ -49,15 +43,18 @@ export const showDashboard = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // ACTIVE TRADE REQUESTS
-        // --------------------------------
+        const shopId =
+            shop._id;
+
+
+        // ========================================
+        // ACTIVE TRADES
+        // ========================================
 
         const activeTrades =
-            await TradeRequest.find({
+            await TradeRequest.countDocuments({
 
-                shop:
-                    shop._id,
+                shop: shopId,
 
                 status: {
                     $in: [
@@ -67,32 +64,54 @@ export const showDashboard = async (req, res) => {
                     ]
                 }
 
-            })
-                .sort({
-                    createdAt: -1
-                })
-                .limit(5);
+            });
 
 
-        // --------------------------------
-        // PENDING RECEIVED OFFERS
-        // --------------------------------
+        // ========================================
+        // PENDING OFFERS RECEIVED
+        // ========================================
 
         const pendingOffers =
             await Offer.countDocuments({
 
-                buyer:
-                    shop._id,
+                buyer: shopId,
 
-                status:
-                    "pending"
+                status: "pending"
 
             });
 
 
-        // --------------------------------
+        // ========================================
+        // UNREAD MESSAGES
+        // ========================================
+
+        const unreadMessages =
+            await Message.countDocuments({
+
+                receiver: shopId,
+
+                read: false
+
+            });
+
+
+        // ========================================
+        // UNREAD NOTIFICATIONS
+        // ========================================
+
+        const unreadNotifications =
+            await Notification.countDocuments({
+
+                user: user._id,
+
+                read: false
+
+            });
+
+
+        // ========================================
         // RECENT TRANSACTIONS
-        // --------------------------------
+        // ========================================
 
         const recentTransactions =
             await Transaction.find({
@@ -100,13 +119,11 @@ export const showDashboard = async (req, res) => {
                 $or: [
 
                     {
-                        fromShop:
-                            shop._id
+                        fromShop: shopId
                     },
 
                     {
-                        toShop:
-                            shop._id
+                        toShop: shopId
                     }
 
                 ]
@@ -121,52 +138,108 @@ export const showDashboard = async (req, res) => {
                 .limit(5);
 
 
-        // --------------------------------
-        // UNREAD MESSAGES
-        // --------------------------------
+        // ========================================
+        // TOTAL MONEY SENT
+        // ========================================
 
-        const unreadMessages =
-            await Message.countDocuments({
+        const sentResult =
+            await Transaction.aggregate([
 
-                receiver:
-                    shop._id,
+                {
+                    $match: {
 
-                read:
-                    false
+                        fromShop: shopId,
 
-            });
+                        status: "successful"
+
+                    }
+                },
+
+                {
+                    $group: {
+
+                        _id: null,
+
+                        total: {
+                            $sum: "$amount"
+                        }
+
+                    }
+                }
+
+            ]);
 
 
-        // --------------------------------
-        // UNREAD NOTIFICATIONS
-        // --------------------------------
-
-        const unreadNotifications =
-            await Notification.countDocuments({
-
-                user:
-                    user._id,
-
-                read:
-                    false
-
-            });
+        const totalSent =
+            sentResult.length > 0
+                ? sentResult[0].total
+                : 0;
 
 
-        // --------------------------------
+        // ========================================
+        // TOTAL MONEY RECEIVED
+        // ========================================
+
+        const receivedResult =
+            await Transaction.aggregate([
+
+                {
+                    $match: {
+
+                        toShop: shopId,
+
+                        status: "successful"
+
+                    }
+                },
+
+                {
+                    $group: {
+
+                        _id: null,
+
+                        total: {
+                            $sum: "$amount"
+                        }
+
+                    }
+                }
+
+            ]);
+
+
+        const totalReceived =
+            receivedResult.length > 0
+                ? receivedResult[0].total
+                : 0;
+
+
+        // ========================================
         // RENDER
-        // --------------------------------
+        // ========================================
 
         return res.render(
             "dashboard/dashboard",
             {
+
                 user,
+
                 shop,
+
                 activeTrades,
+
                 pendingOffers,
-                recentTransactions,
+
                 unreadMessages,
-                unreadNotifications
+
+                unreadNotifications,
+
+                recentTransactions,
+
+                totalSent,
+
+                totalReceived
+
             }
         );
 

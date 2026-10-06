@@ -12,94 +12,331 @@
 
     <title>NEXA Trade</title>
 
-    <link rel="stylesheet" href="/css/main.css">
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
 
 </head>
 
 <body>
 
-    <h1>NEXA Trade</h1>
+
+    <h1>
+        NEXA Trade
+    </h1>
+
 
     <a href="/trade/create">
         + Post a Need
     </a>
 
+    <br><br>
+
+    <a href="/trade/my-requests">
+        My Requests
+    </a>
+
 
     <hr>
+
+
+    <!-- ================================= -->
+    <!-- TRADE FILTERS -->
+    <!-- ================================= -->
+
+    <h2>
+        Find Trade Requests
+    </h2>
+
+
+    <form
+        action="/trade"
+        method="GET"
+    >
+
+
+        <!-- PRODUCT SEARCH -->
+
+        <div>
+
+            <label for="search">
+                Product
+            </label>
+
+            <br>
+
+            <input
+                id="search"
+                type="text"
+                name="search"
+                placeholder="e.g. Rice, Bread, Cooking Oil"
+                value="<%= filters.search %>"
+            >
+
+        </div>
+
+
+        <br>
+
+
+        <!-- DISTANCE -->
+
+        <div>
+
+            <label for="distance">
+                Distance
+            </label>
+
+            <br>
+
+            <select
+                id="distance"
+                name="distance"
+            >
+
+                <option value="">
+                    Any distance
+                </option>
+
+                <option
+                    value="2"
+                    <%= String(filters.distance) === "2" ? "selected" : "" %>
+                >
+                    Within 2 km
+                </option>
+
+                <option
+                    value="5"
+                    <%= String(filters.distance) === "5" ? "selected" : "" %>
+                >
+                    Within 5 km
+                </option>
+
+                <option
+                    value="10"
+                    <%= String(filters.distance) === "10" ? "selected" : "" %>
+                >
+                    Within 10 km
+                </option>
+
+                <option
+                    value="25"
+                    <%= String(filters.distance) === "25" ? "selected" : "" %>
+                >
+                    Within 25 km
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <br>
+
+
+        <!-- MAXIMUM BUDGET -->
+
+        <div>
+
+            <label for="maxBudget">
+                Maximum Budget
+            </label>
+
+            <br>
+
+            <input
+                id="maxBudget"
+                type="number"
+                name="maxBudget"
+                min="0.01"
+                step="0.01"
+                placeholder="e.g. 1000"
+                value="<%= filters.maxBudget %>"
+            >
+
+        </div>
+
+
+        <br>
+
+
+        <!-- FULFILMENT -->
+
+        <div>
+
+            <label for="fulfilment">
+                Fulfilment
+            </label>
+
+            <br>
+
+            <select
+                id="fulfilment"
+                name="fulfilment"
+            >
+
+                <option value="">
+                    Any
+                </option>
+
+                <option
+                    value="pickup"
+                    <%= filters.fulfilment === "pickup" ? "selected" : "" %>
+                >
+                    Pickup
+                </option>
+
+                <option
+                    value="delivery"
+                    <%= filters.fulfilment === "delivery" ? "selected" : "" %>
+                >
+                    Delivery
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <br>
+
+
+        <button type="submit">
+            Apply Filters
+        </button>
+
+
+        <a href="/trade">
+            Clear Filters
+        </a>
+
+
+    </form>
+
+
+    <hr>
+
+
+    <!-- ================================= -->
+    <!-- RESULTS -->
+    <!-- ================================= -->
 
 
     <% if (requestsWithDistance.length === 0) { %>
 
-    <p>No trade requests available.</p>
-
-<% } %>
-
-
-<% requestsWithDistance.forEach(item => { %>
-
-    <div>
-
-        <h2>
-            <%= item.request.shop.name %>
-        </h2>
-
-        <h3>
-            Needs:
-            <%= item.request.quantity %>
-            ×
-            <%= item.request.unit %>
-            <%= item.request.product %>
-        </h3>
-
         <p>
-            Budget:
-            R<%= item.request.budget %>
+            No trade requests match your filters.
         </p>
 
+    <% } %>
 
-        <% if (item.distance !== null) { %>
+
+    <% requestsWithDistance.forEach(item => { %>
+
+
+        <div>
+
+
+            <h2>
+                <%= item.request.shop.name %>
+            </h2>
+
+
+            <h3>
+
+                Needs:
+
+                <%= item.request.quantity %>
+
+                ×
+
+                <%= item.request.unit %>
+
+                <%= item.request.product %>
+
+            </h3>
+
 
             <p>
-                📍 <%= item.distance.toFixed(1) %> km away
+
+                Budget:
+
+                R<%= Number(item.request.budget).toFixed(2) %>
+
             </p>
 
-        <% } else { %>
+
+            <% if (item.distance !== null) { %>
+
+                <p>
+
+                    📍
+
+                    <%= item.distance.toFixed(1) %>
+
+                    km away
+
+                </p>
+
+            <% } else { %>
+
+                <p>
+                    📍 Distance unavailable
+                </p>
+
+            <% } %>
+
 
             <p>
-                📍 Distance unavailable
+
+                Maximum trade distance:
+
+                <%= item.request.maxDistance %>
+
+                km
+
             </p>
 
-        <% } %>
-
-
-        <p>
-            Fulfilment:
-            <%= item.request.fulfilment %>
-        </p>
-
-
-        <% if (item.request.description) { %>
 
             <p>
-                <%= item.request.description %>
+
+                Fulfilment:
+
+                <%= item.request.fulfilment %>
+
             </p>
 
-        <% } %>
+
+            <% if (item.request.description) { %>
+
+                <p>
+                    <%= item.request.description %>
+                </p>
+
+            <% } %>
 
 
-        <a href="/trade/<%= item.request._id %>">
-            View Request
-        </a>
+            <a
+                href="/trade/<%= item.request._id %>"
+            >
+                View Request
+            </a>
 
-    </div>
 
-    <hr>
+        </div>
 
-<% }) %>
+
+        <hr>
+
+
+    <% }) %>
+
 
     <a href="/dashboard">
         Dashboard
     </a>
+
 
 </body>
 

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Shop - NEXA</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/main.css"
+    >
+
+</head>
+
+<body>
+
+
+    <h1>
+        Edit Shop
+    </h1>
+
+
+    <form
+        action="/shop/edit"
+        method="POST"
+    >
+
+
+        <!-- SHOP NAME -->
+
+        <label for="name">
+            Shop Name
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="name"
+            name="name"
+            value="<%= shop.name %>"
+            required
+        >
+
+
+        <br><br>
+
+
+        <!-- CATEGORY -->
+
+        <label for="category">
+            Category
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="category"
+            name="category"
+            value="<%= shop.category || '' %>"
+            placeholder="Groceries, food, clothing..."
+        >
+
+
+        <br><br>
+
+
+        <!-- DESCRIPTION -->
+
+        <label for="description">
+            Description
+        </label>
+
+        <br>
+
+        <textarea
+            id="description"
+            name="description"
+            placeholder="Tell customers about your shop..."
+        ><%= shop.description || '' %></textarea>
+
+
+        <br><br>
+
+
+        <!-- ADDRESS -->
+
+        <label for="address">
+            Address
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="address"
+            name="address"
+            value="<%= shop.address %>"
+            required
+        >
+
+
+        <br><br>
+
+
+        <!-- OPEN PAYMENTS WALLET -->
+
+        <label for="walletAddress">
+            Open Payments Wallet Address
+        </label>
+
+        <br>
+
+        <input
+            type="text"
+            id="walletAddress"
+            name="walletAddress"
+            value="<%= shop.walletAddress || '' %>"
+            placeholder="https://ilp.interledger-test.dev/your-wallet"
+        >
+
+
+        <p>
+            This wallet is used to receive NEXA payments.
+        </p>
+
+
+        <br>
+
+
+        <button type="submit">
+            Save Changes
+        </button>
+
+
+    </form>
+
+
+    <br>
+
+
+    <a href="/shop">
+        ← Back to My Shop
+    </a>
+
+
+    <br><br>
+
+
+    <a href="/dashboard">
+        Dashboard
+    </a>
+
+
+</body>
+
+</html>

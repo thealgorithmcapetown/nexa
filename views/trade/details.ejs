@@ -106,44 +106,56 @@
     <hr>
 
 
-    <!-- ================================= -->
-    <!-- OPEN TRADE -->
-    <!-- ================================= -->
 
-    <% if (request.status === "open") { %>
+   <!-- ================================= -->
+<!-- OPEN TRADE -->
+<!-- ================================= -->
+
+<% if (request.status === "open") { %>
+
+    <% if (
+        request.shop._id.toString() ===
+        currentShopId.toString()
+    ) { %>
+
+        <h3>
+            Manage Request
+        </h3>
+
+        <p>
+            Your trade request is currently open.
+        </p>
+
+        <form
+            action="/trade/<%= request._id %>/cancel"
+            method="POST"
+        >
+
+            <button type="submit">
+                Cancel Request
+            </button>
+
+        </form>
+
+    <% } else { %>
 
         <h3>
             Trade Actions
         </h3>
 
+        <a href="/trade/<%= request._id %>/offer">
+            Make Offer
+        </a>
 
-        <% if (
-            request.shop._id.toString() !==
-            currentShopId.toString()
-        ) { %>
+        <br><br>
 
-            <a href="/trade/<%= request._id %>/offer">
-                Make Offer
-            </a>
-
-
-            <br><br>
-
-
-            <a href="/messages/<%= request.shop._id %>?trade=<%= request._id %>">
-                Chat With Vendor
-            </a>
-
-        <% } else { %>
-
-            <p>
-                This is your trade request.
-            </p>
-
-        <% } %>
+        <a href="/messages/<%= request.shop._id %>?trade=<%= request._id %>">
+            Chat With Vendor
+        </a>
 
     <% } %>
 
+<% } %>
 
 
     <!-- ================================= -->

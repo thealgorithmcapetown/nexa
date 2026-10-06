@@ -8,7 +8,8 @@ import {
     showTradeDetails,
     showMyRequests,
     fulfillTrade,
-    completeTrade
+    completeTrade,
+    cancelTrade
 
 } from "../controllers/tradeController.js";
 
@@ -94,6 +95,17 @@ router.get(
     "/trade/:id",
     requireAuth,
     showTradeDetails
+);
+// ========================================
+// CANCEL TRADE
+// Owner only,
+// Pressly gangy change thison the details.ejs
+// ========================================
+
+router.post(
+    "/trade/:id/cancel",
+    requireAuth,
+    cancelTrade
 );
 
 

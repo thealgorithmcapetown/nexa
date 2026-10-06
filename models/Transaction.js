@@ -20,12 +20,12 @@ const transactionSchema = new mongoose.Schema(
             required: false
         },
         paymentRequest: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "PaymentRequest",
-    required: false,
-    unique: true,
-    sparse: true
-},
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "PaymentRequest",
+            required: false,
+            unique: true,
+            sparse: true
+        },
         fromShop: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Shop",
@@ -52,7 +52,8 @@ const transactionSchema = new mongoose.Schema(
             type: String,
             enum: [
                 "trade_payment",
-                "customer_payment"
+                "customer_payment",
+                "direct_payment"
             ],
             default: "trade_payment"
         },
