@@ -7,170 +7,387 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Payments - NEXA
-    </title>
+    <title>Payments - NEXA</title>
 
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/payments.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/sidebar') %>
+        <%- include('../partials/navbar') %>
 
-    <h1>
-        Payments
-    </h1>
+            <main class="nexa-main payments-page">
 
+                <!-- PAGE HEADING -->
 
-    <section>
+                <div class="payments-heading">
 
-        <h2>
-            Payment Actions
-        </h2>
+                    <div>
 
+                        <span class="payments-eyebrow">
+                            NEXA PAYMENTS
+                        </span>
 
-        <a href="/payments/send">
-            Send Money
-        </a>
+                        <h1>
+                            Payments<span class="payments-title-dot">.</span>
+                        </h1>
 
-        <br><br>
+                        <p>
+                            Manage your money, send payments, and track your transactions.
+                        </p>
 
-        <a href="/payments/receive">
-            Receive Money
-        </a>
+                    </div>
 
-    </section>
+                    <a href="/transactions" class="payments-history-link">
 
+                        <i data-lucide="history"></i>
 
-    <hr>
+                        <span>
+                            Transaction History
+                        </span>
 
+                    </a>
 
-    <section>
+                </div>
 
-        <h2>
-            Recent Transactions
-        </h2>
 
+                <!-- PAYMENT OVERVIEW -->
 
-        <% if (recentTransactions.length===0) { %>
+                <section class="payments-overview">
 
-            <p>
-                No transactions yet.
-            </p>
+                    <div class="payments-overview-content">
 
-            <% } %>
+                        <div class="payments-overview-icon">
 
-
-                <% recentTransactions.forEach(transaction=> { %>
-
-                    <% // Customer QR payments do not have a fromShop. // Trade payments do. const
-                        isCustomerPayment=transaction.type==="customer_payment" ; const sent=!isCustomerPayment &&
-                        transaction.fromShop && transaction.fromShop._id.toString()===currentShopId.toString(); %>
-
-
-                        <div>
-
-                            <strong>
-
-                                <% if (isCustomerPayment) { %>
-
-                                    Received
-
-                                    <% } else { %>
-
-                                        <%= sent ? "Sent" : "Received" %>
-
-                                            <% } %>
-
-                            </strong>
-
-
-                            <p>
-
-                                <% if (isCustomerPayment) { %>
-
-                                    Customer Payment
-
-                                    <% } else { %>
-
-                                        <%= transaction.tradeRequest ? transaction.tradeRequest.product
-                                            : "Trade Payment" %>
-
-                                            <% } %>
-
-                            </p>
-
-
-                            <p>
-
-                                <% if (isCustomerPayment) { %>
-
-                                    From:
-                                    Customer
-
-                                    <% } else if (sent) { %>
-
-                                        To:
-
-                                        <%= transaction.toShop ? transaction.toShop.name : "Unknown Shop" %>
-
-                                            <% } else { %>
-
-                                                From:
-
-                                                <%= transaction.fromShop ? transaction.fromShop.name : "Unknown Shop" %>
-
-                                                    <% } %>
-
-                            </p>
-
-
-                            <p>
-
-                                R<%= Number(transaction.amount).toFixed(2) %>
-
-                            </p>
-
-
-                            <% if (transaction.reference) { %>
-
-                                <p>
-
-                                    Reference:
-                                    <%= transaction.reference %>
-
-                                </p>
-
-                                <% } %>
-
-
-                                    <a href="/transactions/<%= transaction._id %>">
-
-                                        View Receipt
-
-                                    </a>
+                            <i data-lucide="wallet"></i>
 
                         </div>
 
-                        <hr>
+                        <span class="payments-overview-label">
+                            YOUR PAYMENT HUB
+                        </span>
 
-                        <% }) %>
+                        <h2>
+                            Your money.
+                            <span>Your control.</span>
+                        </h2>
 
-                            <a href="/transactions">
-                                View All Transactions
-                            </a>
+                        <p>
+                            Send money to other vendors, accept customer payments,
+                            and keep track of every transaction in one place.
+                        </p>
 
-    </section>
+                        <div class="payments-overview-badge">
+
+                            <i data-lucide="shield-check"></i>
+
+                            Payment management
+
+                        </div>
+
+                    </div>
+
+                    <i data-lucide="wallet-cards" class="payments-overview-watermark"></i>
+
+                </section>
 
 
-    <br>
+                <!-- PAYMENT ACTIONS -->
+
+                <section class="payments-section">
+
+                    <div class="payments-section-heading">
+
+                        <div>
+
+                            <span class="payments-section-eyebrow">
+                                QUICK ACTIONS
+                            </span>
+
+                            <h2>
+                                Move your money
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                    <div class="payments-actions-grid">
+
+                        <a href="/payments/send" class="payments-action-card send-card">
 
 
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
 
+                            <div class="payments-action-content">
+
+                                <h3>
+                                    Send Money
+                                </h3>
+
+                                <p>
+                                    Transfer money to another vendor securely
+                                    and keep a record of your payment.
+                                </p>
+
+                                <span class="payments-action-cta">
+
+                                    Send a payment
+
+                                    <i data-lucide="arrow-right"></i>
+
+                                </span>
+
+                            </div>
+
+                            <i data-lucide="send" class="payments-card-watermark"></i>
+
+                        </a>
+
+
+                        <a href="/payments/receive" class="payments-action-card receive-card">
+
+
+
+                            <div class="payments-action-content">
+
+                                <h3>
+                                    Receive Money
+                                </h3>
+
+                                <p>
+                                    Create a payment request and let customers
+                                    pay through your QR payment flow.
+                                </p>
+
+                                <span class="payments-action-cta">
+
+                                    Receive a payment
+
+                                    <i data-lucide="arrow-right"></i>
+
+                                </span>
+
+                            </div>
+
+                            <i data-lucide="qr-code" class="payments-card-watermark"></i>
+
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- RECENT TRANSACTIONS -->
+
+                <section class="payments-section payments-transactions-section">
+
+                    <div class="payments-section-heading">
+
+                        <div>
+
+                            <span class="payments-section-eyebrow">
+                                PAYMENT ACTIVITY
+                            </span>
+
+                            <h2>
+                                Recent Transactions
+                            </h2>
+
+                            <p>
+                                Your latest sent and received payments.
+                            </p>
+
+                        </div>
+
+                        <a href="/transactions" class="payments-view-all">
+
+                            View All
+
+                            <i data-lucide="arrow-up-right"></i>
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="payments-transactions-panel">
+
+                        <% if (recentTransactions.length===0) { %>
+
+                            <div class="payments-empty-state">
+
+                                <div class="payments-empty-icon">
+
+                                    <i data-lucide="receipt-text"></i>
+
+                                </div>
+
+                                <h3>
+                                    No transactions yet
+                                </h3>
+
+                                <p>
+                                    Your payment history will appear here once
+                                    you start sending or receiving money.
+                                </p>
+
+                                <a href="/payments/send" class="payments-empty-button">
+
+                                    Make Your First Payment
+
+                                    <i data-lucide="arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                            <% } else { %>
+
+                                <div class="payments-transactions-list">
+
+                                    <% recentTransactions.forEach(transaction=> { %>
+
+                                        <% // Customer QR payments do not have a fromShop. // Trade payments do. const
+                                            isCustomerPayment=transaction.type==="customer_payment" ; const
+                                            sent=!isCustomerPayment && transaction.fromShop &&
+                                            transaction.fromShop._id.toString()===currentShopId.toString(); const
+                                            direction=sent ? "sent" : "received" ; const
+                                            transactionTitle=isCustomerPayment ? "Customer Payment" :
+                                            transaction.tradeRequest ? transaction.tradeRequest.product
+                                            : "Trade Payment" ; const counterparty=isCustomerPayment ? "Customer" : sent
+                                            ? transaction.toShop ? transaction.toShop.name : "Unknown Shop" :
+                                            transaction.fromShop ? transaction.fromShop.name : "Unknown Shop" ; %>
+
+                                            <div class="payments-transaction-row">
+
+                                                <div class="payments-transaction-icon <%= direction %>">
+
+                                                    <% if (sent) { %>
+
+                                                        <i data-lucide="arrow-up-right"></i>
+
+                                                        <% } else { %>
+
+                                                            <i data-lucide="arrow-down-left"></i>
+
+                                                            <% } %>
+
+                                                </div>
+
+
+                                                <div class="payments-transaction-details">
+
+                                                    <div class="payments-transaction-title-row">
+
+                                                        <h3>
+                                                            <%= transactionTitle %>
+                                                        </h3>
+
+                                                        <span class="payments-direction-badge <%= direction %>">
+
+                                                            <%= sent ? "Sent" : "Received" %>
+
+                                                        </span>
+
+                                                    </div>
+
+                                                    <p>
+
+                                                        <%= sent ? "To:" : "From:" %>
+
+                                                            <span>
+                                                                <%= counterparty %>
+                                                            </span>
+
+                                                    </p>
+
+                                                    <% if (transaction.reference) { %>
+
+                                                        <span class="payments-transaction-reference">
+
+                                                            Ref:
+                                                            <%= transaction.reference %>
+
+                                                        </span>
+
+                                                        <% } %>
+
+                                                </div>
+
+
+                                                <div class="payments-transaction-right">
+
+                                                    <strong class="payments-transaction-amount <%= direction %>">
+
+                                                        <%= sent ? "-" : "+" %>R<%=
+                                                                Number(transaction.amount).toFixed(2) %>
+
+                                                    </strong>
+
+                                                    <a href="/transactions/<%= transaction._id %>"
+                                                        class="payments-receipt-link">
+
+                                                        View Receipt
+
+                                                        <i data-lucide="arrow-up-right"></i>
+
+                                                    </a>
+
+                                                </div>
+
+                                            </div>
+
+                                            <% }) %>
+
+                                </div>
+
+                                <% } %>
+
+                    </div>
+
+                </section>
+
+
+                <!-- FOOTER -->
+
+                <div class="payments-page-footer">
+
+                    <span>
+
+                        <i data-lucide="shield-check"></i>
+
+                        Keep your payment details private and verify recipients before sending.
+
+                    </span>
+
+                    <a href="/dashboard">
+
+                        Back to Dashboard
+
+                        <i data-lucide="arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </main>
+
+
+            <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+            <script src="/js/navigation.js"></script>
+
+            <script>
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            </script>
 
 </body>
 

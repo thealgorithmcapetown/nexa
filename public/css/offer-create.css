@@ -1,0 +1,630 @@
+
+/* ==========================================
+   NEXA — MAKE OFFER
+   STAGE 4.1
+========================================== */
+
+
+/* PAGE */
+
+.offer-create-page {
+    padding-top: 34px;
+    padding-bottom: 100px;
+    color: #F7FAF8;
+}
+
+
+/* HEADER */
+
+.offer-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 34px;
+}
+
+.offer-eyebrow,
+.offer-card-eyebrow {
+    display: inline-block;
+    color: #8CE11A;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.offer-page-header h1 {
+    margin: 10px 0;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.15;
+}
+
+.offer-page-header h1 span {
+    color: #8CE11A;
+}
+
+.offer-page-header p {
+    color: #98A49D;
+    font-size: 14px;
+}
+
+.offer-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #C5D1C8;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.offer-back-link:hover {
+    color: #8CE11A;
+}
+
+.offer-back-link svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* MAIN LAYOUT */
+
+.offer-page-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.5fr);
+    align-items: start;
+    gap: 22px;
+}
+
+
+/* SUMMARY CARD */
+
+.offer-summary {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-width: 0;
+    padding: 30px;
+    background: #101914;
+    border: 1px solid rgba(140, 225, 26, 0.17);
+    border-radius: 24px;
+}
+
+.offer-summary-content {
+    position: relative;
+    z-index: 1;
+}
+
+.offer-summary-watermark {
+    position: absolute;
+    right: -48px;
+    bottom: -35px;
+    width: 230px;
+    height: 230px;
+    color: rgba(140, 225, 26, 0.08);
+    transform: rotate(-14deg);
+    pointer-events: none;
+    transition: transform 0.4s ease;
+}
+
+.offer-summary-watermark svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.1;
+}
+
+.offer-summary:hover .offer-summary-watermark {
+    transform: rotate(-8deg) scale(1.07);
+}
+
+.offer-product-icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin-top: 28px;
+    margin-bottom: 20px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.1);
+    border: 1px solid rgba(140, 225, 26, 0.16);
+    border-radius: 17px;
+}
+
+.offer-product-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+.offer-summary h2 {
+    margin: 0 0 12px;
+    font-size: clamp(24px, 2.4vw, 32px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    overflow-wrap: anywhere;
+}
+
+.offer-summary-description {
+    margin: 0;
+    color: #98A49D;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.offer-summary-divider {
+    height: 1px;
+    margin: 28px 0;
+    background: rgba(140, 225, 26, 0.14);
+}
+
+.offer-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.offer-summary-row > span {
+    color: #98A49D;
+    font-size: 12px;
+}
+
+.offer-summary-row > strong {
+    font-size: 15px;
+    font-weight: 800;
+    text-align: right;
+}
+
+.offer-summary-row .offer-budget {
+    color: #8CE11A;
+    font-size: 22px;
+    letter-spacing: -0.7px;
+}
+
+.offer-summary-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 34px;
+    padding: 16px;
+    background: rgba(140, 225, 26, 0.055);
+    border: 1px solid rgba(140, 225, 26, 0.12);
+    border-radius: 14px;
+}
+
+.offer-summary-note svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: #8CE11A;
+}
+
+.offer-summary-note p {
+    margin: 0;
+    color: #B0BFB4;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+
+/* FORM PANEL */
+
+.offer-form-panel {
+    min-width: 0;
+    padding: 32px;
+    background: #101914;
+    border: 1px solid rgba(140, 225, 26, 0.14);
+    border-radius: 24px;
+}
+
+.offer-form-heading {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 34px;
+}
+
+.offer-form-heading-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border-radius: 16px;
+}
+
+.offer-form-heading-icon svg {
+    width: 25px;
+    height: 25px;
+}
+
+.offer-form-heading h2 {
+    margin: 7px 0 4px;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.offer-form-heading p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+}
+
+
+/* INPUTS */
+
+.offer-create-form {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.offer-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.offer-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.offer-field > label {
+    color: #EAF1EC;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.offer-field > label span {
+    color: #98A49D;
+    font-weight: 400;
+}
+
+.offer-input-wrap {
+    position: relative;
+}
+
+.offer-input-prefix {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    color: #8CE11A;
+    font-size: 15px;
+    font-weight: 800;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.offer-create-form input[type="number"],
+.offer-create-form textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 15px 16px;
+    color: #F7FAF8;
+    background: #0B130F;
+    border: 1px solid #263A2C;
+    border-radius: 12px;
+    outline: none;
+    font: inherit;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.offer-input-wrap:has(.offer-input-prefix) input {
+    padding-left: 34px;
+}
+
+.offer-create-form input:focus,
+.offer-create-form textarea:focus {
+    border-color: #8CE11A;
+    box-shadow: 0 0 0 3px rgba(140, 225, 26, 0.1);
+}
+
+.offer-create-form input::placeholder,
+.offer-create-form textarea::placeholder {
+    color: #697A6F;
+}
+
+.offer-create-form textarea {
+    min-height: 130px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+.offer-field small {
+    color: #809087;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* DELIVERY OPTION */
+
+.offer-delivery-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px;
+    background: #0B130F;
+    border: 1px solid #263A2C;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.offer-delivery-option:hover {
+    border-color: rgba(140, 225, 26, 0.5);
+}
+
+.offer-delivery-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 43px;
+    height: 43px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border-radius: 12px;
+}
+
+.offer-delivery-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+.offer-delivery-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.offer-delivery-text strong {
+    font-size: 13px;
+}
+
+.offer-delivery-text small {
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.offer-delivery-checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    accent-color: #8CE11A;
+    cursor: pointer;
+}
+
+
+/* FORM ACTIONS */
+
+.offer-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(140, 225, 26, 0.12);
+}
+
+.offer-cancel-button,
+.offer-submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 13px 22px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.offer-cancel-button {
+    color: #EAF1EC;
+    background: #1A2820;
+    border: 1px solid #2A4030;
+}
+
+.offer-submit-button {
+    color: #10180B;
+    background: #8CE11A;
+    border: none;
+}
+
+.offer-submit-button:hover {
+    background: #A5F23E;
+    transform: translateY(-2px);
+}
+
+.offer-submit-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+
+    .offer-page-layout {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .offer-create-page {
+        padding-top: 20px;
+        padding-bottom: 120px;
+    }
+
+    .offer-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .offer-page-header h1 {
+        font-size: 34px;
+    }
+
+    .offer-summary,
+    .offer-form-panel {
+        padding: 22px;
+        border-radius: 20px;
+    }
+
+    .offer-field-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .offer-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .offer-cancel-button,
+    .offer-submit-button {
+        width: 100%;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .offer-summary-watermark,
+    .offer-submit-button,
+    .offer-delivery-option {
+        transition: none;
+    }
+
+}
+
+/* ==========================================
+   STAGE 4.1 — INPUT APPEARANCE FIXES
+========================================== */
+
+
+/* REMOVE NUMBER INPUT ARROWS — CHROME / EDGE */
+
+.offer-create-form input[type="number"]::-webkit-inner-spin-button,
+.offer-create-form input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* REMOVE NUMBER INPUT ARROWS — FIREFOX */
+
+.offer-create-form input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+
+/* PREVENT CHROME AUTOFILL WHITE / BLUE BACKGROUND */
+
+.offer-create-form input:-webkit-autofill,
+.offer-create-form input:-webkit-autofill:hover,
+.offer-create-form input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #F7FAF8;
+    -webkit-box-shadow: 0 0 0 1000px #0B130F inset;
+    box-shadow: 0 0 0 1000px #0B130F inset;
+    caret-color: #F7FAF8;
+    transition: background-color 9999s ease-out;
+}
+
+
+/* KEEP INPUTS DARK IN EVERY STATE */
+
+.offer-create-form input[type="number"] {
+    background-color: #0B130F;
+    color: #F7FAF8;
+    color-scheme: dark;
+}
+
+
+/* STYLE CHECKBOX TO MATCH NEXA */
+
+.offer-delivery-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 21px;
+    height: 21px;
+
+    flex-shrink: 0;
+
+    background: #0B130F;
+    border: 1.5px solid #536A58;
+    border-radius: 6px;
+
+    cursor: pointer;
+    position: relative;
+}
+
+.offer-delivery-checkbox:checked {
+    background: #8CE11A;
+    border-color: #8CE11A;
+}
+
+.offer-delivery-checkbox:checked::after {
+    content: "";
+    position: absolute;
+
+    width: 5px;
+    height: 10px;
+
+    left: 6px;
+    top: 2px;
+
+    border: solid #10180B;
+    border-width: 0 2px 2px 0;
+
+    transform: rotate(45deg);
+}
+
+.offer-delivery-checkbox:focus-visible {
+    outline: 2px solid #8CE11A;
+    outline-offset: 3px;
+}
+
+
+/* ==========================================
+   IOS SAFARI — PREVENT INPUT ZOOM
+========================================== */
+
+@media (max-width: 768px) {
+
+    .offer-create-form input,
+    .offer-create-form textarea,
+    .offer-create-form select {
+        font-size: 16px;
+    }
+
+}

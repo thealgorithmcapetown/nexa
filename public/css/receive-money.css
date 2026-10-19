@@ -1,0 +1,563 @@
+
+/* ==========================================
+   NEXA — RECEIVE MONEY
+   STAGE 6.3
+========================================== */
+
+
+/* PAGE */
+
+.receive-money-page {
+    padding-top: 18px;
+    padding-bottom: 65px;
+    color: #F7FAF8;
+}
+
+
+/* BACK LINK */
+
+.receive-money-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 26px;
+    color: #98A49D;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.receive-money-back:hover {
+    color: #8CE11A;
+}
+
+.receive-money-back svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* PAGE HEADING */
+
+.receive-money-heading {
+    margin-bottom: 30px;
+}
+
+.receive-money-eyebrow,
+.receive-money-section-label {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.receive-money-heading h1 {
+    margin: 10px 0;
+    font-size: clamp(28px, 3vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.receive-money-heading p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+
+/* MAIN LAYOUT */
+
+.receive-money-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+    align-items: start;
+    gap: 20px;
+}
+
+.receive-money-card,
+.receive-money-info-card,
+.receive-money-guide-card {
+    background: #101914;
+    border: 1px solid #25382B;
+    border-radius: 21px;
+}
+
+.receive-money-card {
+    padding: 29px;
+}
+
+
+/* FORM HEADING */
+
+.receive-money-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 32px;
+}
+
+.receive-money-card-heading h2 {
+    margin: 9px 0;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.receive-money-card-heading p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.receive-money-heading-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border-radius: 13px;
+}
+
+.receive-money-heading-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+
+/* FORM */
+
+.receive-money-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.receive-money-field label {
+    display: block;
+    margin-bottom: 10px;
+    color: #F7FAF8;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.receive-money-field label span {
+    color: #8CE11A;
+}
+
+.receive-money-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 0 15px;
+    background: #1A2920;
+    border: 1px solid #314636;
+    border-radius: 13px;
+    transition: border-color 0.2s ease;
+}
+
+.receive-money-input-wrap:focus-within {
+    border-color: #8CE11A;
+}
+
+.receive-money-input-wrap svg {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+    color: #8CE11A;
+}
+
+
+.receive-money-input-wrap input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    min-height: 54px;
+    padding: 12px 0;
+    color: #F7FAF8;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    font-family: inherit;
+    font-size: 16px;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.receive-money-input-wrap input:focus {
+    color: #F7FAF8;
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Browser autofill styling */
+
+.receive-money-input-wrap input:-webkit-autofill,
+.receive-money-input-wrap input:-webkit-autofill:hover,
+.receive-money-input-wrap input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #F7FAF8;
+    -webkit-box-shadow: 0 0 0 1000px #1A2920 inset;
+    caret-color: #F7FAF8;
+}
+
+
+.receive-money-input-wrap input::placeholder {
+    color: #819487;
+}
+
+.receive-money-currency {
+    color: #8CE11A;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.receive-money-field-help {
+    margin: 8px 0 0;
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+
+/* SUBMIT AREA */
+
+.receive-money-form-footer {
+    padding-top: 22px;
+    border-top: 1px solid #25382B;
+}
+
+.receive-money-security-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-bottom: 20px;
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.receive-money-security-note svg {
+    flex-shrink: 0;
+    width: 17px;
+    height: 17px;
+    color: #8CE11A;
+}
+
+.receive-money-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 20px;
+    color: #14210B;
+    background: #8CE11A;
+    border: none;
+    border-radius: 13px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.receive-money-submit:hover {
+    background: #A5F23E;
+}
+
+.receive-money-submit svg {
+    width: 19px;
+    height: 19px;
+}
+
+
+/* INFORMATION SIDEBAR */
+
+.receive-money-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.receive-money-info-card {
+    position: relative;
+    overflow: hidden;
+    padding: 25px;
+}
+
+.receive-money-info-card > span,
+.receive-money-info-card h3,
+.receive-money-wallet-details {
+    position: relative;
+    z-index: 1;
+}
+
+.receive-money-info-card h3 {
+    margin: 12px 0 24px;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.receive-money-wallet-details {
+    padding-top: 17px;
+    border-top: 1px solid #25382B;
+}
+
+.receive-money-wallet-details span {
+    color: #98A49D;
+    font-size: 11px;
+}
+
+.receive-money-wallet-details p {
+    margin: 9px 0 0;
+    color: #F7FAF8;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.receive-money-watermark {
+    position: absolute;
+    right: -22px;
+    bottom: -30px;
+    width: 175px;
+    height: 175px;
+    color: #8CE11A;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+
+/* HOW IT WORKS */
+
+.receive-money-guide-card {
+    padding: 25px;
+}
+
+.receive-money-guide-card h3 {
+    margin: 9px 0 25px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.receive-money-guide-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-top: 22px;
+}
+
+.receive-money-step {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 33px;
+    height: 33px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.1);
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.receive-money-guide-item strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #F7FAF8;
+    font-size: 12px;
+}
+
+.receive-money-guide-item p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+
+/* NO WALLET CONNECTED */
+
+.receive-money-no-wallet {
+    position: relative;
+    overflow: hidden;
+    max-width: 700px;
+    padding: 35px;
+    background: #101914;
+    border: 1px solid #25382B;
+    border-radius: 21px;
+}
+
+.receive-money-no-wallet-icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 24px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.1);
+    border-radius: 15px;
+}
+
+.receive-money-no-wallet-icon svg {
+    width: 25px;
+    height: 25px;
+}
+
+.receive-money-no-wallet h2 {
+    margin: 12px 0;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.receive-money-no-wallet p {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0;
+    color: #98A49D;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.receive-money-secondary-button {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 25px;
+    padding: 12px 16px;
+    color: #F7FAF8;
+    background: #1B2A20;
+    border: 1px solid #314636;
+    border-radius: 11px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.receive-money-secondary-button svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 950px) {
+
+    .receive-money-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .receive-money-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .receive-money-page {
+        padding-top: 10px;
+        padding-bottom: 110px;
+    }
+
+    .receive-money-heading {
+        margin-bottom: 20px;
+    }
+
+    .receive-money-heading h1 {
+        font-size: 29px;
+    }
+
+    .receive-money-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Show wallet and instructions before payment form */
+
+    .receive-money-sidebar {
+        display: flex;
+        flex-direction: column;
+        order: -1;
+        align-items: stretch;
+        gap: 12px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .receive-money-card,
+    .receive-money-info-card,
+    .receive-money-guide-card {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        margin: 0;
+        padding: 20px;
+        border-radius: 17px;
+        box-sizing: border-box;
+    }
+
+    .receive-money-card {
+        order: 1;
+    }
+
+    .receive-money-info-card h3 {
+        margin-bottom: 15px;
+    }
+
+    .receive-money-guide-card h3 {
+        margin-bottom: 18px;
+    }
+
+    .receive-money-guide-item {
+        margin-top: 16px;
+    }
+
+    .receive-money-card-heading h2 {
+        font-size: 20px;
+    }
+
+    .receive-money-heading-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .receive-money-input-wrap input {
+        font-size: 16px;
+    }
+
+    .receive-money-no-wallet {
+        padding: 23px;
+        border-radius: 17px;
+    }
+
+    .receive-money-no-wallet h2 {
+        font-size: 21px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .receive-money-input-wrap {
+        transition: none;
+    }
+
+}

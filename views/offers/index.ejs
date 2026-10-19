@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,118 +6,386 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Offers - NEXA</title>
+    <title>My Offers | NEXA</title>
 
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/offers.css">
 
 </head>
 
 <body>
 
-    <h1>Offers</h1>
+    <!-- SHARED NAVIGATION -->
+
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
 
-    <h2>Offers Received</h2>
+    <main class="nexa-main offers-page">
+
+        <!-- PAGE HEADER -->
+
+        <header class="offers-page-header">
+
+            <div>
+
+                <span class="offers-eyebrow">
+                    NEXA MARKETPLACE
+                </span>
+
+                <h1>My offers<span>.</span></h1>
+
+                <p>
+                    Manage your proposals and trade opportunities.
+                </p>
+
+            </div>
+
+            <a href="/trade" class="offers-browse-button">
+                <i data-lucide="search"></i>
+                Browse trades
+            </a>
+
+        </header>
 
 
-    <% if (receivedOffers.length===0) { %>
+        <!-- OVERVIEW CARDS -->
 
-        <p>
-            No offers received yet.
-        </p>
+        <section class="offers-overview">
 
-        <% } %>
+            <div class="offers-overview-card">
+
+                <div class="offers-overview-watermark" aria-hidden="true">
+                    <i data-lucide="inbox"></i>
+                </div>
+
+                <span>Offers received</span>
+
+                <strong>
+                    <%= receivedOffers.length %>
+                </strong>
+
+                <small>
+                    Proposals from other vendors
+                </small>
+
+            </div>
 
 
-            <% receivedOffers.forEach(offer=> { %>
+            <div class="offers-overview-card">
+
+                <div class="offers-overview-watermark" aria-hidden="true">
+                    <i data-lucide="send"></i>
+                </div>
+
+                <span>Offers sent</span>
+
+                <strong>
+                    <%= sentOffers.length %>
+                </strong>
+
+                <small>
+                    Proposals you've submitted
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <!-- OFFERS RECEIVED -->
+
+        <section class="offers-section">
+
+            <div class="offers-section-heading">
 
                 <div>
 
-                    <h3>
-                        <%= offer.seller.name %>
-                    </h3>
+                    <span class="offers-eyebrow">
+                        INCOMING PROPOSALS
+                    </span>
+
+                    <h2>Offers received</h2>
+
+                </div>
+
+                <span class="offers-section-count">
+                    <%= receivedOffers.length %>
+                    total
+                </span>
+
+            </div>
+
+
+            <% if (receivedOffers.length === 0) { %>
+
+                <div class="offers-empty-state">
+
+                    <div class="offers-empty-icon">
+                        <i data-lucide="inbox"></i>
+                    </div>
+
+                    <h3>No offers received yet</h3>
 
                     <p>
-                        Product:
-                        <%= offer.tradeRequest.product %>
+                        When vendors respond to your trade requests,
+                        their offers will appear here.
                     </p>
 
-                    <p>
-                        Offered Price:
-                        R<%= offer.amount %>
-                    </p>
-
-                    <p>
-                        Quantity:
-                        <%= offer.quantity %>
-                    </p>
-
-                    <p>
-                        Status:
-                        <%= offer.status %>
-                    </p>
-
-                    <a href="/offers/<%= offer._id %>">
-                        View Offer
+                    <a href="/trade/my-requests">
+                        View my requests
+                        <i data-lucide="arrow-up-right"></i>
                     </a>
 
                 </div>
 
-                <hr>
+            <% } else { %>
 
-                <% }) %>
+                <div class="offers-card-grid">
 
+                    <% receivedOffers.forEach(offer => { %>
 
+                        <article class="offers-card">
 
-                    <h2>Offers Sent</h2>
+                            <div class="offers-card-watermark" aria-hidden="true">
+                                <i data-lucide="handshake"></i>
+                            </div>
 
+                            <div class="offers-card-content">
 
-                    <% if (sentOffers.length===0) { %>
+                                <div class="offers-card-top">
 
-                        <p>
-                            You haven't sent any offers.
-                        </p>
+                                    <div class="offers-vendor-icon">
+                                        <i data-lucide="store"></i>
+                                    </div>
 
-                        <% } %>
-
-
-                            <% sentOffers.forEach(offer=> { %>
-
-                                <div>
-
-                                    <h3>
-                                        <%= offer.tradeRequest.product %>
-                                    </h3>
-
-                                    <p>
-                                        Buyer:
-                                        <%= offer.buyer.name %>
-                                    </p>
-
-                                    <p>
-                                        Your Price:
-                                        R<%= offer.amount %>
-                                    </p>
-
-                                    <p>
-                                        Status:
+                                    <span class="offers-status offers-status-<%= offer.status %>">
+                                        <span class="offers-status-dot"></span>
                                         <%= offer.status %>
-                                    </p>
-                                    <a href="/offers/<%= offer._id %>">
-                                        View Offer
-                                    </a>
+                                    </span>
+
                                 </div>
 
-                                <hr>
 
-                                <% }) %>
+                                <span class="offers-card-label">
+                                    OFFER FROM
+                                </span>
+
+                                <h3>
+                                    <%= offer.seller.name %>
+                                </h3>
+
+                                <p class="offers-card-product">
+                                    <i data-lucide="package"></i>
+                                    <%= offer.tradeRequest.product %>
+                                </p>
 
 
-                                    <a href="/trade">
-                                        Browse Trade Requests
-                                    </a>
+                                <div class="offers-card-divider"></div>
+
+
+                                <div class="offers-card-meta">
+
+                                    <div>
+
+                                        <span>Offered price</span>
+
+                                        <strong class="offers-card-price">
+                                            R<%= Number(offer.amount).toLocaleString('en-ZA', {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            }) %>
+                                        </strong>
+
+                                    </div>
+
+                                    <div>
+
+                                        <span>Quantity</span>
+
+                                        <strong>
+                                            <%= offer.quantity %>
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <a
+                                    href="/offers/<%= offer._id %>"
+                                    class="offers-card-button"
+                                >
+                                    View offer
+                                    <i data-lucide="arrow-up-right"></i>
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    <% }) %>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+
+        <!-- OFFERS SENT -->
+
+        <section class="offers-section">
+
+            <div class="offers-section-heading">
+
+                <div>
+
+                    <span class="offers-eyebrow">
+                        OUTGOING PROPOSALS
+                    </span>
+
+                    <h2>Offers sent</h2>
+
+                </div>
+
+                <span class="offers-section-count">
+                    <%= sentOffers.length %>
+                    total
+                </span>
+
+            </div>
+
+
+            <% if (sentOffers.length === 0) { %>
+
+                <div class="offers-empty-state">
+
+                    <div class="offers-empty-icon">
+                        <i data-lucide="send"></i>
+                    </div>
+
+                    <h3>No offers sent yet</h3>
+
+                    <p>
+                        Explore the Trade Board and submit
+                        an offer to a nearby vendor.
+                    </p>
+
+                    <a href="/trade">
+                        Browse trade requests
+                        <i data-lucide="arrow-up-right"></i>
+                    </a>
+
+                </div>
+
+            <% } else { %>
+
+                <div class="offers-card-grid">
+
+                    <% sentOffers.forEach(offer => { %>
+
+                        <article class="offers-card">
+
+                            <div class="offers-card-watermark" aria-hidden="true">
+                                <i data-lucide="send"></i>
+                            </div>
+
+                            <div class="offers-card-content">
+
+                                <div class="offers-card-top">
+
+                                    <div class="offers-vendor-icon">
+                                        <i data-lucide="shopping-bag"></i>
+                                    </div>
+
+                                    <span class="offers-status offers-status-<%= offer.status %>">
+                                        <span class="offers-status-dot"></span>
+                                        <%= offer.status %>
+                                    </span>
+
+                                </div>
+
+
+                                <span class="offers-card-label">
+                                    OFFER FOR
+                                </span>
+
+                                <h3>
+                                    <%= offer.tradeRequest.product %>
+                                </h3>
+
+                                <p class="offers-card-product">
+                                    <i data-lucide="store"></i>
+                                    <%= offer.buyer.name %>
+                                </p>
+
+
+                                <div class="offers-card-divider"></div>
+
+
+                                <div class="offers-card-meta">
+
+                                    <div>
+
+                                        <span>Your price</span>
+
+                                        <strong class="offers-card-price">
+                                            R<%= Number(offer.amount).toLocaleString('en-ZA', {
+                                                minimumFractionDigits: 2,
+                                                maximumFractionDigits: 2
+                                            }) %>
+                                        </strong>
+
+                                    </div>
+
+                                    <div>
+
+                                        <span>Status</span>
+
+                                        <strong class="offers-card-status-text">
+                                            <%= offer.status %>
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <a
+                                    href="/offers/<%= offer._id %>"
+                                    class="offers-card-button"
+                                >
+                                    View offer
+                                    <i data-lucide="arrow-up-right"></i>
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    <% }) %>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+    </main>
+
+
+    <!-- SHARED SCRIPTS -->
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
 
 </body>
 

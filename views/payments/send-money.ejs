@@ -5,142 +5,285 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Send Money - NEXA
-    </title>
+    <title>Send Money - NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/send-money.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/sidebar') %>
+        <%- include('../partials/navbar') %>
 
-    <h1>
-        Send Money
-    </h1>
+            <main class="nexa-main send-money-page">
 
+                <a href="/payments" class="send-money-back">
 
-    <p>
-        Send money to another NEXA vendor
-        using Open Payments + Interledger.
-    </p>
+                    <i data-lucide="arrow-left"></i>
 
+                    Back to Payments
 
-    <p>
-        <strong>
-            From:
-        </strong>
-
-        <%= currentShop.name %>
-    </p>
+                </a>
 
 
-    <p>
-        <strong>
-            Your wallet:
-        </strong>
+                <!-- PAGE HEADING -->
 
-        <%= currentShop.walletAddress || "No wallet configured" %>
-    </p>
+                <header class="send-money-heading">
 
-
-    <form
-        action="/payments/send"
-        method="POST"
-    >
-
-        <div>
-
-            <label for="walletAddress">
-                Recipient Wallet Address
-            </label>
-
-            <br>
-
-            <input
-                id="walletAddress"
-                type="text"
-                name="walletAddress"
-                placeholder="https://ilp.interledger-test.dev/vendor"
-                required
-            >
-
-        </div>
+                    <span class="send-money-eyebrow">
+                        NEXA PAYMENTS
+                    </span>
 
 
-        <br>
+                    <h1>
+                        Send Money<span class="nexa-title-dot">.</span>
+                    </h1>
 
 
-        <div>
+                    <p>
+                        Transfer money to another vendor using
+                        Open Payments and Interledger.
+                    </p>
 
-            <label for="amount">
-                Amount
-            </label>
-
-            <br>
-
-            <input
-                id="amount"
-                type="number"
-                name="amount"
-                min="0.01"
-                step="0.01"
-                placeholder="100.00"
-                required
-            >
-
-        </div>
+                </header>
 
 
-        <br>
+                <div class="send-money-layout">
+
+                    <!-- PAYMENT FORM -->
+
+                    <section class="send-money-card">
+
+                        <div class="send-money-card-heading">
+
+                            <div>
+
+                                <span class="send-money-section-label">
+                                    NEW TRANSFER
+                                </span>
+
+                                <h2>
+                                    Payment Details
+                                </h2>
+
+                                <p>
+                                    Enter the recipient's wallet and the amount to send.
+                                </p>
+
+                            </div>
+
+                            <div class="send-money-heading-icon">
+
+                                <i data-lucide="send"></i>
+
+                            </div>
+
+                        </div>
 
 
-        <div>
+                        <form action="/payments/send" method="POST" class="send-money-form">
 
-            <label for="reference">
-                Reference
-            </label>
+                            <div class="send-money-field">
 
-            <br>
+                                <label for="walletAddress">
+                                    Recipient Wallet Address
+                                    <span>*</span>
+                                </label>
 
-            <input
-                id="reference"
-                type="text"
-                name="reference"
-                maxlength="100"
-                placeholder="Stock payment"
-                required
-            >
+                                <div class="send-money-input-wrap">
 
-        </div>
+                                    <i data-lucide="wallet"></i>
 
+                                    <input id="walletAddress" type="text" name="walletAddress"
+                                        placeholder="https://ilp.interledger-test.dev/vendor" autocomplete="off"
+                                        required>
 
-        <br>
+                                </div>
 
+                                <p class="send-money-field-help">
+                                    Enter the recipient's complete Interledger wallet address.
+                                </p>
 
-        <button type="submit">
-            Send with Open Payments
-        </button>
-
-    </form>
+                            </div>
 
 
-    <br>
+                            <div class="send-money-field">
+
+                                <label for="amount">
+                                    Amount (ZAR)
+                                    <span>*</span>
+                                </label>
+
+                                <div class="send-money-input-wrap">
+
+                                    <span class="send-money-currency">
+                                        R
+                                    </span>
+
+                                    <input id="amount" type="number" name="amount" min="0.01" step="0.01"
+                                        placeholder="100.00" inputmode="decimal" required>
+
+                                </div>
+
+                            </div>
 
 
-    <a href="/payments">
-        Back to Payments
-    </a>
+                            <div class="send-money-field">
 
+                                <label for="reference">
+                                    Payment Reference
+                                    <span>*</span>
+                                </label>
+
+                                <div class="send-money-input-wrap">
+
+                                    <i data-lucide="file-text"></i>
+
+                                    <input id="reference" type="text" name="reference" maxlength="100"
+                                        placeholder="e.g. Stock payment" required>
+
+                                </div>
+
+                                <p class="send-money-field-help">
+                                    A short description to help identify this transaction.
+                                </p>
+
+                            </div>
+
+
+                            <div class="send-money-form-footer">
+
+                                <div class="send-money-security-note">
+
+                                    <i data-lucide="shield-check"></i>
+
+                                    <span>
+                                        Double-check the recipient wallet address
+                                        before sending your payment.
+                                    </span>
+
+                                </div>
+
+                                <button type="submit" class="send-money-submit">
+
+                                    <i data-lucide="arrow-up-right"></i>
+
+                                    Send with Open Payments
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </section>
+
+
+                    <!-- PAYMENT INFORMATION -->
+
+                    <aside class="send-money-sidebar">
+
+                        <section class="send-money-info-card">
+
+                            <div class="send-money-info-heading">
+
+                                <div class="send-money-info-icon">
+
+                                    <i data-lucide="store"></i>
+
+                                </div>
+
+                                <span>
+                                    SENDING FROM
+                                </span>
+
+                            </div>
+
+                            <h3>
+                                <%= currentShop.name %>
+                            </h3>
+
+                            <div class="send-money-wallet-details">
+
+                                <span>
+                                    Your Wallet Address
+                                </span>
+
+                                <p>
+                                    <%= currentShop.walletAddress || "No wallet configured" %>
+                                </p>
+
+                            </div>
+
+                            <i data-lucide="wallet-cards" class="send-money-watermark"></i>
+
+                        </section>
+
+
+                        <section class="send-money-guide-card">
+
+                            <span class="send-money-section-label">
+                                BEFORE YOU SEND
+                            </span>
+
+                            <h3>
+                                Payment Checklist
+                            </h3>
+
+                            <div class="send-money-checklist-item">
+
+                                <i data-lucide="check-circle-2"></i>
+
+                                <p>
+                                    Confirm the recipient's wallet address.
+                                </p>
+
+                            </div>
+
+                            <div class="send-money-checklist-item">
+
+                                <i data-lucide="check-circle-2"></i>
+
+                                <p>
+                                    Check the payment amount and currency.
+                                </p>
+
+                            </div>
+
+                            <div class="send-money-checklist-item">
+
+                                <i data-lucide="check-circle-2"></i>
+
+                                <p>
+                                    Add a reference you can recognize later.
+                                </p>
+
+                            </div>
+
+                        </section>
+
+                    </aside>
+
+                </div>
+
+            </main>
+
+
+            <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+            <script src="/js/navigation.js"></script>
+
+            <script>
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+            </script>
 
 </body>
 

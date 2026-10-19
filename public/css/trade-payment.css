@@ -1,0 +1,345 @@
+
+/* ==========================================
+   NEXA — COMPLETE TRADE PAYMENT
+   STAGE 6.2B
+========================================== */
+
+.trade-payment-page {
+    padding-top: 18px;
+    padding-bottom: 65px;
+    color: #F7FAF8;
+}
+
+.trade-payment-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 26px;
+    color: #98A49D;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.trade-payment-back:hover {
+    color: #8CE11A;
+}
+
+.trade-payment-back svg {
+    width: 17px;
+    height: 17px;
+}
+
+.trade-payment-heading {
+    margin-bottom: 30px;
+}
+
+.trade-payment-eyebrow {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.trade-payment-heading h1 {
+    margin: 10px 0;
+    font-size: clamp(28px, 3vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.trade-payment-heading p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* LAYOUT */
+
+.trade-payment-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(270px, 1fr);
+    align-items: start;
+    gap: 20px;
+}
+
+.trade-payment-card,
+.trade-payment-info-card,
+.trade-payment-note-card {
+    background: #101914;
+    border: 1px solid #25382B;
+    border-radius: 21px;
+}
+
+.trade-payment-card {
+    padding: 30px;
+}
+
+.trade-payment-card-header {
+    padding-bottom: 24px;
+    border-bottom: 1px solid #25382B;
+}
+
+.trade-payment-card-header h2 {
+    margin: 10px 0;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.trade-payment-card-header p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* DETAILS */
+
+.trade-payment-details {
+    padding: 12px 0;
+}
+
+.trade-payment-detail-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 17px 0;
+    border-bottom: 1px solid #25382B;
+}
+
+.trade-payment-detail-row:last-child {
+    border-bottom: none;
+}
+
+.trade-payment-detail-row span {
+    color: #98A49D;
+    font-size: 12px;
+}
+
+.trade-payment-detail-row strong {
+    max-width: 60%;
+    color: #F7FAF8;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* TOTAL */
+
+.trade-payment-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 15px;
+    padding: 24px;
+    background: #17271A;
+    border: 1px solid rgba(140, 225, 26, 0.2);
+    border-radius: 16px;
+}
+
+.trade-payment-total span {
+    display: block;
+    margin-bottom: 9px;
+    color: #98A49D;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+.trade-payment-total strong {
+    display: block;
+    color: #8CE11A;
+    font-size: clamp(26px, 3vw, 36px);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.trade-payment-total > svg {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    color: #8CE11A;
+    opacity: 0.55;
+}
+
+/* ACTIONS */
+
+.trade-payment-form {
+    margin-top: 25px;
+}
+
+.trade-payment-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 20px;
+    color: #14210B;
+    background: #8CE11A;
+    border: none;
+    border-radius: 13px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.trade-payment-submit:hover {
+    background: #A5F23E;
+}
+
+.trade-payment-submit svg {
+    width: 19px;
+    height: 19px;
+}
+
+.trade-payment-cancel {
+    display: block;
+    margin-top: 20px;
+    color: #98A49D;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+}
+
+.trade-payment-cancel:hover {
+    color: #F7FAF8;
+}
+
+/* SIDEBAR */
+
+.trade-payment-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.trade-payment-info-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 170px;
+    padding: 26px;
+}
+
+.trade-payment-info-card > span,
+.trade-payment-info-card h3,
+.trade-payment-info-card p {
+    position: relative;
+    z-index: 1;
+}
+
+.trade-payment-info-card h3 {
+    margin: 12px 0;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.trade-payment-info-card p {
+    max-width: 310px;
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.trade-payment-watermark {
+    position: absolute;
+    right: -20px;
+    bottom: -30px;
+    width: 170px;
+    height: 170px;
+    color: #8CE11A;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+.trade-payment-note-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 24px;
+}
+
+.trade-payment-note-card > svg {
+    flex-shrink: 0;
+    width: 23px;
+    height: 23px;
+    color: #8CE11A;
+}
+
+.trade-payment-note-card h3 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.trade-payment-note-card p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 950px) {
+
+    .trade-payment-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .trade-payment-sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .trade-payment-page {
+        padding-top: 10px;
+        padding-bottom: 110px;
+    }
+
+    .trade-payment-heading h1 {
+        font-size: 29px;
+    }
+
+    .trade-payment-layout,
+    .trade-payment-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .trade-payment-card,
+    .trade-payment-info-card,
+    .trade-payment-note-card {
+        width: 100%;
+        padding: 20px;
+        border-radius: 17px;
+        box-sizing: border-box;
+    }
+
+    .trade-payment-card-header h2 {
+        font-size: 20px;
+    }
+
+    .trade-payment-total {
+        padding: 19px;
+    }
+
+    .trade-payment-detail-row {
+        gap: 12px;
+    }
+
+}

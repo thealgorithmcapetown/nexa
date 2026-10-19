@@ -17,6 +17,12 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 import openPaymentsTestRoutes from "./routes/openPaymentsTestRoutes.js";
 
+import dns from 'dns';
+
+dns.setServers(['8.8.8.8','8.8.4.4'])
+
+console.log('passed dns config')
+
 dotenv.config();
 
 const app = express();

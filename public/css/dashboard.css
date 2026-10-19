@@ -1,0 +1,1285 @@
+
+/* =========================================
+   NEXA — PREMIUM DASHBOARD
+   ========================================= */
+
+.nexa-dashboard {
+    max-width: none;
+    padding: 36px 42px 70px;
+}
+
+/* HEADER */
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.dashboard-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    color: #F7FAF8;
+    font-size: clamp(30px, 3vw, 42px);
+    font-weight: 800;
+    letter-spacing: -1.8px;
+}
+
+.dashboard-header p {
+    margin: 8px 0 0;
+    color: #98A49D;
+    font-size: 14px;
+}
+
+.dashboard-notification {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: 1px solid rgba(140,225,26,.13);
+    border-radius: 50%;
+    background: #141E18;
+}
+
+.dashboard-notification svg {
+    width: 20px;
+    height: 20px;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #8CE11A;
+    box-shadow: 0 0 0 3px #141E18;
+}
+
+/* SHOP STRIP */
+
+.dashboard-shop {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding: 17px 20px;
+    border: 1px solid rgba(140,225,26,.10);
+    border-radius: 20px;
+    background: #101914;
+}
+
+.shop-avatar {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: rgba(140,225,26,.10);
+    color: #8CE11A;
+}
+
+.shop-avatar svg {
+    width: 22px;
+    height: 22px;
+}
+
+.shop-details {
+    min-width: 0;
+    flex: 1;
+}
+
+.shop-details h2 {
+    margin: 0 0 4px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.shop-details p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.shop-separator {
+    margin: 0 6px;
+    color: #566A5C;
+}
+
+.shop-link {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #1B2A20;
+    color: #8CE11A;
+}
+
+.shop-link svg {
+    width: 17px;
+    height: 17px;
+}
+
+/* FINANCIAL CARDS */
+
+.dashboard-finances {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 18px;
+}
+
+.finance-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 285px;
+    padding: 28px;
+    border-radius: 26px;
+}
+
+/* Logo 2 watermark */
+
+.finance-card::before {
+    content: "";
+    position: absolute;
+    right: -28px;
+    bottom: -22px;
+    width: 76%;
+    height: 58%;
+    background-image: url('/images/branding/nexa-logo.svg');
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    background-size: contain;
+    opacity: .11;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.finance-card-content {
+    position: relative;
+    z-index: 1;
+}
+
+.finance-card-primary {
+    background: #8CE11A;
+    color: #10180B;
+}
+
+.finance-card-primary::before {
+    opacity: .09;
+}
+
+.finance-card-dark {
+    border: 1px solid rgba(140,225,26,.13);
+    background: #17221A;
+    color: #F7FAF8;
+}
+
+.finance-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.finance-card-top svg {
+    width: 21px;
+    height: 21px;
+}
+
+.finance-card h2 {
+    margin: 30px 0 8px;
+    font-size: clamp(30px, 3.4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.finance-card h2 small {
+    margin-right: 5px;
+    font-size: .55em;
+    letter-spacing: 0;
+}
+
+.finance-card p {
+    margin: 0;
+    font-size: 12px;
+    opacity: .72;
+}
+
+.finance-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+.finance-card-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 43px;
+    padding: 0 19px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    transition: transform .2s ease;
+}
+
+.finance-card-actions a:hover {
+    transform: translateY(-2px);
+}
+
+.finance-card-actions svg {
+    width: 16px;
+    height: 16px;
+}
+
+.finance-action-dark {
+    background: #10180B;
+    color: #FFFFFF;
+}
+
+.finance-action-light {
+    background: transparent;
+    color: #10180B;
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+}
+
+.finance-action-light:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.finance-history-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 32px;
+    color: #8CE11A;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.finance-history-link svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* SECTION HEADINGS */
+
+.dashboard-section {
+    margin-top: 38px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -.6px;
+}
+
+.section-view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #8CE11A;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.section-view-all svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* ACTIVITY */
+
+.activity-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.activity-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 170px;
+    padding: 19px;
+    border: 1px solid rgba(140,225,26,.10);
+    border-radius: 20px;
+    background: #101914;
+    transition: border-color .2s, transform .2s;
+}
+
+.activity-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(140,225,26,.35);
+}
+
+.activity-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    background: rgba(140,225,26,.10);
+    color: #8CE11A;
+}
+
+.activity-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.activity-card > span {
+    color: #98A49D;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.activity-card > strong {
+    margin-top: 5px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.activity-arrow {
+    position: absolute;
+    top: 21px;
+    right: 19px;
+    width: 16px;
+    height: 16px;
+    color: #6D8572;
+}
+
+/* QUICK ACTIONS */
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.quick-action {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 155px;
+    padding: 19px;
+    border: 1px solid rgba(140,225,26,.10);
+    border-radius: 20px;
+    background: #101914;
+    transition: transform .2s, border-color .2s;
+}
+
+.quick-action:hover {
+    transform: translateY(-3px);
+    border-color: rgba(140,225,26,.35);
+}
+
+.quick-action-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    margin-bottom: auto;
+    border-radius: 13px;
+    background: rgba(140,225,26,.10);
+    color: #8CE11A;
+}
+
+.quick-action-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.quick-action strong {
+    display: block;
+    margin-top: 18px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.quick-action span {
+    display: block;
+    margin-top: 5px;
+    color: #98A49D;
+    font-size: 11px;
+}
+
+.quick-action-arrow {
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    width: 16px;
+    height: 16px;
+    color: #6D8572;
+}
+
+.quick-action-featured {
+    border-color: #8CE11A;
+    background: #8CE11A;
+    color: #10180B;
+}
+
+.quick-action-featured .quick-action-icon {
+    background: rgba(16,24,11,.12);
+    color: #10180B;
+}
+
+.quick-action-featured span {
+    color: #3D551E;
+}
+
+.quick-action-featured .quick-action-arrow {
+    color: #10180B;
+}
+
+/* =========================================
+   STAGE 1.7 — RECENT TRANSACTIONS
+   ========================================= */
+
+.transactions-panel {
+    overflow: hidden;
+    border: 1px solid rgba(140, 225, 26, .13);
+    border-radius: 24px;
+    background: #101914;
+}
+
+.transaction-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 16px;
+    padding: 21px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+    text-decoration: none;
+    transition: background .25s ease, padding .25s ease;
+}
+
+.transaction-row:last-child { border-bottom: 0; }
+.transaction-row:hover { background: rgba(140, 225, 26, .045); }
+.transaction-row:focus-visible {
+    outline: 2px solid #8CE11A;
+    outline-offset: -3px;
+}
+
+.transaction-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 16px;
+    transition: transform .25s ease;
+}
+.transaction-row:hover .transaction-icon { transform: scale(1.06); }
+.transaction-icon svg { width: 21px; height: 21px; stroke-width: 1.8; }
+.transaction-received {
+    background: rgba(140, 225, 26, .12);
+    color: #8CE11A;
+    border: 1px solid rgba(140, 225, 26, .12);
+}
+.transaction-sent {
+    background: rgba(255, 255, 255, .055);
+    color: #F7FAF8;
+    border: 1px solid rgba(255, 255, 255, .065);
+}
+
+.transaction-info {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    gap: 5px;
+}
+.transaction-info strong {
+    color: #F7FAF8;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+.transaction-info span,
+.transaction-info small {
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.4;
+}
+.transaction-info span { overflow-wrap: anywhere; }
+.transaction-info small { color: #748579; }
+
+.transaction-amount {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 0;
+    gap: 7px;
+    text-align: right;
+}
+.transaction-amount strong {
+    color: #F7FAF8;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -.35px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.transaction-amount.amount-received strong { color: #8CE11A; }
+.transaction-amount span {
+    color: #98A49D;
+    font-size: 10px;
+    font-weight: 650;
+    transition: color .2s ease;
+}
+.transaction-row:hover .transaction-amount span { color: #8CE11A; }
+
+.transactions-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 58px 20px;
+    text-align: center;
+}
+.empty-icon {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    margin: 0 0 17px;
+    border: 1px solid rgba(140, 225, 26, .15);
+    border-radius: 20px;
+    background: rgba(140, 225, 26, .085);
+    color: #8CE11A;
+}
+.empty-icon svg { width: 26px; height: 26px; }
+.transactions-empty h3 {
+    margin: 0 0 8px;
+    color: #F7FAF8;
+    font-size: 16px;
+    font-weight: 800;
+}
+.transactions-empty p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .transactions-panel { border-radius: 20px; }
+    .transaction-row { gap: 11px; padding: 17px 14px; }
+    .transaction-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        border-radius: 13px;
+    }
+    .transaction-icon svg { width: 18px; height: 18px; }
+    .transaction-info strong { font-size: 12px; }
+    .transaction-info span,
+    .transaction-info small { font-size: 10px; }
+    .transaction-amount { gap: 5px; }
+    .transaction-amount strong { font-size: 12px; }
+    .transaction-amount span { font-size: 9px; }
+    .transactions-empty { padding: 48px 18px; }
+}
+
+@media (max-width: 380px) {
+    .transaction-row { gap: 8px; padding: 15px 10px; }
+    .transaction-icon { width: 34px; height: 34px; flex-basis: 34px; }
+    .transaction-amount strong { font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .transaction-row,
+    .transaction-icon,
+    .transaction-amount span { transition: none; }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1150px) {
+    .nexa-dashboard {
+        padding: 28px 24px 70px;
+    }
+
+    .activity-grid,
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .dashboard-finances {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .nexa-dashboard {
+        padding: 24px 16px 135px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 22px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 32px;
+    }
+
+    .dashboard-header p {
+        font-size: 12px;
+    }
+
+    .dashboard-shop {
+        padding: 14px;
+        margin-bottom: 20px;
+    }
+
+    .finance-card {
+        min-height: 255px;
+        padding: 24px;
+        border-radius: 24px;
+    }
+
+    .finance-card h2 {
+        font-size: clamp(30px, 8vw, 42px);
+    }
+
+    .dashboard-section {
+        margin-top: 32px;
+    }
+
+    .activity-grid,
+    .quick-actions-grid {
+        gap: 10px;
+    }
+
+    .activity-card {
+        min-height: 155px;
+        padding: 15px;
+    }
+
+    .quick-action {
+        min-height: 145px;
+        padding: 15px;
+    }
+
+    .section-heading h2 {
+        font-size: 19px;
+    }
+
+    .transaction-row {
+        padding: 15px 13px;
+        gap: 10px;
+    }
+
+    .transaction-amount strong {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 380px) {
+    .finance-card-actions a {
+        padding: 0 13px;
+    }
+
+    .activity-card > span {
+        font-size: 11px;
+    }
+
+    .transaction-icon {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* =========================================
+   MOBILE OVERFLOW FIX
+   ========================================= */
+
+.nexa-dashboard {
+    min-width: 0;
+    width: auto;
+    max-width: 100%;
+}
+
+.dashboard-finances,
+.activity-grid,
+.quick-actions-grid {
+    min-width: 0;
+}
+
+.finance-card,
+.activity-card,
+.quick-action,
+.dashboard-shop {
+    min-width: 0;
+}
+
+.finance-card h2 {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+
+    .nexa-dashboard {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        padding: 24px 16px 135px;
+    }
+
+    .dashboard-finances {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .activity-grid,
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .finance-card {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .dashboard-header,
+    .dashboard-shop,
+    .section-heading {
+        min-width: 0;
+    }
+}
+
+/* =========================================
+   NEXA MOBILE FINANCIAL CARD REFINEMENT
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .finance-card {
+        min-height: 285px;
+        padding: 22px 20px;
+        border-radius: 24px;
+    }
+
+    /* Keep all important content above the watermark */
+
+    .finance-card-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Smaller labels */
+
+    .finance-card-top {
+        font-size: 11px;
+    }
+
+    .finance-card-top svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    /* Smaller balance, aligned left */
+
+    .finance-card h2 {
+        margin: 24px 0 7px;
+        font-size: clamp(27px, 7vw, 36px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.15;
+    }
+
+    .finance-card h2 small {
+        font-size: .55em;
+    }
+
+    .finance-card p {
+        max-width: 200px;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    /* Compact action buttons */
+
+    .finance-card-actions {
+        gap: 8px;
+        margin-top: 22px;
+    }
+
+    .finance-card-actions a {
+        min-height: 38px;
+        padding: 0 15px;
+        font-size: 11px;
+    }
+
+    .finance-card-actions svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .finance-history-link {
+        margin-top: 24px;
+        font-size: 11px;
+    }
+
+    /* Reserve lower-right area for NEXA watermark */
+
+    .finance-card::before {
+        right: -18px;
+        bottom: 8px;
+        width: 85%;
+        height: 43%;
+        background-position: right bottom;
+        background-size: contain;
+        opacity: .12;
+    }
+
+    .finance-card-primary::before {
+        opacity: .09;
+    }
+
+    .finance-card-dark::before {
+        opacity: .08;
+    }
+}
+
+/* =========================================
+   MOBILE FINANCIAL CARD LAYOUT
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    .finance-card {
+        min-height: 285px;
+        padding: 22px 20px;
+    }
+
+    .finance-card-content {
+        display: flex;
+        flex-direction: column;
+        min-height: 241px;
+    }
+
+    /* Bring balance closer to the top label */
+
+    .finance-card h2 {
+        margin: 12px 0 4px;
+        font-size: clamp(27px, 7vw, 36px);
+        line-height: 1.15;
+    }
+
+    /* Keep description directly under balance */
+
+    .finance-card p {
+        margin: 0;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    /* Push Send and Receive to the bottom */
+
+    .finance-card-actions {
+        margin-top: auto;
+        padding-top: 18px;
+        justify-content: flex-start;
+    }
+
+    /* Also position the dark card's link at the bottom */
+
+    .finance-history-link {
+        margin-top: auto;
+        padding-top: 18px;
+        align-self: flex-start;
+    }
+}
+
+/* =========================================
+   DESKTOP FINANCIAL CARD LAYOUT
+   ========================================= */
+
+@media (min-width: 769px) {
+
+    .finance-card {
+        min-height: 310px;
+    }
+
+    .finance-card-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 254px;
+    }
+
+    /* Bring the balance closer to the top label */
+
+    .finance-card h2 {
+        margin: 14px 0 6px;
+    }
+
+    /* Description stays directly below the balance */
+
+    .finance-card p {
+        margin: 0;
+    }
+
+    /* Push buttons to bottom-left */
+
+    .finance-card-actions {
+        margin-top: auto;
+        padding-top: 20px;
+        justify-content: flex-start;
+    }
+
+    /* Push View Transactions to bottom-left */
+
+    .finance-history-link {
+        margin-top: auto;
+        padding-top: 20px;
+        align-self: flex-start;
+    }
+}
+
+/* =========================================
+   DESKTOP FINANCIAL CARDS — HOVER EXPANSION
+   ========================================= */
+
+@media (min-width: 901px) {
+
+    .dashboard-finances {
+        grid-template-columns: 1.35fr 1fr;
+        transition: grid-template-columns 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Hover Total Sent: reverse the card widths */
+
+    .dashboard-finances:has(.finance-card-dark:hover) {
+        grid-template-columns: 1fr 1.35fr;
+    }
+
+    .finance-card {
+        min-width: 0;
+    }
+}
+
+/* Respect reduced-motion preferences */
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-finances {
+        transition: none;
+    }
+}
+
+/* =========================================
+   NEXA LOGO 2 — FINANCIAL CARD WATERMARK
+   ========================================= */
+
+.finance-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+/* Shared watermark positioning */
+
+.finance-card::before {
+    content: "";
+    position: absolute;
+
+    right: -30px;
+    bottom: 42px;
+
+    width: 78%;
+    height: 46%;
+
+    background-image: url('/images/branding/nexa-logo2.svg');
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: contain;
+
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Keep text and buttons above the watermark */
+
+.finance-card-content {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================
+   NEXA EMBOSSED WATERMARK EFFECT
+   ========================================= */
+
+/* Lime card — subtle engraved appearance */
+
+.finance-card-primary::before {
+    filter:
+        brightness(0)
+        drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.65))
+        drop-shadow(-1px -1px 0 rgba(0, 0, 0, 0.35));
+
+    opacity: 0.18;
+}
+
+/* Dark card — soft raised appearance */
+
+.finance-card-dark::before {
+    filter:
+        brightness(0)
+        invert(1)
+        drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.35))
+        drop-shadow(-1px -1px 0 rgba(0, 0, 0, 0.7));
+
+    opacity: 0.12;
+}
+
+
+/* Mobile adjustments */
+
+@media (max-width: 768px) {
+
+    .finance-card::before {
+        right: -20px;
+        bottom: 48px;
+
+        width: 88%;
+        height: 43%;
+    }
+}
+
+/* Stage 1.5 — Fix Activity Card Arrows */
+
+.activity-network .activity-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.activity-network .activity-card .activity-arrow {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    bottom: auto;
+    left: auto;
+
+    width: 18px;
+    height: 18px;
+
+    color: #8CE11A;
+    opacity: 0.65;
+    z-index: 3;
+
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.activity-network .activity-card:hover .activity-arrow {
+    transform: translate(3px, -3px);
+    opacity: 1;
+}
+
+/* ==========================================
+   STAGE 1.6 — QUICK ACTION WATERMARKS
+   ========================================== */
+
+.quick-action {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 200px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    border-radius: 24px;
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+}
+
+/* Transform the existing icon into a watermark */
+.quick-action .quick-action-icon {
+    position: absolute;
+    right: -24px;
+    bottom: -30px;
+    width: 175px;
+    height: 175px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 0;
+    color: #8CE11A;
+    opacity: .12;
+    transform: rotate(-10deg);
+    transition: transform .4s ease, opacity .4s ease;
+}
+
+.quick-action .quick-action-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.5;
+}
+
+/* Dark watermark on featured lime card */
+.quick-action-featured .quick-action-icon {
+    color: #10180B;
+    opacity: .17;
+}
+
+/* Keep text above the watermark */
+.quick-action > div:not(.quick-action-icon) {
+    position: relative;
+    z-index: 1;
+    margin-top: 8px;
+}
+
+/* Navigation arrow stays top-right */
+.quick-action .quick-action-arrow {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    bottom: auto;
+    left: auto;
+    width: 18px;
+    height: 18px;
+    z-index: 3;
+    transition: transform .3s ease;
+}
+
+/* Hover interactions */
+.quick-action:hover {
+    transform: translateY(-4px);
+}
+
+.quick-action:hover .quick-action-icon {
+    transform: rotate(-4deg) scale(1.08);
+    opacity: .19;
+}
+
+.quick-action-featured:hover .quick-action-icon {
+    opacity: .23;
+}
+
+.quick-action:hover .quick-action-arrow {
+    transform: translate(3px, -3px);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .quick-action {
+        min-height: 170px;
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .quick-action .quick-action-icon {
+        width: 125px;
+        height: 125px;
+        right: -20px;
+        bottom: -20px;
+    }
+
+    .quick-action .quick-action-arrow {
+        top: 18px;
+        right: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quick-action,
+    .quick-action .quick-action-icon,
+    .quick-action .quick-action-arrow {
+        transition: none;
+    }
+}
+
+/* ==========================================
+   STAGE 1.6 — QUICK ACTION TITLE ALIGNMENT
+   ========================================== */
+
+/* The original .quick-action strong has margin-top: 18px,
+   which was pushing the heading below the arrow. */
+.quick-action > div:not(.quick-action-icon) {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: 52px;
+    margin: 0;
+    padding: 0;
+    z-index: 2;
+}
+
+.quick-action > div:not(.quick-action-icon) > strong {
+    margin: 0;
+    line-height: 18px;
+}
+
+.quick-action > div:not(.quick-action-icon) > span {
+    margin-top: 6px;
+    line-height: 1.45;
+}
+
+.quick-action .quick-action-arrow {
+    top: 24px;
+    right: 24px;
+    bottom: auto;
+    left: auto;
+}
+
+@media (max-width: 768px) {
+    .quick-action > div:not(.quick-action-icon) {
+        top: 18px;
+        left: 18px;
+        right: 42px;
+    }
+
+    .quick-action .quick-action-arrow {
+        top: 18px;
+        right: 18px;
+    }
+}

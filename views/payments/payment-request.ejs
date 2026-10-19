@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,143 +6,403 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Payment Request - NEXA
-    </title>
+    <title>Payment Request - NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/payment-request.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
-    <h1>
-        Payment Request
-    </h1>
+    <main class="nexa-main payment-request-page">
 
+        <a href="/payments/receive" class="payment-request-back">
 
-    <p>
-        Customer pays:
-    </p>
+            <i data-lucide="arrow-left"></i>
 
+            Back to Receive Money
 
-    <h2>
-        R<%= Number(paymentRequest.amount).toFixed(2) %>
-    </h2>
+        </a>
 
 
-    <p>
-        To:
-        <strong>
-            <%= paymentRequest.shop.name %>
-        </strong>
-    </p>
+        <header class="payment-request-heading">
 
+            <span class="payment-request-eyebrow">
+                NEXA PAYMENTS
+            </span>
 
-    <p>
-        Reference:
-        <strong>
-            <%= paymentRequest.reference %>
-        </strong>
-    </p>
-
-
-    <!-- ============================== -->
-    <!-- LIVE PAYMENT STATUS -->
-    <!-- ============================== -->
-
-    <div id="payment-status">
-
-        <% if (paymentRequest.status === "paid") { %>
-
-            <h2>
-                ✓ PAYMENT RECEIVED
-            </h2>
+            <h1>
+                Payment Request<span class="nexa-title-dot">.</span>
+            </h1>
 
             <p>
-                R<%= Number(paymentRequest.amount).toFixed(2) %>
+                Share this QR code with your customer to request payment.
             </p>
 
-        <% } else { %>
-
-            <p>
-                Status:
-                <strong>
-                    Waiting for payment...
-                </strong>
-            </p>
-
-            <p>
-                Keep this page open.
-            </p>
-
-        <% } %>
-
-    </div>
+        </header>
 
 
-    <h2>
-        Scan to Pay
-    </h2>
+        <div class="payment-request-layout">
+
+            <!-- QR CODE -->
+
+            <section class="payment-request-qr-card">
+
+                <div class="payment-request-card-header">
+
+                    <span class="payment-request-eyebrow">
+                        CUSTOMER PAYMENT
+                    </span>
+
+                    <h2>
+                        Scan to Pay
+                    </h2>
+
+                    <p>
+                        Ask your customer to scan the QR code
+                        using their phone.
+                    </p>
+
+                </div>
 
 
-    <img
-        src="<%= qrCode %>"
-        alt="NEXA payment QR code"
-        width="280"
-    >
+                <div class="payment-request-qr-frame">
+
+                    <img
+                        src="<%= qrCode %>"
+                        alt="NEXA payment QR code"
+                        width="280"
+                        height="280"
+                    >
+
+                </div>
 
 
-    <p>
-        Payment URL:
-    </p>
+                <div class="payment-request-qr-note">
+
+                    <i data-lucide="scan-line"></i>
+
+                    <span>
+                        Keep the QR code visible until payment is confirmed.
+                    </span>
+
+                </div>
+
+            </section>
 
 
-    <p>
-        <%= paymentUrl %>
-    </p>
+            <!-- PAYMENT DETAILS -->
+
+            <div class="payment-request-details-column">
+
+                <section class="payment-request-summary-card">
+
+                    <span class="payment-request-eyebrow">
+                        PAYMENT DETAILS
+                    </span>
+
+                    <p class="payment-request-amount-label">
+                        Customer pays
+                    </p>
+
+                    <h2 class="payment-request-amount">
+                        R<%= Number(paymentRequest.amount).toFixed(2) %>
+                    </h2>
 
 
-    <br>
+                    <div class="payment-request-detail-row">
+
+                        <span>
+                            Receiving shop
+                        </span>
+
+                        <strong>
+                            <%= paymentRequest.shop.name %>
+                        </strong>
+
+                    </div>
 
 
-    <a href="/payments/receive">
-        Create Another Payment Request
-    </a>
+                    <div class="payment-request-detail-row">
+
+                        <span>
+                            Reference
+                        </span>
+
+                        <strong>
+                            <%= paymentRequest.reference %>
+                        </strong>
+
+                    </div>
 
 
-    <!-- ============================== -->
-    <!-- LIVE PAYMENT CHECKER -->
-    <!-- ============================== -->
+                    <!-- LIVE PAYMENT STATUS -->
+
+                    <div
+                        id="payment-status"
+                        class="payment-request-status <%= paymentRequest.status === 'paid' ? 'is-paid' : 'is-pending' %>"
+                        role="status"
+                        aria-live="polite"
+                    >
+
+                        <% if (paymentRequest.status === "paid") { %>
+
+                            <div class="payment-request-status-heading">
+
+                                <i data-lucide="check-circle-2"></i>
+
+                                <strong>
+                                    Payment Received
+                                </strong>
+
+                            </div>
+
+                            <p>
+                                R<%= Number(paymentRequest.amount).toFixed(2) %> received.
+                            </p>
+
+                        <% } else { %>
+
+                            <div class="payment-request-status-heading">
+
+                                <i data-lucide="clock-3"></i>
+
+                                <strong>
+                                    Waiting for Payment
+                                </strong>
+
+                            </div>
+
+                            <p>
+                                Keep this page open. Payment status
+                                will update automatically.
+                            </p>
+
+                        <% } %>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SHARE PAYMENT LINK -->
+
+                <section class="payment-request-link-card">
+
+                    <span class="payment-request-eyebrow">
+                        PAYMENT LINK
+                    </span>
+
+                    <h3>
+                        Share Payment Request
+                    </h3>
+
+                    <p>
+                        Your customer can also open this link
+                        instead of scanning the QR code.
+                    </p>
+
+
+                    <div class="payment-request-link-field">
+
+                        <input
+                            id="payment-url"
+                            type="text"
+                            value="<%= paymentUrl %>"
+                            aria-label="Payment URL"
+                            readonly
+                        >
+
+                        <button
+                            type="button"
+                            id="copy-payment-url"
+                            class="payment-request-copy-button"
+                            aria-label="Copy payment URL"
+                        >
+
+                            <i data-lucide="copy"></i>
+
+                        </button>
+
+                    </div>
+
+                    <p id="payment-copy-feedback" class="payment-request-copy-feedback" role="status" aria-live="polite"></p>
+
+                </section>
+
+            </div>
+
+        </div>
+
+
+        <div class="payment-request-footer">
+
+            <a href="/payments/receive" class="payment-request-new-button">
+
+                <i data-lucide="plus"></i>
+
+                Create Another Payment Request
+
+            </a>
+
+            <a href="/payments" class="payment-request-footer-back">
+
+                Back to Payments
+
+                <i data-lucide="arrow-right"></i>
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script src="/js/navigation.js"></script>
+
 
     <script>
 
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+
+        /* COPY PAYMENT URL */
+
+        const copyPaymentButton =
+            document.getElementById("copy-payment-url");
+
+        const paymentUrlInput =
+            document.getElementById("payment-url");
+
+        const copyFeedback =
+            document.getElementById("payment-copy-feedback");
+
+
+        copyPaymentButton.addEventListener("click", async () => {
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    paymentUrlInput.value
+                );
+
+                copyFeedback.textContent =
+                    "Payment link copied!";
+
+            } catch (error) {
+
+                paymentUrlInput.focus();
+                paymentUrlInput.select();
+
+                copyFeedback.textContent =
+                    "Select and copy the payment link.";
+
+            }
+
+        });
+
+
+        /* LIVE PAYMENT STATUS */
+
         const paymentRequestId =
-            "<%= paymentRequest._id %>";
+            <%- JSON.stringify(String(paymentRequest._id)).replace(/</g, '\\u003c') %>;
 
 
         let paymentFound =
-            <%= paymentRequest.status === "paid"
-                ? "true"
-                : "false"
-            %>;
+            <%= paymentRequest.status === "paid" ? "true" : "false" %>;
+
+
+        function renderPaymentReceived(amount, transactionId) {
+
+            const statusBox =
+                document.getElementById("payment-status");
+
+            statusBox.classList.remove("is-pending");
+            statusBox.classList.add("is-paid");
+
+            statusBox.replaceChildren();
+
+
+            const heading =
+                document.createElement("div");
+
+            heading.className =
+                "payment-request-status-heading";
+
+
+            const icon =
+                document.createElement("i");
+
+            icon.setAttribute("data-lucide", "check-circle-2");
+
+
+            const title =
+                document.createElement("strong");
+
+            title.textContent =
+                "Payment Received";
+
+
+            heading.append(icon, title);
+
+
+            const description =
+                document.createElement("p");
+
+            const receivedAmount =
+                Number(amount);
+
+            description.textContent =
+                Number.isFinite(receivedAmount)
+                    ? `R${receivedAmount.toFixed(2)} received.`
+                    : "Payment received.";
+
+
+            statusBox.append(heading, description);
+
+
+            if (transactionId) {
+
+                const receiptLink =
+                    document.createElement("a");
+
+                receiptLink.href =
+                    `/transactions/${encodeURIComponent(String(transactionId))}`;
+
+                receiptLink.className =
+                    "payment-request-receipt-link";
+
+                receiptLink.textContent =
+                    "View Receipt";
+
+                statusBox.appendChild(receiptLink);
+
+            }
+
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+        }
 
 
         async function checkPaymentStatus() {
 
             if (paymentFound) {
-
                 return;
-
             }
 
 
@@ -149,7 +410,10 @@
 
                 const response =
                     await fetch(
-                        `/payments/requests/${paymentRequestId}/status`
+                        `/payments/requests/${encodeURIComponent(paymentRequestId)}/status`,
+                        {
+                            cache: "no-store"
+                        }
                     );
 
 
@@ -168,55 +432,18 @@
                     await response.json();
 
 
-                console.log(
-                    "PAYMENT STATUS:",
-                    data.status
-                );
-
-
                 if (data.status === "paid") {
 
-                    paymentFound =
-                        true;
+                    paymentFound = true;
 
-
-                    const statusBox =
-                        document.getElementById(
-                            "payment-status"
-                        );
-
-
-                    statusBox.innerHTML = `
-
-                        <h2>
-                            ✓ PAYMENT RECEIVED
-                        </h2>
-
-                        <p>
-                            R${Number(data.amount).toFixed(2)}
-                        </p>
-
-                        ${
-                            data.transactionId
-                                ? `
-                                    <a
-                                        href="/transactions/${data.transactionId}"
-                                    >
-                                        View Receipt
-                                    </a>
-                                `
-                                : ""
-                        }
-
-                    `;
-
-
-                    clearInterval(
-                        paymentChecker
+                    renderPaymentReceived(
+                        data.amount,
+                        data.transactionId
                     );
 
-                }
+                    clearInterval(paymentChecker);
 
+                }
 
             } catch (error) {
 
@@ -231,16 +458,16 @@
 
 
         const paymentChecker =
-            setInterval(
-                checkPaymentStatus,
-                2000
-            );
+            paymentFound
+                ? null
+                : setInterval(checkPaymentStatus, 2000);
 
 
-        checkPaymentStatus();
+        if (!paymentFound) {
+            checkPaymentStatus();
+        }
 
     </script>
-
 
 </body>
 

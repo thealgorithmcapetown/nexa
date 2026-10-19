@@ -2,342 +2,186 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>NEXA Trade</title>
-
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Board | NEXA</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/trade.css">
 </head>
 
 <body>
-
-
-    <h1>
-        NEXA Trade
-    </h1>
-
-
-    <a href="/trade/create">
-        + Post a Need
-    </a>
-
-    <br><br>
-
-    <a href="/trade/my-requests">
-        My Requests
-    </a>
-
-
-    <hr>
-
-
-    <!-- ================================= -->
-    <!-- TRADE FILTERS -->
-    <!-- ================================= -->
-
-    <h2>
-        Find Trade Requests
-    </h2>
-
-
-    <form
-        action="/trade"
-        method="GET"
-    >
-
-
-        <!-- PRODUCT SEARCH -->
-
-        <div>
-
-            <label for="search">
-                Product
-            </label>
-
-            <br>
-
-            <input
-                id="search"
-                type="text"
-                name="search"
-                placeholder="e.g. Rice, Bread, Cooking Oil"
-                value="<%= filters.search %>"
-            >
-
-        </div>
-
-
-        <br>
-
-
-        <!-- DISTANCE -->
-
-        <div>
-
-            <label for="distance">
-                Distance
-            </label>
-
-            <br>
-
-            <select
-                id="distance"
-                name="distance"
-            >
-
-                <option value="">
-                    Any distance
-                </option>
-
-                <option
-                    value="2"
-                    <%= String(filters.distance) === "2" ? "selected" : "" %>
-                >
-                    Within 2 km
-                </option>
-
-                <option
-                    value="5"
-                    <%= String(filters.distance) === "5" ? "selected" : "" %>
-                >
-                    Within 5 km
-                </option>
-
-                <option
-                    value="10"
-                    <%= String(filters.distance) === "10" ? "selected" : "" %>
-                >
-                    Within 10 km
-                </option>
-
-                <option
-                    value="25"
-                    <%= String(filters.distance) === "25" ? "selected" : "" %>
-                >
-                    Within 25 km
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <br>
-
-
-        <!-- MAXIMUM BUDGET -->
-
-        <div>
-
-            <label for="maxBudget">
-                Maximum Budget
-            </label>
-
-            <br>
-
-            <input
-                id="maxBudget"
-                type="number"
-                name="maxBudget"
-                min="0.01"
-                step="0.01"
-                placeholder="e.g. 1000"
-                value="<%= filters.maxBudget %>"
-            >
-
-        </div>
-
-
-        <br>
-
-
-        <!-- FULFILMENT -->
-
-        <div>
-
-            <label for="fulfilment">
-                Fulfilment
-            </label>
-
-            <br>
-
-            <select
-                id="fulfilment"
-                name="fulfilment"
-            >
-
-                <option value="">
-                    Any
-                </option>
-
-                <option
-                    value="pickup"
-                    <%= filters.fulfilment === "pickup" ? "selected" : "" %>
-                >
-                    Pickup
-                </option>
-
-                <option
-                    value="delivery"
-                    <%= filters.fulfilment === "delivery" ? "selected" : "" %>
-                >
-                    Delivery
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <br>
-
-
-        <button type="submit">
-            Apply Filters
-        </button>
-
-
-        <a href="/trade">
-            Clear Filters
-        </a>
-
-
-    </form>
-
-
-    <hr>
-
-
-    <!-- ================================= -->
-    <!-- RESULTS -->
-    <!-- ================================= -->
-
-
-    <% if (requestsWithDistance.length === 0) { %>
-
-        <p>
-            No trade requests match your filters.
-        </p>
-
-    <% } %>
-
-
-    <% requestsWithDistance.forEach(item => { %>
-
-
-        <div>
-
-
-            <h2>
-                <%= item.request.shop.name %>
-            </h2>
-
-
-            <h3>
-
-                Needs:
-
-                <%= item.request.quantity %>
-
-                ×
-
-                <%= item.request.unit %>
-
-                <%= item.request.product %>
-
-            </h3>
-
-
-            <p>
-
-                Budget:
-
-                R<%= Number(item.request.budget).toFixed(2) %>
-
-            </p>
-
-
-            <% if (item.distance !== null) { %>
-
-                <p>
-
-                    📍
-
-                    <%= item.distance.toFixed(1) %>
-
-                    km away
-
-                </p>
-
-            <% } else { %>
-
-                <p>
-                    📍 Distance unavailable
-                </p>
-
-            <% } %>
-
-
-            <p>
-
-                Maximum trade distance:
-
-                <%= item.request.maxDistance %>
-
-                km
-
-            </p>
-
-
-            <p>
-
-                Fulfilment:
-
-                <%= item.request.fulfilment %>
-
-            </p>
-
-
-            <% if (item.request.description) { %>
-
-                <p>
-                    <%= item.request.description %>
-                </p>
-
-            <% } %>
-
-
-            <a
-                href="/trade/<%= item.request._id %>"
-            >
-                View Request
-            </a>
-
-
-        </div>
-
-
-        <hr>
-
-
-    <% }) %>
-
-
-    <a href="/dashboard">
-        Dashboard
-    </a>
-
-
+    <%- include('../partials/sidebar') %>
+        <%- include('../partials/navbar') %>
+
+
+            <main class="nexa-main trade-page">
+
+                <header class="trade-header">
+                    <div>
+                        <span class="trade-eyebrow">NEXA MARKETPLACE</span>
+
+                        <h1>
+                            Trade Board<span class="nexa-title-dot">.</span>
+                        </h1>
+
+                        <p>Discover what nearby vendors need and find your next opportunity.</p>
+                    </div>
+                    <div class="trade-header-actions">
+                        <a class="trade-button trade-button-outline" href="/trade/my-requests">
+                            <i data-lucide="clipboard-list"></i>
+                            My Requests</a>
+                        <a class="trade-button trade-button-primary" href="/trade/create">
+                            <i data-lucide="plus"></i>
+                            Post a Need</a>
+                    </div>
+                </header>
+
+
+                <section class="trade-filter-panel" aria-labelledby="trade-filter-heading">
+                    <div class="trade-filter-heading">
+                        <div>
+                            <span class="trade-eyebrow">FIND AN OPPORTUNITY</span>
+                            <h2 id="trade-filter-heading">Explore trade requests</h2>
+                        </div>
+                        <span class="trade-results-count">
+                            <%= requestsWithDistance.length %>
+                                <%= requestsWithDistance.length===1 ? 'request' : 'requests' %> found
+                        </span>
+                    </div>
+                    <form class="trade-filter-form" action="/trade" method="GET">
+                        <div class="trade-field trade-field-search">
+                            <label for="search">Product</label>
+                            <div class="trade-input-wrap">
+                                <i data-lucide="search"></i>
+                                <input id="search" type="text" name="search" placeholder="Rice, bread, cooking oil..."
+                                    value="<%= filters.search || '' %>">
+                            </div>
+                        </div>
+                        <div class="trade-field">
+                            <label for="distance">Distance</label>
+                            <select id="distance" name="distance">
+                                <option value="">Any distance</option>
+                                <% [2, 5, 10, 25].forEach(km=> { %>
+                                    <option value="<%= km %>" <%=String(filters.distance)===String(km) ? 'selected' : ''
+                                        %>>Within <%= km %> km</option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="trade-field">
+                            <label for="maxBudget">Maximum budget (R)</label>
+                            <input id="maxBudget" type="number" name="maxBudget" min="0.01" step="0.01"
+                                placeholder="e.g. 1000" value="<%= filters.maxBudget || '' %>">
+                        </div>
+                        <div class="trade-field">
+                            <label for="fulfilment">Fulfilment</label>
+                            <select id="fulfilment" name="fulfilment">
+                                <option value="">Any method</option>
+                                <option value="pickup" <%=filters.fulfilment==='pickup' ? 'selected' : '' %>>Pickup
+                                </option>
+                                <option value="delivery" <%=filters.fulfilment==='delivery' ? 'selected' : '' %>
+                                    >Delivery</option>
+                            </select>
+                        </div>
+                        <div class="trade-filter-actions">
+                            <button class="trade-button trade-button-primary" type="submit">
+                                <i data-lucide="sliders-horizontal"></i>
+                                Apply filters</button>
+                            <a class="trade-clear" href="/trade">Clear filters</a>
+                        </div>
+                    </form>
+                </section>
+
+
+                <section class="trade-results" aria-labelledby="trade-results-heading">
+                    <div class="trade-results-heading">
+                        <div><span class="trade-eyebrow">THE TRADE FEED</span>
+                            <h2 id="trade-results-heading">Available requests</h2>
+                        </div>
+                        <span class="trade-results-count">
+                            <%= requestsWithDistance.length %> showing
+                        </span>
+                    </div>
+                    <% if (requestsWithDistance.length===0) { %>
+                        <div class="trade-empty">
+                            <div class="trade-empty-icon"><i data-lucide="package-search"></i></div>
+                            <h3>No matching trade requests</h3>
+                            <p>Try changing your filters, or post a new request for nearby vendors.</p>
+                            <div class="trade-empty-actions"><a href="/trade"
+                                    class="trade-button trade-button-outline">Clear filters</a>
+                                <a href="/trade/create" class="trade-button trade-button-primary">Post a Need</a>
+                            </div>
+                        </div>
+                        <% } else { %>
+                            <div class="trade-cards">
+                                <% requestsWithDistance.forEach(item=> { %>
+                                    <article class="trade-card">
+                                        <!-- Decorative watermark: does not affect trade data or links -->
+                                        <div class="trade-card-watermark" aria-hidden="true">
+                                            <i data-lucide="package"></i>
+                                        </div>
+                                        <div class="trade-card-top">
+                                            <div class="trade-vendor">
+                                                <div class="trade-vendor-icon"><i data-lucide="store"></i></div>
+                                                <div class="trade-vendor-meta">
+                                                    <h3>
+                                                        <%= item.request.shop.name %>
+                                                    </h3>
+                                                    <span>
+                                                        <i data-lucide="map-pin"></i>
+                                                        <% if (item.distance !==null &&
+                                                            Number.isFinite(Number(item.distance))) { %>
+                                                            <%= Number(item.distance).toFixed(1) %> km away
+                                                                <% } else { %>
+                                                                    Distance unavailable
+                                                                    <% } %>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <span class="trade-needs-badge">NEEDS</span>
+                                        </div>
+                                        <div class="trade-card-body">
+                                            <span class="trade-card-label">REQUESTED PRODUCT</span>
+                                            <h4>
+                                                <%= item.request.product %>
+                                            </h4>
+                                            <p class="trade-quantity">
+                                                <%= item.request.quantity %> × <%= item.request.unit %>
+                                            </p>
+                                            <% if (item.request.description) { %>
+                                                <p class="trade-description">
+                                                    <%= item.request.description %>
+                                                </p>
+                                                <% } %>
+                                        </div>
+                                        <div class="trade-card-tags">
+                                            <span><i data-lucide="truck"></i>
+                                                <%= item.request.fulfilment %>
+                                            </span>
+                                            <span><i data-lucide="radar"></i> Up to <%= item.request.maxDistance %>
+                                                    km</span>
+                                        </div>
+                                        <div class="trade-card-footer">
+                                            <div><span class="trade-card-label">MAXIMUM BUDGET</span><strong>R <%=
+                                                        Number(item.request.budget).toLocaleString('en-ZA', {
+                                                        minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                                                        </strong></div>
+                                            <a href="/trade/<%= item.request._id %>" class="trade-view-link"
+                                                aria-label="View request for <%= item.request.product %>">View Request
+                                                <i data-lucide="arrow-up-right"></i></a>
+                                        </div>
+                                    </article>
+                                    <% }) %>
+                            </div>
+                            <% } %>
+                </section>
+            </main>
+            <script src="/socket.io/socket.io.js"></script>
+            <script src="/js/notifications.js"></script>
+            <script src="/js/messages.js"></script>
+            <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+            <script src="/js/navigation.js"></script>
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,197 +11,434 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Offer Details - NEXA</title>
+    <title>Offer Details | NEXA</title>
 
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/offer-details.css">
 
 </head>
 
 <body>
 
-    <h1>Offer Details</h1>
+    <!-- SHARED NAVIGATION -->
+
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
 
-    <h2>
-        <%= offer.tradeRequest.product %>
-    </h2>
+    <main class="nexa-main offer-details-page">
 
+        <!-- PAGE HEADER -->
 
-    <p>
-        Seller:
-        <%= offer.seller.name %>
-    </p>
+        <header class="offer-details-header">
 
+            <div>
 
-    <p>
-        Buyer:
-        <%= offer.buyer.name %>
-    </p>
+                <span class="offer-details-eyebrow">
+                    NEXA MARKETPLACE
+                </span>
 
+                <h1>Offer details<span>.</span></h1>
 
-    <p>
-        Offer:
-        R<%= offer.amount %>
-    </p>
+                <p>
+                    Review the proposal and manage your trade.
+                </p>
 
+            </div>
 
-    <p>
-        Quantity:
-        <%= offer.quantity %>
-    </p>
-
-
-    <p>
-        Delivery:
-        <%= offer.delivery ? "Yes" : "No" %>
-    </p>
-
-
-    <% if (offer.message) { %>
-
-        <p>
-            Message:
-            <%= offer.message %>
-        </p>
-
-    <% } %>
-
-
-    <p>
-        Status:
-        <strong>
-            <%= offer.status %>
-        </strong>
-    </p>
-
-
-    <!-- ================================= -->
-    <!-- BUYER ACTIONS -->
-    <!-- ================================= -->
-
-    <% if (
-        isBuyer &&
-        offer.status === "pending"
-    ) { %>
-
-        <form
-            action="/offers/<%= offer._id %>/accept"
-            method="POST"
-        >
-
-            <button type="submit">
-                Accept Offer
-            </button>
-
-        </form>
-
-
-        <form
-            action="/offers/<%= offer._id %>/decline"
-            method="POST"
-        >
-
-            <button type="submit">
-                Decline Offer
-            </button>
-
-        </form>
-
-    <% } %>
-
-
-    <!-- ================================= -->
-    <!-- SELLER ACTIONS -->
-    <!-- ================================= -->
-
-    <% if (
-        isSeller &&
-        offer.status === "pending"
-    ) { %>
-
-        <form
-            action="/offers/<%= offer._id %>/withdraw"
-            method="POST"
-        >
-
-            <button type="submit">
-                Withdraw Offer
-            </button>
-
-        </form>
-
-    <% } %>
-
-
-    <!-- ================================= -->
-    <!-- ACCEPTED OFFER -->
-    <!-- ================================= -->
-
-    <% if (offer.status === "accepted") { %>
-
-        <p>
-            Deal agreed.
-        </p>
-
-
-        <!-- Only buyer should pay -->
-
-        <% if (isBuyer) { %>
-
-            <a href="/payments/offer/<%= offer._id %>">
-                Proceed to Payment
+            <a href="/offers" class="offer-details-back">
+                <i data-lucide="arrow-left"></i>
+                Back to offers
             </a>
 
-        <% } %>
-
-    <% } %>
+        </header>
 
 
-    <!-- ================================= -->
-    <!-- DECLINED OFFER -->
-    <!-- ================================= -->
+        <!-- OFFER SUMMARY -->
 
-    <% if (offer.status === "declined") { %>
+        <section class="offer-details-hero">
 
-        <p>
-            This offer was declined.
-        </p>
+            <div class="offer-details-watermark" aria-hidden="true">
+                <i data-lucide="handshake"></i>
+            </div>
 
-    <% } %>
+            <div class="offer-details-hero-content">
+
+                <div class="offer-details-topline">
+
+                    <span class="offer-details-eyebrow">
+                        TRADE PROPOSAL
+                    </span>
+
+                    <span class="offer-status offer-status-<%= offer.status %>">
+                        <span class="offer-status-dot"></span>
+                        <%= offer.status %>
+                    </span>
+
+                </div>
+
+                <div class="offer-details-product">
+
+                    <div class="offer-details-product-icon">
+                        <i data-lucide="package"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            <%= offer.tradeRequest.product %>
+                        </h2>
+
+                        <p>
+                            Offer submitted through NEXA
+                        </p>
+
+                    </div>
+
+                </div>
 
 
-    <!-- ================================= -->
-    <!-- WITHDRAWN OFFER -->
-    <!-- ================================= -->
+                <div class="offer-details-price">
 
-    <% if (offer.status === "withdrawn") { %>
+                    <span>OFFERED PRICE</span>
 
-        <p>
-            This offer has been withdrawn.
-        </p>
+                    <strong>
+                        <small>R</small><%= Number(offer.amount).toLocaleString('en-ZA', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }) %>
+                    </strong>
 
-    <% } %>
+                </div>
 
+            </div>
 
-    <!-- ================================= -->
-    <!-- EXPIRED OFFER -->
-    <!-- ================================= -->
-
-    <% if (offer.status === "expired") { %>
-
-        <p>
-            This offer has expired.
-        </p>
-
-    <% } %>
+        </section>
 
 
-    <br>
+        <!-- INFORMATION GRID -->
+
+        <div class="offer-details-layout">
+
+            <!-- OFFER INFORMATION -->
+
+            <section class="offer-details-panel">
+
+                <div class="offer-details-panel-heading">
+
+                    <div class="offer-details-heading-icon">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="offer-details-eyebrow">
+                            THE PROPOSAL
+                        </span>
+
+                        <h2>Offer information</h2>
+
+                    </div>
+
+                </div>
 
 
-    <a href="/offers">
-        ← Back to Offers
-    </a>
+                <div class="offer-details-info-list">
+
+                    <div class="offer-details-info-row">
+
+                        <span>
+                            <i data-lucide="store"></i>
+                            Seller
+                        </span>
+
+                        <strong>
+                            <%= offer.seller.name %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="offer-details-info-row">
+
+                        <span>
+                            <i data-lucide="shopping-bag"></i>
+                            Buyer
+                        </span>
+
+                        <strong>
+                            <%= offer.buyer.name %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="offer-details-info-row">
+
+                        <span>
+                            <i data-lucide="boxes"></i>
+                            Quantity
+                        </span>
+
+                        <strong>
+                            <%= offer.quantity %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="offer-details-info-row">
+
+                        <span>
+                            <i data-lucide="truck"></i>
+                            Delivery
+                        </span>
+
+                        <strong>
+                            <%= offer.delivery ? "Available" : "Not included" %>
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <% if (offer.message) { %>
+
+                    <div class="offer-details-message">
+
+                        <div class="offer-details-message-heading">
+
+                            <i data-lucide="message-square-text"></i>
+
+                            <strong>
+                                Seller's message
+                            </strong>
+
+                        </div>
+
+                        <p>
+                            <%= offer.message %>
+                        </p>
+
+                    </div>
+
+                <% } %>
+
+            </section>
+
+
+            <!-- ACTION PANEL -->
+
+            <aside class="offer-details-panel offer-details-actions">
+
+                <div class="offer-details-panel-heading">
+
+                    <div class="offer-details-heading-icon">
+                        <i data-lucide="handshake"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="offer-details-eyebrow">
+                            NEXT STEPS
+                        </span>
+
+                        <h2>Manage offer</h2>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BUYER: PENDING -->
+
+                <% if (
+                    isBuyer &&
+                    offer.status === "pending"
+                ) { %>
+
+                    <div class="offer-action-notice">
+
+                        <i data-lucide="clock-3"></i>
+
+                        <p>
+                            This offer is waiting for your decision.
+                            Review the details before responding.
+                        </p>
+
+                    </div>
+
+                    <form
+                        action="/offers/<%= offer._id %>/accept"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="offer-action-button offer-action-primary"
+                        >
+                            <i data-lucide="check"></i>
+                            Accept Offer
+                        </button>
+
+                    </form>
+
+                    <form
+                        action="/offers/<%= offer._id %>/decline"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="offer-action-button offer-action-danger"
+                        >
+                            <i data-lucide="x"></i>
+                            Decline Offer
+                        </button>
+
+                    </form>
+
+                <% } %>
+
+
+                <!-- SELLER: PENDING -->
+
+                <% if (
+                    isSeller &&
+                    offer.status === "pending"
+                ) { %>
+
+                    <div class="offer-action-notice">
+
+                        <i data-lucide="clock-3"></i>
+
+                        <p>
+                            Your offer has been submitted.
+                            Waiting for the buyer to respond.
+                        </p>
+
+                    </div>
+
+                    <form
+                        action="/offers/<%= offer._id %>/withdraw"
+                        method="POST"
+                    >
+
+                        <button
+                            type="submit"
+                            class="offer-action-button offer-action-danger"
+                        >
+                            <i data-lucide="undo-2"></i>
+                            Withdraw Offer
+                        </button>
+
+                    </form>
+
+                <% } %>
+
+
+                <!-- ACCEPTED -->
+
+                <% if (offer.status === "accepted") { %>
+
+                    <div class="offer-action-notice offer-notice-success">
+
+                        <i data-lucide="check-circle-2"></i>
+
+                        <p>
+                            Deal agreed. This offer has been accepted.
+                        </p>
+
+                    </div>
+
+                    <% if (isBuyer) { %>
+
+                        <a
+                            href="/payments/offer/<%= offer._id %>"
+                            class="offer-action-button offer-action-primary"
+                        >
+                            Proceed to Payment
+                            <i data-lucide="arrow-up-right"></i>
+                        </a>
+
+                    <% } %>
+
+                <% } %>
+
+
+                <!-- DECLINED -->
+
+                <% if (offer.status === "declined") { %>
+
+                    <div class="offer-action-notice offer-notice-muted">
+
+                        <i data-lucide="x-circle"></i>
+
+                        <p>
+                            This offer was declined.
+                        </p>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- WITHDRAWN -->
+
+                <% if (offer.status === "withdrawn") { %>
+
+                    <div class="offer-action-notice offer-notice-muted">
+
+                        <i data-lucide="undo-2"></i>
+
+                        <p>
+                            This offer has been withdrawn.
+                        </p>
+
+                    </div>
+
+                <% } %>
+
+
+                <!-- EXPIRED -->
+
+                <% if (offer.status === "expired") { %>
+
+                    <div class="offer-action-notice offer-notice-muted">
+
+                        <i data-lucide="hourglass"></i>
+
+                        <p>
+                            This offer has expired.
+                        </p>
+
+                    </div>
+
+                <% } %>
+
+
+                <a
+                    href="/offers"
+                    class="offer-details-bottom-link"
+                >
+                    <i data-lucide="arrow-left"></i>
+                    Back to all offers
+                </a>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <!-- SHARED SCRIPTS -->
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
 
 </body>
 

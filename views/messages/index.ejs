@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,97 +11,353 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Messages - NEXA</title>
+    <title>Messages | NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/messages.css">
 
 </head>
 
 <body>
 
-    <h1>Messages</h1>
+    <!-- SHARED NAVIGATION -->
+
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
 
-    <% if (conversations.length === 0) { %>
+    <main class="nexa-main messages-page">
 
-        <p>
-            You have no conversations yet.
-        </p>
+        <!-- PAGE HEADER -->
 
-    <% } %>
+        <header class="messages-page-header">
 
+            <div>
 
-    <% conversations.forEach(conversation => { %>
+                <span class="messages-eyebrow">
+                    NEXA CONNECTIONS
+                </span>
 
-        <div>
-
-            <h3>
-                <%= conversation.shop.name %>
-            </h3>
-
-
-            <% if (conversation.tradeRequest) { %>
+                <h1>Messages<span>.</span></h1>
 
                 <p>
-                    Trade:
-                    <strong>
-                        <%= conversation.tradeRequest.product %>
-                    </strong>
+                    Stay connected and make better trades.
                 </p>
 
-            <% } else { %>
+            </div>
+
+            <div class="messages-header-icon">
+                <i data-lucide="messages-square"></i>
+            </div>
+
+        </header>
+
+
+        <!-- INBOX SUMMARY -->
+
+        <section class="messages-summary">
+
+            <div class="messages-summary-content">
+
+                <div class="messages-summary-watermark" aria-hidden="true">
+                    <i data-lucide="message-circle-more"></i>
+                </div>
+
+                <span class="messages-eyebrow">
+                    YOUR INBOX
+                </span>
+
+                <h2>
+                    <%= conversations.length %>
+                    <span>
+                        <%= conversations.length === 1
+                            ? "conversation"
+                            : "conversations" %>
+                    </span>
+                </h2>
 
                 <p>
-                    General conversation
+                    Your vendor discussions, all in one place.
                 </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONVERSATIONS -->
+
+        <section class="messages-inbox-section">
+
+            <div class="messages-section-heading">
+
+                <div>
+
+                    <span class="messages-eyebrow">
+                        STAY IN TOUCH
+                    </span>
+
+                    <h2>Conversations</h2>
+
+                </div>
+
+                <span class="messages-section-count">
+                    <%= conversations.length %> total
+                </span>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <% if (conversations.length > 0) { %>
+
+                <div class="messages-search">
+
+                    <i data-lucide="search"></i>
+
+                    <input
+                        type="search"
+                        id="conversation-search"
+                        placeholder="Search conversations..."
+                        aria-label="Search conversations"
+                        autocomplete="off"
+                    >
+
+                </div>
 
             <% } %>
 
 
-            <p>
-                <%= conversation.lastMessage.content %>
-            </p>
+            <!-- INBOX -->
+
+            <div class="messages-inbox-panel">
+
+                <% if (conversations.length === 0) { %>
+
+                    <div class="messages-empty-state">
+
+                        <div class="messages-empty-icon">
+                            <i data-lucide="message-circle"></i>
+                        </div>
+
+                        <h3>No conversations yet</h3>
+
+                        <p>
+                            Find a vendor on the Trade Board
+                            and start a conversation.
+                        </p>
+
+                        <a href="/trade" class="messages-empty-button">
+                            Browse trades
+                            <i data-lucide="arrow-up-right"></i>
+                        </a>
+
+                    </div>
+
+                <% } else { %>
+
+                    <% conversations.forEach(conversation => { %>
+
+                        <%
+                            const conversationUrl = conversation.tradeRequest
+                                ? '/messages/' + conversation.shop._id +
+                                  '?trade=' + conversation.tradeRequest._id
+                                : '/messages/' + conversation.shop._id;
+                        %>
+
+                        <a
+                            href="<%= conversationUrl %>"
+                            class="messages-conversation"
+                            data-search="<%= (
+                                conversation.shop.name + ' ' +
+                                (conversation.tradeRequest
+                                    ? conversation.tradeRequest.product
+                                    : '') + ' ' +
+                                conversation.lastMessage.content
+                            ).toLowerCase() %>"
+                        >
+
+                            <!-- SHOP AVATAR -->
+
+                            <div class="messages-avatar">
+
+                                <i data-lucide="store"></i>
+
+                            </div>
 
 
-            <small>
-                <%= conversation.lastMessage.createdAt.toLocaleString() %>
-            </small>
+                            <!-- CONVERSATION CONTENT -->
+
+                            <div class="messages-conversation-content">
+
+                                <div class="messages-conversation-top">
+
+                                    <h3>
+                                        <%= conversation.shop.name %>
+                                    </h3>
+
+                                    <time>
+                                        <%= conversation.lastMessage.createdAt.toLocaleString(
+                                            'en-ZA',
+                                            {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            }
+                                        ) %>
+                                    </time>
+
+                                </div>
 
 
-            <br><br>
+                                <% if (conversation.tradeRequest) { %>
+
+                                    <span class="messages-trade-label">
+
+                                        <i data-lucide="package"></i>
+
+                                        <%= conversation.tradeRequest.product %>
+
+                                    </span>
+
+                                <% } else { %>
+
+                                    <span class="messages-trade-label messages-general-label">
+
+                                        <i data-lucide="message-circle"></i>
+
+                                        General conversation
+
+                                    </span>
+
+                                <% } %>
 
 
-            <% if (conversation.tradeRequest) { %>
+                                <p class="messages-preview">
+                                    <%= conversation.lastMessage.content %>
+                                </p>
 
-                <a
-                    href="/messages/<%= conversation.shop._id %>?trade=<%= conversation.tradeRequest._id %>"
-                >
-                    Open Chat
-                </a>
-
-            <% } else { %>
-
-                <a
-                    href="/messages/<%= conversation.shop._id %>"
-                >
-                    Open Chat
-                </a>
-
-            <% } %>
-
-        </div>
-
-        <hr>
-
-    <% }) %>
+                            </div>
 
 
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
+                            <!-- OPEN ICON -->
+
+                            <div class="messages-open-icon">
+
+                                <i data-lucide="chevron-right"></i>
+
+                            </div>
+
+                        </a>
+
+                    <% }) %>
+
+                    <!-- SEARCH EMPTY STATE -->
+
+                    <div
+                        id="messages-search-empty"
+                        class="messages-search-empty"
+                        hidden
+                    >
+
+                        <i data-lucide="search-x"></i>
+
+                        <p>
+                            No conversations match your search.
+                        </p>
+
+                    </div>
+
+                <% } %>
+
+            </div>
+
+        </section>
+
+
+        <!-- COMMUNICATION REMINDER -->
+
+        <aside class="messages-guidelines">
+
+            <div class="messages-guidelines-icon">
+                <i data-lucide="shield-check"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Trade with respect
+                </strong>
+
+                <p>
+                    Keep conversations clear and respectful.
+                    Good communication builds better trades.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- SHARED SCRIPTS -->
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
+
+
+    <!-- CONVERSATION SEARCH -->
+
+    <script>
+
+        const conversationSearch = document.getElementById(
+            "conversation-search"
+        );
+
+        if (conversationSearch) {
+
+            conversationSearch.addEventListener("input", function () {
+
+                const query = this.value.trim().toLowerCase();
+
+                const conversations = document.querySelectorAll(
+                    ".messages-conversation"
+                );
+
+                let visibleCount = 0;
+
+                conversations.forEach(function (conversation) {
+
+                    const searchText = conversation.dataset.search || "";
+
+                    const matches = searchText.includes(query);
+
+                    conversation.hidden = !matches;
+
+                    if (matches) {
+                        visibleCount++;
+                    }
+
+                });
+
+                const emptyState = document.getElementById(
+                    "messages-search-empty"
+                );
+
+                if (emptyState) {
+                    emptyState.hidden = visibleCount !== 0;
+                }
+
+            });
+
+        }
+
+    </script>
 
 </body>
 

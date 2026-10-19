@@ -1,0 +1,577 @@
+/* NEXA — Stage 2.1 Trade Board. Scoped to avoid dashboard changes. */
+.trade-page{
+    max-width:100%;
+    min-width:0;
+    padding:36px 42px 90px;
+    color:#F7FAF8
+}
+
+.trade-page *{
+    box-sizing:border-box
+}
+
+.trade-eyebrow{
+    display:block;
+    margin-bottom:9px;
+    color:#8CE11A;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:2px
+}
+
+.trade-header,.trade-filter-heading,.trade-results-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px
+}
+
+.trade-header{
+    margin-bottom:30px
+}
+
+.trade-header h1{
+    font-size:clamp(30px,3vw,42px);
+    letter-spacing:-1.7px;
+    line-height:1.12;
+    margin:0 0 10px;
+    font-weight:800
+}
+
+.trade-header p{
+    font-size:14px;
+    color:#98A49D;
+    margin:0;
+    line-height:1.6
+}
+
+.trade-header-actions,.trade-filter-actions,.trade-empty-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap
+}
+
+.trade-button{
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    gap:9px;
+    min-height:43px;
+    padding:0 18px;
+    border-radius:999px;
+    font:800 12px inherit;
+    text-decoration:none;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:transform .2s,background .2s,border-color .2s
+}
+
+.trade-button:hover,.trade-view-link:hover{
+    transform:translateY(-2px)
+}
+
+.trade-button svg{
+    width:17px;
+    height:17px
+}
+
+.trade-button-primary{
+    background:#8CE11A;
+    border:1px solid #8CE11A;
+    color:#10180B;
+    font-size:12px;
+    font-weight:800
+}
+
+.trade-button-primary:hover{
+    background:#A5F23E
+}
+
+.trade-button-outline{
+    background:#131E17;
+    border:1px solid rgba(140,225,26,.22);
+    color:#F7FAF8;
+    font-size:12px;
+    font-weight:800
+}
+
+.trade-filter-panel{
+    padding:25px;
+    border:1px solid rgba(140,225,26,.14);
+    border-radius:24px;
+    background:#101914;
+    margin-bottom:38px
+}
+
+.trade-filter-heading{
+    margin-bottom:24px
+}
+
+.trade-filter-heading h2,.trade-results-heading h2{
+    font-size:21px;
+    letter-spacing:-.6px;
+    margin:0;
+    font-weight:800
+}
+
+.trade-results-count{
+    font-size:11px;
+    color:#98A49D;
+    white-space:nowrap
+}
+
+.trade-filter-form{
+    display:grid;
+    grid-template-columns:minmax(190px,1.5fr) repeat(3,minmax(130px,1fr));
+    gap:14px;
+    align-items:end
+}
+
+.trade-field{
+    min-width:0
+}
+
+.trade-field label{
+    display:block;
+    margin-bottom:9px;
+    font-size:11px;
+    font-weight:750;
+    color:#B8C6BB
+}
+
+.trade-field input,.trade-field select{
+    width:100%;
+    height:46px;
+    min-width:0;
+    padding:0 14px;
+    background:#0A120D;
+    color:#F7FAF8;
+    border:1px solid rgba(140,225,26,.15);
+    border-radius:13px;
+    font:inherit;
+    font-size:12px;
+    outline:none
+}
+
+.trade-field input::placeholder{
+    color:#718477
+}
+
+.trade-field input:focus,.trade-field select:focus{
+    border-color:#8CE11A;
+    box-shadow:0 0 0 3px rgba(140,225,26,.09)
+}
+
+.trade-input-wrap{
+    position:relative
+}
+
+.trade-input-wrap svg{
+    position:absolute;
+    top:14px;
+    left:13px;
+    width:17px;
+    height:17px;
+    color:#8CE11A;
+    pointer-events:none
+}
+
+.trade-input-wrap input{
+    padding-left:40px
+}
+
+.trade-filter-actions{
+    grid-column:1/-1;
+    justify-content:flex-end;
+    margin-top:4px
+}
+
+.trade-clear{
+    color:#98A49D;
+    font-size:12px;
+    font-weight:700;
+    padding:10px
+}
+
+.trade-clear:hover{
+    color:#8CE11A
+}
+
+.trade-results-heading{
+    margin-bottom:19px
+}
+
+.trade-cards{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px
+}
+
+.trade-card{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+    min-height:310px;
+    padding:23px;
+    border:1px solid rgba(140,225,26,.13);
+    border-radius:23px;
+    background:#101914;
+    transition:transform .25s,border-color .25s,box-shadow .25s
+}
+
+.trade-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(140,225,26,.4);
+    box-shadow:0 16px 35px rgba(0,0,0,.18)
+}
+
+.trade-card-top,.trade-card-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px
+}
+
+.trade-vendor{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0
+}
+
+.trade-vendor-icon{
+    display:grid;
+    place-items:center;
+    flex-shrink:0;
+    width:45px;
+    height:45px;
+    border-radius:14px;
+    background:rgba(140,225,26,.1);
+    color:#8CE11A
+}
+
+.trade-vendor-icon svg{
+    width:22px;
+    height:22px
+}
+
+.trade-vendor-meta{
+    min-width:0
+}
+
+.trade-vendor-meta h3{
+    margin:0 0 6px;
+    font-size:13px;
+    font-weight:800;
+    overflow-wrap:anywhere
+}
+
+.trade-vendor-meta span{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    color:#98A49D;
+    font-size:11px
+}
+
+.trade-vendor-meta span svg{
+    width:12px;
+    height:12px
+}
+
+.trade-needs-badge{
+    padding:7px 10px;
+    border-radius:999px;
+    background:rgba(140,225,26,.12);
+    color:#8CE11A;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1px
+}
+
+.trade-card-body{
+    padding:27px 0 18px;
+    flex:1
+}
+
+.trade-card-label{
+    display:block;
+    font-size:10px;
+    letter-spacing:1.1px;
+    color:#98A49D;
+    font-weight:800
+}
+
+.trade-card-body h4{
+    margin:8px 0 4px;
+    font-size:clamp(20px,2vw,27px);
+    line-height:1.25;
+    letter-spacing:-.7px;
+    overflow-wrap:anywhere
+}
+
+.trade-quantity{
+    margin:0;
+    font-size:13px;
+    color:#C1D0C4
+}
+
+.trade-description{
+    margin:12px 0 0;
+    color:#98A49D;
+    font-size:12px;
+    line-height:1.55;
+    overflow-wrap:anywhere;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden
+}
+
+.trade-card-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:19px
+}
+
+.trade-card-tags span{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 10px;
+    border:1px solid rgba(140,225,26,.10);
+    border-radius:999px;
+    color:#AFC0B2;
+    background:#162119;
+    font-size:10px;
+    text-transform:capitalize
+}
+
+.trade-card-tags svg{
+    width:13px;
+    height:13px;
+    color:#8CE11A
+}
+
+.trade-card-footer{
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,.075)
+}
+
+.trade-card-footer strong{
+    display:block;
+    margin-top:6px;
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:-.7px;
+    color:#8CE11A;
+    overflow-wrap:anywhere
+}
+
+.trade-view-link{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    border-radius:999px;
+    padding:12px 14px;
+    background:#8CE11A;
+    color:#10180B;
+    font-size:11px;
+    font-weight:800;
+    white-space:nowrap;
+    transition:transform .2s
+}
+
+.trade-view-link svg{
+    width:15px;
+    height:15px
+}
+
+.trade-empty{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    padding:64px 20px;
+    border-radius:24px;
+    border:1px solid rgba(140,225,26,.14);
+    background:#101914
+}
+
+.trade-empty-icon{
+    display:grid;
+    place-items:center;
+    width:64px;
+    height:64px;
+    border-radius:20px;
+    background:rgba(140,225,26,.1);
+    color:#8CE11A
+}
+
+.trade-empty-icon svg{
+    width:30px;
+    height:30px
+}
+
+.trade-empty h3{
+    font-size:19px;
+    margin:18px 0 6px
+}
+
+.trade-empty p{
+    max-width:360px;
+    font-size:13px;
+    line-height:1.6;
+    color:#98A49D;
+    margin:0 0 20px
+}
+
+@media(max-width:1200px){
+    .trade-filter-form{
+        grid-template-columns:repeat(2,minmax(0,1fr))
+    }
+}
+
+@media(max-width:1000px){
+    .trade-cards{
+        grid-template-columns:1fr
+    }
+}
+
+@media(max-width:768px){
+    .trade-page{
+        padding:24px 16px 135px
+    }.trade-header{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:17px
+}.trade-header h1{
+
+font-size:32px
+}.trade-header p{
+
+font-size:12px
+}.trade-header-actions{
+
+width:100%
+}.trade-header-actions .trade-button{
+
+flex:1
+}.trade-filter-panel{
+
+padding:18px;
+border-radius:20px;
+margin-bottom:30px
+}.trade-filter-heading{
+
+align-items:flex-start
+}.trade-filter-heading h2,.trade-results-heading h2{
+
+font-size:19px
+}.trade-filter-form{
+
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:12px
+}.trade-field-search{
+
+grid-column:1/-1
+}.trade-filter-actions{
+
+justify-content:space-between
+}.trade-card{
+
+padding:18px;
+min-height:300px;
+border-radius:20px
+}.trade-card-footer strong{
+
+font-size:20px
+}
+
+}
+
+@media(max-width:390px){
+    .trade-filter-form{
+        grid-template-columns:1fr
+    }.trade-field-search{
+    grid-column:auto
+}.trade-header-actions .trade-button{
+
+padding:0 12px
+}.trade-card-footer{
+
+align-items:flex-end
+}.trade-view-link{
+
+padding:11px 10px;
+font-size:10px
+}
+
+}
+
+@media(prefers-reduced-motion:reduce){
+    .trade-page .trade-card,.trade-page .trade-button,.trade-page .trade-view-link{
+        transition:none
+    }
+}
+
+
+/* =========================================
+   STAGE 2.2 — TRADE CARD WATERMARK TEST
+   ========================================= */
+
+.trade-page .trade-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.trade-page .trade-card-watermark {
+    position: absolute;
+    right: -27px;
+    bottom: 52px;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8CE11A;
+    opacity: 0.09;
+    transform: rotate(-12deg);
+    pointer-events: none;
+    z-index: 0;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.trade-page .trade-card-watermark svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.3;
+}
+
+.trade-page .trade-card > :not(.trade-card-watermark) {
+    position: relative;
+    z-index: 1;
+}
+
+.trade-page .trade-card:hover .trade-card-watermark {
+    transform: rotate(-6deg) scale(1.07);
+    opacity: 0.15;
+}
+
+@media (max-width: 768px) {
+    .trade-page .trade-card-watermark {
+        width: 135px;
+        height: 135px;
+        right: -20px;
+        bottom: 45px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .trade-page .trade-card-watermark {
+        transition: none;
+    }
+}

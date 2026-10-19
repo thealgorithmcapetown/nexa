@@ -1,0 +1,529 @@
+
+/* ==========================================
+   NEXA — OFFERS OVERVIEW
+   STAGE 4.3
+========================================== */
+
+
+/* PAGE */
+
+.offers-page {
+    padding-top: 34px;
+    padding-bottom: 100px;
+    color: #F7FAF8;
+}
+
+
+/* HEADER */
+
+.offers-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.offers-eyebrow {
+    display: inline-block;
+    color: #8CE11A;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.offers-page-header h1 {
+    margin: 10px 0;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+
+.offers-page-header h1 span {
+    color: #8CE11A;
+}
+
+.offers-page-header p {
+    color: #98A49D;
+    font-size: 14px;
+}
+
+.offers-browse-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 13px 19px;
+    color: #10180B;
+    background: #8CE11A;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.offers-browse-button:hover {
+    background: #A5F23E;
+    transform: translateY(-2px);
+}
+
+.offers-browse-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* OVERVIEW */
+
+.offers-overview {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 45px;
+}
+
+.offers-overview-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 180px;
+    padding: 25px;
+    background: #101914;
+    border: 1px solid rgba(140, 225, 26, 0.15);
+    border-radius: 22px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.offers-overview-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(140, 225, 26, 0.4);
+}
+
+.offers-overview-card > span,
+.offers-overview-card > strong,
+.offers-overview-card > small {
+    position: relative;
+    z-index: 1;
+}
+
+.offers-overview-card > span {
+    color: #A5B3A8;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.offers-overview-card > strong {
+    margin-top: 17px;
+    color: #F7FAF8;
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+.offers-overview-card > small {
+    margin-top: auto;
+    color: #98A49D;
+    font-size: 11px;
+}
+
+.offers-overview-watermark {
+    position: absolute;
+    right: -22px;
+    bottom: -28px;
+    width: 160px;
+    height: 160px;
+    color: rgba(140, 225, 26, 0.09);
+    transform: rotate(-12deg);
+    pointer-events: none;
+}
+
+.offers-overview-watermark svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.1;
+}
+
+
+/* SECTION HEADINGS */
+
+.offers-section {
+    margin-bottom: 45px;
+}
+
+.offers-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.offers-section-heading h2 {
+    margin: 8px 0 0;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+}
+
+.offers-section-count {
+    padding: 8px 13px;
+    color: #AFC1B3;
+    background: #17241B;
+    border: 1px solid #2B4030;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+/* OFFER CARDS */
+
+.offers-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.offers-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-width: 0;
+    padding: 25px;
+    background: #101914;
+    border: 1px solid rgba(140, 225, 26, 0.14);
+    border-radius: 22px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.offers-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(140, 225, 26, 0.38);
+}
+
+.offers-card-watermark {
+    position: absolute;
+    right: -32px;
+    bottom: -35px;
+    width: 175px;
+    height: 175px;
+    color: rgba(140, 225, 26, 0.075);
+    transform: rotate(-13deg);
+    pointer-events: none;
+}
+
+.offers-card-watermark svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 1.1;
+}
+
+.offers-card-content {
+    position: relative;
+    z-index: 1;
+}
+
+.offers-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.offers-vendor-icon {
+    display: grid;
+    place-items: center;
+    width: 49px;
+    height: 49px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border-radius: 14px;
+}
+
+.offers-vendor-icon svg {
+    width: 23px;
+    height: 23px;
+}
+
+.offers-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    color: #C7D3CA;
+    background: #1C2B22;
+    border: 1px solid #304535;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: capitalize;
+}
+
+.offers-status-dot {
+    width: 6px;
+    height: 6px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+.offers-status-pending {
+    color: #F1C76C;
+    background: rgba(241, 199, 108, 0.09);
+    border-color: rgba(241, 199, 108, 0.25);
+}
+
+.offers-status-accepted {
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border-color: rgba(140, 225, 26, 0.25);
+}
+
+.offers-status-declined,
+.offers-status-withdrawn,
+.offers-status-expired {
+    color: #E49A9A;
+    background: rgba(228, 154, 154, 0.08);
+    border-color: rgba(228, 154, 154, 0.2);
+}
+
+.offers-card-label {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.offers-card h3 {
+    margin: 9px 0 12px;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+    overflow-wrap: anywhere;
+}
+
+.offers-card-product {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+    color: #A8B6AC;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.offers-card-product svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: #8CE11A;
+}
+
+.offers-card-divider {
+    height: 1px;
+    margin: 25px 0;
+    background: rgba(140, 225, 26, 0.12);
+}
+
+.offers-card-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.offers-card-meta > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.offers-card-meta span {
+    color: #98A49D;
+    font-size: 11px;
+}
+
+.offers-card-meta strong {
+    color: #F7FAF8;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: capitalize;
+}
+
+.offers-card-meta .offers-card-price {
+    color: #8CE11A;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+}
+
+.offers-card-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 47px;
+    padding: 12px 16px;
+    color: #10180B;
+    background: #8CE11A;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    box-sizing: border-box;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.offers-card-button:hover {
+    background: #A5F23E;
+    transform: translateY(-2px);
+}
+
+.offers-card-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* EMPTY STATE */
+
+.offers-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 55px 24px;
+    background: #101914;
+    border: 1px dashed rgba(140, 225, 26, 0.22);
+    border-radius: 22px;
+    text-align: center;
+}
+
+.offers-empty-icon {
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    margin-bottom: 20px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border-radius: 20px;
+}
+
+.offers-empty-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+.offers-empty-state h3 {
+    margin: 0 0 10px;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.offers-empty-state p {
+    max-width: 350px;
+    margin: 0 0 23px;
+    color: #98A49D;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.offers-empty-state a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #8CE11A;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.offers-empty-state a svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1050px) {
+
+    .offers-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .offers-page {
+        padding-top: 20px;
+        padding-bottom: 120px;
+    }
+
+    .offers-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .offers-page-header h1 {
+        font-size: 34px;
+    }
+
+    .offers-overview {
+        gap: 12px;
+    }
+
+    .offers-overview-card {
+        min-height: 155px;
+        padding: 17px;
+        border-radius: 18px;
+    }
+
+    .offers-overview-card > strong {
+        font-size: 34px;
+    }
+
+    .offers-overview-watermark {
+        width: 115px;
+        height: 115px;
+    }
+
+    .offers-section-heading h2 {
+        font-size: 21px;
+    }
+
+    .offers-card {
+        padding: 20px;
+        border-radius: 19px;
+    }
+
+}
+
+@media (max-width: 380px) {
+
+    .offers-overview {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .offers-overview-card,
+    .offers-card,
+    .offers-card-button,
+    .offers-browse-button {
+        transition: none;
+    }
+
+}

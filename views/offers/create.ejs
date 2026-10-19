@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,98 +11,310 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Make Offer - NEXA</title>
+    <title>Make Offer | NEXA</title>
 
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/offer-create.css">
 
 </head>
 
 <body>
 
-    <h1>Make an Offer</h1>
+    <!-- SHARED NAVIGATION -->
+
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
 
-    <h2>
-        <%= tradeRequest.product %>
-    </h2>
+    <main class="nexa-main offer-create-page">
 
+        <!-- PAGE HEADER -->
 
-    <p>
-        Requested:
-        <%= tradeRequest.quantity %>
-        ×
-        <%= tradeRequest.unit %>
-    </p>
+        <header class="offer-page-header">
 
+            <div>
 
-    <p>
-        Buyer's Budget:
-        R<%= tradeRequest.budget %>
-    </p>
+                <span class="offer-eyebrow">
+                    NEXA MARKETPLACE
+                </span>
 
+                <h1>Make an offer<span>.</span></h1>
 
-    <form
-        action="/trade/<%= tradeRequest._id %>/offer"
-        method="POST"
-    >
+                <p>
+                    Send your proposal and start a new trade.
+                </p>
 
-        <label>
-            Your Price
-        </label>
+            </div>
 
-        <input
-            type="number"
-            name="amount"
-            min="0"
-            step="0.01"
-            required
-        >
-
-
-        <label>
-            Quantity You Can Supply
-        </label>
-
-        <input
-            type="number"
-            name="quantity"
-            min="1"
-            required
-        >
-
-
-        <label>
-
-            <input
-                type="checkbox"
-                name="delivery"
+            <a
+                href="/trade/<%= tradeRequest._id %>"
+                class="offer-back-link"
             >
+                <i data-lucide="arrow-left"></i>
+                Back to request
+            </a>
 
-            I can deliver
-
-        </label>
-
-
-        <label>
-            Message
-        </label>
-
-        <textarea
-            name="message"
-            placeholder="Add details about your offer..."
-        ></textarea>
+        </header>
 
 
-        <button type="submit">
-            Send Offer
-        </button>
+        <div class="offer-page-layout">
 
-    </form>
+            <!-- TRADE SUMMARY -->
+
+            <aside class="offer-summary">
+
+                <div class="offer-summary-watermark" aria-hidden="true">
+                    <i data-lucide="package"></i>
+                </div>
+
+                <div class="offer-summary-content">
+
+                    <span class="offer-card-eyebrow">
+                        TRADE REQUEST
+                    </span>
+
+                    <div class="offer-product-icon">
+                        <i data-lucide="package-check"></i>
+                    </div>
+
+                    <h2>
+                        <%= tradeRequest.product %>
+                    </h2>
+
+                    <p class="offer-summary-description">
+                        Review the buyer's requirements before
+                        submitting your offer.
+                    </p>
+
+                    <div class="offer-summary-divider"></div>
+
+                    <div class="offer-summary-row">
+
+                        <span>Requested quantity</span>
+
+                        <strong>
+                            <%= tradeRequest.quantity %>
+                            ×
+                            <%= tradeRequest.unit %>
+                        </strong>
+
+                    </div>
+
+                    <div class="offer-summary-row">
+
+                        <span>Buyer's budget</span>
+
+                        <strong class="offer-budget">
+                            R<%= Number(tradeRequest.budget).toLocaleString('en-ZA', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }) %>
+                        </strong>
+
+                    </div>
+
+                    <div class="offer-summary-note">
+
+                        <i data-lucide="info"></i>
+
+                        <p>
+                            Your offer will be sent to the buyer
+                            for review and approval.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </aside>
 
 
-    <a href="/trade/<%= tradeRequest._id %>">
-        Cancel
-    </a>
+            <!-- OFFER FORM -->
+
+            <section class="offer-form-panel">
+
+                <div class="offer-form-heading">
+
+                    <div class="offer-form-heading-icon">
+                        <i data-lucide="handshake"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="offer-card-eyebrow">
+                            YOUR PROPOSAL
+                        </span>
+
+                        <h2>Offer details</h2>
+
+                        <p>
+                            Set your price and supply details.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    action="/trade/<%= tradeRequest._id %>/offer"
+                    method="POST"
+                    class="offer-create-form"
+                >
+
+                    <div class="offer-field-grid">
+
+                        <!-- PRICE -->
+
+                        <div class="offer-field">
+
+                            <label for="amount">
+                                Your price (ZAR)
+                            </label>
+
+                            <div class="offer-input-wrap">
+
+                                <span class="offer-input-prefix">
+                                    R
+                                </span>
+
+                                <input
+                                    id="amount"
+                                    type="number"
+                                    name="amount"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    required
+                                >
+
+                            </div>
+
+                            <small>
+                                Enter the total amount for your offer.
+                            </small>
+
+                        </div>
+
+
+                        <!-- QUANTITY -->
+
+                        <div class="offer-field">
+
+                            <label for="quantity">
+                                Quantity you can supply
+                            </label>
+
+                            <div class="offer-input-wrap">
+
+                                <input
+                                    id="quantity"
+                                    type="number"
+                                    name="quantity"
+                                    min="1"
+                                    step="1"
+                                    placeholder="Enter quantity"
+                                    required
+                                >
+
+                            </div>
+
+                            <small>
+                                Requested:
+                                <%= tradeRequest.quantity %>
+                                <%= tradeRequest.unit %>
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DELIVERY -->
+
+                    <label class="offer-delivery-option">
+
+                        <span class="offer-delivery-icon">
+                            <i data-lucide="truck"></i>
+                        </span>
+
+                        <span class="offer-delivery-text">
+
+                            <strong>
+                                I can deliver
+                            </strong>
+
+                            <small>
+                                Let the buyer know you offer delivery.
+                            </small>
+
+                        </span>
+
+                        <input
+                            type="checkbox"
+                            name="delivery"
+                            class="offer-delivery-checkbox"
+                        >
+
+                    </label>
+
+
+                    <!-- MESSAGE -->
+
+                    <div class="offer-field">
+
+                        <label for="message">
+                            Message to buyer
+                            <span>(Optional)</span>
+                        </label>
+
+                        <textarea
+                            id="message"
+                            name="message"
+                            rows="5"
+                            placeholder="Tell the buyer about product quality, availability, delivery arrangements or any other details..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="offer-form-actions">
+
+                        <a
+                            href="/trade/<%= tradeRequest._id %>"
+                            class="offer-cancel-button"
+                        >
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="offer-submit-button"
+                        >
+                            Send Offer
+
+                            <i data-lucide="arrow-up-right"></i>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- SHARED SCRIPTS -->
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
 
 </body>
 

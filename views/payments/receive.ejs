@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,116 +6,358 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Receive Money - NEXA
-    </title>
+    <title>Receive Money - NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/receive-money.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
-    <h1>
-        Receive Money
-    </h1>
+    <main class="nexa-main receive-money-page">
 
+        <!-- BACK LINK -->
 
-    <% if (!currentShop.walletAddress) { %>
+        <a href="/payments" class="receive-money-back">
 
-        <p>
-            This shop does not have an
-            Open Payments wallet connected.
-        </p>
+            <i data-lucide="arrow-left"></i>
 
-    <% } else { %>
+            Back to Payments
 
-
-        <p>
-            Create a payment request for
-            your customer.
-        </p>
+        </a>
 
 
-        <form
-            action="/payments/receive"
-            method="POST"
-        >
+        <!-- PAGE HEADING -->
+
+        <header class="receive-money-heading">
+
+            <span class="receive-money-eyebrow">
+                NEXA PAYMENTS
+            </span>
+
+            <h1>
+                Receive Money<span class="nexa-title-dot">.</span>
+            </h1>
+
+            <p>
+                Create a payment request and let your customers pay
+                using a QR code.
+            </p>
+
+        </header>
 
 
-            <div>
+        <% if (!currentShop.walletAddress) { %>
 
-                <label>
-                    Amount
-                </label>
+            <!-- NO WALLET CONNECTED -->
 
-                <br>
+            <section class="receive-money-no-wallet">
 
-                <input
-                    type="number"
-                    name="amount"
-                    min="0.01"
-                    step="0.01"
-                    placeholder="50.00"
-                    required
-                >
+                <div class="receive-money-no-wallet-icon">
+
+                    <i data-lucide="wallet"></i>
+
+                </div>
+
+                <span class="receive-money-section-label">
+                    WALLET REQUIRED
+                </span>
+
+                <h2>
+                    Connect Your Wallet
+                </h2>
+
+                <p>
+                    This shop does not have an Open Payments wallet connected.
+                    You'll need to configure a wallet before creating
+                    payment requests.
+                </p>
+
+                <a href="/payments" class="receive-money-secondary-button">
+
+                    <i data-lucide="arrow-left"></i>
+
+                    Back to Payments
+
+                </a>
+
+                <i data-lucide="wallet-cards" class="receive-money-watermark"></i>
+
+            </section>
+
+        <% } else { %>
+
+
+            <div class="receive-money-layout">
+
+                <!-- PAYMENT REQUEST FORM -->
+
+                <section class="receive-money-card">
+
+                    <div class="receive-money-card-heading">
+
+                        <div>
+
+                            <span class="receive-money-section-label">
+                                NEW PAYMENT REQUEST
+                            </span>
+
+                            <h2>
+                                Payment Details
+                            </h2>
+
+                            <p>
+                                Enter the amount and reference for your customer.
+                            </p>
+
+                        </div>
+
+                        <div class="receive-money-heading-icon">
+
+                            <i data-lucide="qr-code"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <form
+                        action="/payments/receive"
+                        method="POST"
+                        class="receive-money-form"
+                    >
+
+                        <!-- AMOUNT -->
+
+                        <div class="receive-money-field">
+
+                            <label for="amount">
+                                Amount (ZAR)
+                                <span>*</span>
+                            </label>
+
+                            <div class="receive-money-input-wrap">
+
+                                <span class="receive-money-currency">
+                                    R
+                                </span>
+
+                                <input
+                                    id="amount"
+                                    type="number"
+                                    name="amount"
+                                    min="0.01"
+                                    step="0.01"
+                                    placeholder="50.00"
+                                    inputmode="decimal"
+                                    required
+                                >
+
+                            </div>
+
+                            <p class="receive-money-field-help">
+                                Enter the amount you want your customer to pay.
+                            </p>
+
+                        </div>
+
+
+                        <!-- REFERENCE -->
+
+                        <div class="receive-money-field">
+
+                            <label for="reference">
+                                Payment Reference
+                                <span>*</span>
+                            </label>
+
+                            <div class="receive-money-input-wrap">
+
+                                <i data-lucide="file-text"></i>
+
+                                <input
+                                    id="reference"
+                                    type="text"
+                                    name="reference"
+                                    placeholder="e.g. Customer purchase"
+                                    required
+                                >
+
+                            </div>
+
+                            <p class="receive-money-field-help">
+                                Use a reference that helps identify the purchase.
+                            </p>
+
+                        </div>
+
+
+                        <!-- SUBMIT -->
+
+                        <div class="receive-money-form-footer">
+
+                            <div class="receive-money-security-note">
+
+                                <i data-lucide="info"></i>
+
+                                <span>
+                                    Generating a QR code creates a payment request.
+                                    It does not mean payment has been received.
+                                </span>
+
+                            </div>
+
+                            <button type="submit" class="receive-money-submit">
+
+                                <i data-lucide="qr-code"></i>
+
+                                Generate Payment QR
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+                <!-- INFORMATION CARDS -->
+
+                <aside class="receive-money-sidebar">
+
+                    <!-- WALLET INFORMATION -->
+
+                    <section class="receive-money-info-card">
+
+                        <span class="receive-money-section-label">
+                            RECEIVING INTO
+                        </span>
+
+                        <h3>
+                            <%= currentShop.name %>
+                        </h3>
+
+                        <div class="receive-money-wallet-details">
+
+                            <span>
+                                Connected Wallet Address
+                            </span>
+
+                            <p>
+                                <%= currentShop.walletAddress %>
+                            </p>
+
+                        </div>
+
+                        <i data-lucide="wallet-cards" class="receive-money-watermark"></i>
+
+                    </section>
+
+
+                    <!-- HOW IT WORKS -->
+
+                    <section class="receive-money-guide-card">
+
+                        <span class="receive-money-section-label">
+                            QR PAYMENTS
+                        </span>
+
+                        <h3>
+                            How It Works
+                        </h3>
+
+                        <div class="receive-money-guide-item">
+
+                            <span class="receive-money-step">
+                                01
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Enter Payment Details
+                                </strong>
+
+                                <p>
+                                    Set the amount and reference for the purchase.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="receive-money-guide-item">
+
+                            <span class="receive-money-step">
+                                02
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Generate QR Code
+                                </strong>
+
+                                <p>
+                                    Create a QR payment request for your customer.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="receive-money-guide-item">
+
+                            <span class="receive-money-step">
+                                03
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Customer Pays
+                                </strong>
+
+                                <p>
+                                    Let the customer open the payment request
+                                    and complete the payment.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </aside>
 
             </div>
 
+        <% } %>
 
-            <br>
-
-
-            <div>
-
-                <label>
-                    Reference
-                </label>
-
-                <br>
-
-                <input
-                    type="text"
-                    name="reference"
-                    placeholder="Customer purchase"
-                    required
-                >
-
-            </div>
+    </main>
 
 
-            <br>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 
+    <script src="/js/navigation.js"></script>
 
-            <button type="submit">
-
-                Generate Payment QR
-
-            </button>
-
-
-        </form>
-
-
-    <% } %>
-
-
-    <br>
-
-
-    <a href="/payments">
-        Back to Payments
-    </a>
-
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
 
 </body>
 

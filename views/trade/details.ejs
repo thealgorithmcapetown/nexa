@@ -2,393 +2,268 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>Trade Details | NEXA</title>
 
-    <title>Trade Request - NEXA</title>
-
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
-
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/trade-details.css">
 </head>
 
 <body>
 
-
-    <h1>
-        <%= request.shop.name %>
-    </h1>
-
-
-    <h2>
-        <%= request.product %>
-    </h2>
-
-
-    <p>
-        Status:
-        <strong>
-            <%= request.status.toUpperCase() %>
-        </strong>
-    </p>
-
-
-    <p>
-        Quantity:
-        <%= request.quantity %>
-        ×
-        <%= request.unit %>
-    </p>
-
-
-    <p>
-        Maximum Budget:
-        R<%= request.budget %>
-    </p>
-
-
-    <p>
-        Fulfilment:
-        <%= request.fulfilment %>
-    </p>
-
-
-    <p>
-        📍
-        <%= request.address %>
-    </p>
-
-
-    <p>
-        Maximum Distance:
-        <%= request.maxDistance %> km
-    </p>
-
-
-    <% if (request.description) { %>
-
-        <h3>
-            Additional Details
-        </h3>
-
-        <p>
-            <%= request.description %>
-        </p>
-
-    <% } %>
-
-
-    <hr>
-
-
-    <h3>
-        About this shop
-    </h3>
-
-
-    <p>
-        ⭐ <%= request.shop.rating %>
-    </p>
-
-
-    <p>
-        <%= request.shop.description || "No description available." %>
-    </p>
-
-
-    <hr>
-
-
-
-   <!-- ================================= -->
-<!-- OPEN TRADE -->
-<!-- ================================= -->
-
-<% if (request.status === "open") { %>
-
-    <% if (
-        request.shop._id.toString() ===
-        currentShopId.toString()
-    ) { %>
-
-        <h3>
-            Manage Request
-        </h3>
-
-        <p>
-            Your trade request is currently open.
-        </p>
-
-        <form
-            action="/trade/<%= request._id %>/cancel"
-            method="POST"
-        >
-
-            <button type="submit">
-                Cancel Request
-            </button>
-
-        </form>
-
-    <% } else { %>
-
-        <h3>
-            Trade Actions
-        </h3>
-
-        <a href="/trade/<%= request._id %>/offer">
-            Make Offer
-        </a>
-
-        <br><br>
-
-        <a href="/messages/<%= request.shop._id %>?trade=<%= request._id %>">
-            Chat With Vendor
-        </a>
-
-    <% } %>
-
-<% } %>
-
-
-    <!-- ================================= -->
-    <!-- ACCEPTED / PAID TRADE -->
-    <!-- ================================= -->
-
-    <% if (request.status === "accepted") { %>
-
-        <h3>
-            Trade In Progress
-        </h3>
-
-
-        <p>
-            An offer has been accepted.
-        </p>
-
-
-        <!-- SELLER -->
-
-        <% if (
-            acceptedOffer &&
-            acceptedOffer.seller &&
-            acceptedOffer.seller.toString() ===
-            currentShopId.toString()
-        ) { %>
-
-
-            <% if (successfulPayment) { %>
-
-                <p>
-                    Payment received.
-                </p>
-
-
-                <form
-                    action="/trade/<%= request._id %>/fulfill"
-                    method="POST"
-                >
-
-                    <button type="submit">
-                        Mark as Fulfilled
-                    </button>
-
-                </form>
-
-            <% } else { %>
-
-                <p>
-                    Waiting for payment from buyer.
-                </p>
-
-            <% } %>
-
-        <% } %>
-
-
-        <!-- BUYER -->
-
-        <% if (
-            acceptedOffer &&
-            acceptedOffer.buyer &&
-            acceptedOffer.buyer.toString() ===
-            currentShopId.toString()
-        ) { %>
-
-
-            <% if (successfulPayment) { %>
-
-                <p>
-                    Payment successful.
-                    Waiting for the seller to fulfil the trade.
-                </p>
-
-            <% } else { %>
-
-                <p>
-                    Payment is still required.
-                </p>
-
-
-                <a href="/payments/offer/<%= acceptedOffer._id %>">
-                    Proceed to Payment
-                </a>
-
-            <% } %>
-
-        <% } %>
-
-    <% } %>
-
-
-
-    <!-- ================================= -->
-    <!-- FULFILLED -->
-    <!-- ================================= -->
-
-    <% if (request.status === "fulfilled") { %>
-
-        <h3>
-            Trade Fulfilled
-        </h3>
-
-
-        <p>
-            The seller has marked this trade as fulfilled.
-        </p>
-
-
-        <% if (request.fulfilledAt) { %>
-
-            <p>
-                Fulfilled:
-                <%= request.fulfilledAt.toLocaleString() %>
-            </p>
-
-        <% } %>
-
-
-        <% if (
-            acceptedOffer &&
-            acceptedOffer.buyer &&
-            acceptedOffer.buyer.toString() ===
-            currentShopId.toString()
-        ) { %>
-
-            <p>
-                If you have received the goods,
-                confirm the trade below.
-            </p>
-
-
-            <form
-                action="/trade/<%= request._id %>/complete"
-                method="POST"
-            >
-
-                <button type="submit">
-                    Confirm Received
-                </button>
-
-            </form>
-
-        <% } else { %>
-
-            <p>
-                Waiting for the buyer to confirm receipt.
-            </p>
-
-        <% } %>
-
-    <% } %>
-
-
-
-    <!-- ================================= -->
-    <!-- COMPLETED -->
-    <!-- ================================= -->
-
-    <% if (request.status === "completed") { %>
-
-        <h3>
-            ✓ Trade Completed
-        </h3>
-
-
-        <p>
-            This trade has been successfully completed.
-        </p>
-
-
-        <% if (request.completedAt) { %>
-
-            <p>
-                Completed:
-                <%= request.completedAt.toLocaleString() %>
-            </p>
-
-        <% } %>
-
-    <% } %>
-
-
-
-    <!-- ================================= -->
-    <!-- CANCELLED -->
-    <!-- ================================= -->
-
-    <% if (request.status === "cancelled") { %>
-
-        <h3>
-            Trade Cancelled
-        </h3>
-
-
-        <p>
-            This trade is no longer active.
-        </p>
-
-    <% } %>
-
-
-    <br><br>
-
-
-    <!-- ================================= -->
-    <!-- BACK NAVIGATION -->
-    <!-- ================================= -->
-
-    <% if (
-        request.shop &&
-        request.shop._id.toString() ===
-        currentShopId.toString()
-    ) { %>
-
-        <a href="/trade/my-requests">
-            ← Back to My Requests
-        </a>
-
-
-        <br><br>
-
-    <% } %>
-
-
-    <a href="/trade">
-        ← Back to Trade Board
-    </a>
-
-
-    
-
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
+
+    <main class="nexa-main trade-details-page">
+
+        <nav class="details-breadcrumb" aria-label="Breadcrumb">
+            <a href="/trade">Trade Board</a>
+            <i data-lucide="chevron-right"></i>
+            <span>Request details</span>
+        </nav>
+
+        <header class="details-header">
+            <div>
+                <span class="details-eyebrow">NEXA MARKETPLACE / TRADE DETAILS</span>
+                <h1>Trade request</h1>
+                <p>Review the request, connect with the vendor, and manage the next step.</p>
+            </div>
+
+            <span class="details-status details-status-<%= request.status %>">
+                <span class="details-status-dot"></span>
+                <%= request.status.toUpperCase() %>
+            </span>
+        </header>
+
+        <div class="details-layout">
+
+            <div class="details-primary">
+
+                <!-- PRODUCT SUMMARY -->
+                <section class="details-hero">
+                    <div class="details-watermark" aria-hidden="true">
+                        <i data-lucide="package"></i>
+                    </div>
+
+                    <div class="details-hero-content">
+                        <span class="details-overline">PRODUCT REQUEST</span>
+                        <h2><%= request.product %></h2>
+                        <p>Requested by <strong><%= request.shop.name %></strong></p>
+
+                        <div class="details-hero-footer">
+                            <div>
+                                <span>MAXIMUM BUDGET</span>
+                                <strong>R <%= Number(request.budget).toLocaleString('en-ZA', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }) %></strong>
+                            </div>
+                            <span class="details-hero-tag">
+                                <i data-lucide="shopping-basket"></i>
+                                Vendor need
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- REQUEST SPECIFICATIONS -->
+                <section class="details-section">
+                    <div class="details-section-heading">
+                        <span class="details-eyebrow">THE ESSENTIALS</span>
+                        <h2>Request overview</h2>
+                    </div>
+
+                    <div class="details-spec-grid">
+                        <article class="details-spec-card">
+                            <i data-lucide="boxes"></i>
+                            <span>Quantity</span>
+                            <strong><%= request.quantity %> × <%= request.unit %></strong>
+                        </article>
+
+                        <article class="details-spec-card">
+                            <i data-lucide="truck"></i>
+                            <span>Fulfilment</span>
+                            <strong><%= request.fulfilment %></strong>
+                        </article>
+
+                        <article class="details-spec-card">
+                            <i data-lucide="map-pin"></i>
+                            <span>Maximum distance</span>
+                            <strong><%= request.maxDistance %> km</strong>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- LOCATION AND DESCRIPTION -->
+                <section class="details-section details-info-panel">
+                    <div class="details-info-row">
+                        <div class="details-info-icon"><i data-lucide="map-pinned"></i></div>
+                        <div>
+                            <span>TRADE LOCATION</span>
+                            <p><%= request.address %></p>
+                        </div>
+                    </div>
+
+                    <% if (request.description) { %>
+                        <div class="details-info-row">
+                            <div class="details-info-icon"><i data-lucide="align-left"></i></div>
+                            <div>
+                                <span>ADDITIONAL DETAILS</span>
+                                <p class="details-description"><%= request.description %></p>
+                            </div>
+                        </div>
+                    <% } %>
+                </section>
+
+                <!-- VENDOR PROFILE -->
+                <section class="details-section details-vendor">
+                    <div class="details-section-heading">
+                        <span class="details-eyebrow">WHO YOU'RE TRADING WITH</span>
+                        <h2>About this shop</h2>
+                    </div>
+
+                    <div class="details-vendor-body">
+                        <div class="details-vendor-avatar"><i data-lucide="store"></i></div>
+                        <div class="details-vendor-copy">
+                            <h3><%= request.shop.name %></h3>
+                            <span class="details-rating"><i data-lucide="star"></i> <%= request.shop.rating %></span>
+                            <p><%= request.shop.description || "No description available." %></p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- STATUS-AWARE ACTIONS: PRESERVE ALL EXISTING ROUTES -->
+            <aside class="details-action-column">
+                <section class="details-action-panel">
+                    <span class="details-eyebrow">NEXT STEP</span>
+
+                    <% if (request.status === "open") { %>
+
+                        <% if (request.shop._id.toString() === currentShopId.toString()) { %>
+                            <div class="details-action-icon"><i data-lucide="clipboard-list"></i></div>
+                            <h2>Manage your request</h2>
+                            <p>Your trade request is currently open and visible to other vendors.</p>
+
+                            <form action="/trade/<%= request._id %>/cancel" method="POST">
+                                <button class="details-button details-button-danger" type="submit">
+                                    <i data-lucide="x-circle"></i>
+                                    Cancel Request
+                                </button>
+                            </form>
+                        <% } else { %>
+                            <div class="details-action-icon"><i data-lucide="handshake"></i></div>
+                            <h2>Interested in this trade?</h2>
+                            <p>Make an offer or start a conversation with the vendor.</p>
+
+                            <a class="details-button details-button-primary" href="/trade/<%= request._id %>/offer">
+                                <i data-lucide="send"></i>
+                                Make Offer
+                                <i data-lucide="arrow-up-right"></i>
+                            </a>
+
+                            <a class="details-button details-button-secondary" href="/messages/<%= request.shop._id %>?trade=<%= request._id %>">
+                                <i data-lucide="message-circle"></i>
+                                Chat With Vendor
+                            </a>
+                        <% } %>
+
+                    <% } %>
+
+                    <% if (request.status === "accepted") { %>
+                        <div class="details-action-icon"><i data-lucide="handshake"></i></div>
+                        <h2>Trade in progress</h2>
+                        <p>An offer has been accepted.</p>
+
+                        <% if (acceptedOffer && acceptedOffer.seller && acceptedOffer.seller.toString() === currentShopId.toString()) { %>
+                            <% if (successfulPayment) { %>
+                                <div class="details-notice details-notice-success">Payment received.</div>
+                                <form action="/trade/<%= request._id %>/fulfill" method="POST">
+                                    <button class="details-button details-button-primary" type="submit">
+                                        <i data-lucide="package-check"></i>
+                                        Mark as Fulfilled
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <div class="details-notice">Waiting for payment from buyer.</div>
+                            <% } %>
+                        <% } %>
+
+                        <% if (acceptedOffer && acceptedOffer.buyer && acceptedOffer.buyer.toString() === currentShopId.toString()) { %>
+                            <% if (successfulPayment) { %>
+                                <div class="details-notice details-notice-success">Payment successful. Waiting for the seller to fulfil the trade.</div>
+                            <% } else { %>
+                                <div class="details-notice">Payment is still required.</div>
+                                <a class="details-button details-button-primary" href="/payments/offer/<%= acceptedOffer._id %>">
+                                    <i data-lucide="credit-card"></i>
+                                    Proceed to Payment
+                                </a>
+                            <% } %>
+                        <% } %>
+                    <% } %>
+
+                    <% if (request.status === "fulfilled") { %>
+                        <div class="details-action-icon"><i data-lucide="package-check"></i></div>
+                        <h2>Trade fulfilled</h2>
+                        <p>The seller has marked this trade as fulfilled.</p>
+
+                        <% if (request.fulfilledAt) { %>
+                            <div class="details-notice">Fulfilled: <%= request.fulfilledAt.toLocaleString() %></div>
+                        <% } %>
+
+                        <% if (acceptedOffer && acceptedOffer.buyer && acceptedOffer.buyer.toString() === currentShopId.toString()) { %>
+                            <p>If you have received the goods, confirm the trade below.</p>
+                            <form action="/trade/<%= request._id %>/complete" method="POST">
+                                <button class="details-button details-button-primary" type="submit">
+                                    <i data-lucide="check-check"></i>
+                                    Confirm Received
+                                </button>
+                            </form>
+                        <% } else { %>
+                            <div class="details-notice">Waiting for the buyer to confirm receipt.</div>
+                        <% } %>
+                    <% } %>
+
+                    <% if (request.status === "completed") { %>
+                        <div class="details-action-icon"><i data-lucide="badge-check"></i></div>
+                        <h2>Trade completed</h2>
+                        <p>This trade has been successfully completed.</p>
+
+                        <% if (request.completedAt) { %>
+                            <div class="details-notice details-notice-success">Completed: <%= request.completedAt.toLocaleString() %></div>
+                        <% } %>
+                    <% } %>
+
+                    <% if (request.status === "cancelled") { %>
+                        <div class="details-action-icon"><i data-lucide="circle-x"></i></div>
+                        <h2>Trade cancelled</h2>
+                        <p>This trade is no longer active.</p>
+                    <% } %>
+
+                    <div class="details-action-bottom">
+                        <i data-lucide="shield-check"></i>
+                        Trade confidently on NEXA
+                    </div>
+                </section>
+
+                <div class="details-back-links">
+                    <% if (request.shop && request.shop._id.toString() === currentShopId.toString()) { %>
+                        <a href="/trade/my-requests"><i data-lucide="arrow-left"></i> Back to My Requests</a>
+                    <% } %>
+                    <a href="/trade"><i data-lucide="arrow-left"></i> Back to Trade Board</a>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
 
 </body>
-
 </html>

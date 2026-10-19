@@ -2,376 +2,464 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>NEXA Dashboard</title>
+    <title>Dashboard | NEXA</title>
 
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        /* Stage 1.5 — embossed icon watermarks on activity cards. */
+        .activity-network {
+            padding: 14px 0;
+        }
 
+        .activity-network .activity-grid {
+            gap: 18px;
+        }
+
+        .activity-network .activity-card {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 0;
+            min-height: 190px;
+            padding: 22px;
+            border: 1px solid rgba(140, 225, 26, .15);
+            border-radius: 22px;
+            background: #101914;
+            transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+        }
+
+        .activity-network .activity-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(140, 225, 26, .42);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .22);
+        }
+
+        /* Decorative icon replaces the small lime icon box. */
+        .activity-network .activity-icon {
+            display: none;
+        }
+
+        .activity-network .activity-watermark {
+            position: absolute;
+            right: -20px;
+            bottom: -25px;
+            width: 155px;
+            height: 155px;
+            display: grid;
+            place-items: center;
+            color: rgba(140, 225, 26, .10);
+            pointer-events: none;
+            z-index: 0;
+            transform: rotate(-12deg);
+            transition: transform .4s ease, color .4s ease;
+        }
+
+        .activity-network .activity-watermark svg {
+            width: 100%;
+            height: 100%;
+            stroke-width: 1.15;
+            filter: drop-shadow(1px 1px 0 rgba(255, 255, 255, .075)) drop-shadow(-1px -1px 0 rgba(0, 0, 0, .6));
+        }
+
+        .activity-network .activity-card:hover .activity-watermark {
+            transform: rotate(-7deg) scale(1.06);
+            color: rgba(140, 225, 26, .16);
+        }
+
+        .activity-network .activity-card>span,
+        .activity-network .activity-card>strong,
+        .activity-network .activity-arrow {
+            position: relative;
+            z-index: 1;
+        }
+
+        .activity-network .activity-card>span {
+            color: #A5B3A8;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .activity-network .activity-card>strong {
+            margin-top: 14px;
+            font-size: clamp(30px, 2.5vw, 40px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .activity-network .activity-arrow {
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .activity-network {
+                padding: 8px 0;
+            }
+
+            .activity-network .activity-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .activity-network .activity-card {
+                min-height: 165px;
+                padding: 16px;
+                border-radius: 18px;
+            }
+
+            .activity-network .activity-card>strong {
+                font-size: 32px;
+            }
+
+            .activity-network .activity-watermark {
+                width: 112px;
+                height: 112px;
+                right: -18px;
+                bottom: -12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .activity-network .activity-card,
+            .activity-network .activity-watermark {
+                transition: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-
-    <!-- ================================= -->
-    <!-- HEADER -->
-    <!-- ================================= -->
-
-    <h1>
-        NEXA Dashboard
-    </h1>
-
-
-    <h2>
-        Welcome, <%= user.name %> 👋
-    </h2>
-
-
-    <h3>
-        <%= shop.name %>
-    </h3>
-
-
-    <p>
-        <%= shop.category || "Shop" %>
-    </p>
-
-
-    <p>
-        📍 <%= shop.address %>
-    </p>
-
-
-    <hr>
-
-
-    <!-- ================================= -->
-    <!-- QUICK ACTIONS -->
-    <!-- ================================= -->
-
-    <h2>
-        Quick Actions
-    </h2>
-
-
-    <a href="/trade/create">
-        Create Trade Request
-    </a>
-
-    <br><br>
-
-
-    <a href="/trade">
-        Browse Trade Board
-    </a>
-
-    <br><br>
-
-
-    <a href="/trade/my-requests">
-        My Requests
-    </a>
-
-    <br><br>
-
-
-    <a href="/payments/receive">
-        Receive Payment
-    </a>
-
-
-    <hr>
-
-
-    <!-- ================================= -->
-    <!-- ACTIVITY -->
-    <!-- ================================= -->
-
-    <h2>
-        Activity
-    </h2>
-
-
-    <p>
-
-        Active Trades:
-
-        <strong>
-            <%= activeTrades %>
-        </strong>
-
-    </p>
-
-
-    <p>
-
-        Pending Offers:
-
-        <strong>
-            <%= pendingOffers %>
-        </strong>
-
-    </p>
-
-
-    <p>
-
-        Unread Messages:
-
-        <strong>
-            <%= unreadMessages %>
-        </strong>
-
-    </p>
-
-
-    <p>
-
-        Notifications:
-
-        <strong>
-            <%= unreadNotifications %>
-        </strong>
-
-    </p>
-
-
-    <hr>
-
-
-    <!-- ================================= -->
-    <!-- MONEY -->
-    <!-- ================================= -->
-
-    <h2>
-        Payment Summary
-    </h2>
-
-
-    <p>
-
-        Total Received:
-
-        <strong>
-            R<%= Number(totalReceived).toFixed(2) %>
-        </strong>
-
-    </p>
-
-
-    <p>
-
-        Total Sent:
-
-        <strong>
-            R<%= Number(totalSent).toFixed(2) %>
-        </strong>
-
-    </p>
-
-
-    <hr>
-
-
-    <!-- ================================= -->
-    <!-- RECENT TRANSACTIONS -->
-    <!-- ================================= -->
-
-    <h2>
-        Recent Transactions
-    </h2>
-
-
-    <% if (recentTransactions.length===0) { %>
-
-        <p>
-            No transactions yet.
-        </p>
-
-        <% } %>
-
-
-            <% recentTransactions.forEach(transaction=> { %>
-
-                <div>
-
-
-                    <p>
-
-                        <strong>
-
-                            <% if ( transaction.fromShop && transaction.fromShop._id.toString()===shop._id.toString() )
-                                { %>
-
-                                Payment Sent
-
-                                <% } else { %>
-
-                                    Payment Received
-
-                                    <% } %>
-
-                        </strong>
-
-                    </p>
-
-
-                    <% if (transaction.tradeRequest) { %>
-
-                        <p>
-                            <%= transaction.tradeRequest.product %>
-                        </p>
-
-                        <% } else if ( transaction.type==="customer_payment" ) { %>
-
-                            <p>
-                                Customer Payment
-                            </p>
-
+    <%- include('../partials/sidebar') %>
+        <%- include('../partials/navbar') %>
+
+            <main class="nexa-main nexa-dashboard">
+
+                <!-- DASHBOARD HEADER -->
+                <header class="dashboard-header">
+                    <div>
+                        <span class="dashboard-eyebrow">YOUR WORKSPACE</span>
+
+                        <h1>
+                            Dashboard<span class="nexa-title-dot">.</span>
+                        </h1>
+
+                        <p>Welcome back, <%= user.name %>.</p>
+                    </div>
+
+                    <a href="/notifications" class="dashboard-notification" aria-label="Notifications">
+                        <i data-lucide="bell"></i>
+                        <% if (unreadNotifications> 0) { %>
+                            <span class="notification-dot"></span>
                             <% } %>
+                    </a>
+                </header>
 
+                <!-- SHOP INFORMATION -->
+                <section class="dashboard-shop">
+                    <div class="shop-avatar">
+                        <i data-lucide="store"></i>
+                    </div>
 
-                                <p>
+                    <div class="shop-details">
+                        <h2>
+                            <%= shop.name %>
+                        </h2>
+                        <p>
+                            <%= shop.category || "Shop" %>
+                                <% if (shop.address) { %>
+                                    <span class="shop-separator">·</span>
+                                    <%= shop.address %>
+                                        <% } %>
+                        </p>
+                    </div>
 
-                                    R<%= Number(transaction.amount).toFixed(2) %>
+                    <a href="/shop" class="shop-link">
+                        <i data-lucide="arrow-up-right"></i>
+                    </a>
+                </section>
 
-                                </p>
+                <!-- FINANCIAL OVERVIEW -->
+                <section class="dashboard-finances">
 
+                    <article class="finance-card finance-card-primary">
+                        <div class="finance-card-content">
+                            <div class="finance-card-top">
+                                <span>Total received</span>
+                                <i data-lucide="arrow-down-left"></i>
+                            </div>
 
-                                <p>
+                            <h2>
+                                <small>R</small>
+                                <%= Number(totalReceived).toLocaleString('en-ZA', { minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2 }) %>
+                            </h2>
 
-                                    <%= transaction.createdAt.toLocaleString() %>
+                            <p>Payments received through NEXA</p>
 
-                                </p>
-
-
-                                <a href="/transactions/<%= transaction._id %>">
-                                    View Receipt
+                            <div class="finance-card-actions">
+                                <a href="/payments/send" class="finance-action-dark">
+                                    <i data-lucide="arrow-up-right"></i>
+                                    Send
                                 </a>
 
+                                <a href="/payments/receive" class="finance-action-light">
+                                    <i data-lucide="arrow-down-left"></i>
+                                    Receive
+                                </a>
+                            </div>
+                        </div>
+                    </article>
 
-                </div>
+                    <article class="finance-card finance-card-dark">
+                        <div class="finance-card-content">
+                            <div class="finance-card-top">
+                                <span>Total sent</span>
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
 
+                            <h2>
+                                <small>R</small>
+                                <%= Number(totalSent).toLocaleString('en-ZA', { minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2 }) %>
+                            </h2>
 
-                <hr>
+                            <p>Payments sent through NEXA</p>
 
-                <% }) %>
+                            <a href="/transactions" class="finance-history-link">
+                                View transactions
+                                <i data-lucide="arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </article>
 
+                </section>
 
-                    <!-- ================================= -->
-                    <!-- NAVIGATION -->
-                    <!-- ================================= -->
+                <!-- ACTIVITY -->
+                <section class="dashboard-section">
 
-                    <h2>
-                        Navigation
-                    </h2>
+                    <div class="section-heading">
+                        <div>
+                            <span class="dashboard-eyebrow">AT A GLANCE</span>
+                            <h2>Activity overview</h2>
+                        </div>
+                    </div>
 
+                    <div class="activity-network">
+                        <div class="activity-grid">
 
-                    <nav>
+                            <a href="/trade/my-requests" class="activity-card">
+                                <div class="activity-watermark" aria-hidden="true">
+                                    <i data-lucide="store"></i>
+                                </div>
+                                <span>Active trades</span>
+                                <strong>
+                                    <%= activeTrades %>
+                                </strong>
+                                <i data-lucide="arrow-up-right" class="activity-arrow"></i>
+                            </a>
 
+                            <a href="/offers" class="activity-card">
+                                <div class="activity-watermark" aria-hidden="true">
+                                    <i data-lucide="handshake"></i>
+                                </div>
+                                <span>Pending offers</span>
+                                <strong>
+                                    <%= pendingOffers %>
+                                </strong>
+                                <i data-lucide="arrow-up-right" class="activity-arrow"></i>
+                            </a>
 
-                        <a href="/trade">
-                            Trade
+                            <a href="/messages" class="activity-card">
+                                <div class="activity-watermark" aria-hidden="true">
+                                    <i data-lucide="message-circle"></i>
+                                </div>
+                                <span>Unread messages</span>
+                                <strong>
+                                    <%= unreadMessages %>
+                                </strong>
+                                <i data-lucide="arrow-up-right" class="activity-arrow"></i>
+                            </a>
+
+                            <a href="/notifications" class="activity-card">
+                                <div class="activity-watermark" aria-hidden="true">
+                                    <i data-lucide="bell"></i>
+                                </div>
+                                <span>Notifications</span>
+                                <strong>
+                                    <%= unreadNotifications %>
+                                </strong>
+                                <i data-lucide="arrow-up-right" class="activity-arrow"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- QUICK ACTIONS -->
+                <section class="dashboard-section">
+
+                    <div class="section-heading">
+                        <div>
+                            <span class="dashboard-eyebrow">GET THINGS DONE</span>
+                            <h2>Quick actions</h2>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions-grid">
+
+                        <a href="/trade/create" class="quick-action quick-action-featured">
+                            <div class="quick-action-icon">
+                                <i data-lucide="plus"></i>
+                            </div>
+                            <div>
+                                <strong>Create trade</strong>
+                                <span>Post a new request</span>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="quick-action-arrow"></i>
                         </a>
 
-
-                        <br><br>
-
-
-                        <a href="/offers">
-                            Offers
+                        <a href="/trade" class="quick-action">
+                            <div class="quick-action-icon">
+                                <i data-lucide="search"></i>
+                            </div>
+                            <div>
+                                <strong>Browse trades</strong>
+                                <span>Find nearby vendors</span>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="quick-action-arrow"></i>
                         </a>
 
-
-                        <br><br>
-
-
-                        <a href="/messages">
-
-                            Messages
-
-                            <span id="message-count" style="display: none;"></span>
-
+                        <a href="/trade/my-requests" class="quick-action">
+                            <div class="quick-action-icon">
+                                <i data-lucide="clipboard-list"></i>
+                            </div>
+                            <div>
+                                <strong>My requests</strong>
+                                <span>Manage your trades</span>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="quick-action-arrow"></i>
                         </a>
 
-
-                        <br><br>
-
-
-                        <a href="/payments">
-                            Payments
+                        <a href="/payments/receive" class="quick-action">
+                            <div class="quick-action-icon">
+                                <i data-lucide="qr-code"></i>
+                            </div>
+                            <div>
+                                <strong>Receive payment</strong>
+                                <span>Generate a payment QR</span>
+                            </div>
+                            <i data-lucide="arrow-up-right" class="quick-action-arrow"></i>
                         </a>
 
+                    </div>
+                </section>
 
-                        <br><br>
+                <!-- RECENT TRANSACTIONS -->
+                <section class="dashboard-section dashboard-transactions">
 
+                    <div class="section-heading">
+                        <div>
+                            <span class="dashboard-eyebrow">YOUR MONEY</span>
+                            <h2>Recent transactions</h2>
+                        </div>
 
-                        <a href="/transactions">
-                            Transactions
+                        <a href="/transactions" class="section-view-all">
+                            View all
+                            <i data-lucide="arrow-up-right"></i>
                         </a>
+                    </div>
 
+                    <div class="transactions-panel">
 
-                        <br><br>
+                        <% if (recentTransactions.length===0) { %>
 
+                            <div class="transactions-empty">
+                                <div class="empty-icon">
+                                    <i data-lucide="receipt-text"></i>
+                                </div>
+                                <h3>No transactions yet</h3>
+                                <p>Your payment activity will appear here.</p>
+                            </div>
 
-                        <a href="/notifications">
+                            <% } else { %>
 
-                            Notifications
+                                <% recentTransactions.forEach(transaction=> { %>
 
-                            <span id="notification-count" style="display: none;"></span>
+                                    <% const isSent=transaction.fromShop &&
+                                        transaction.fromShop._id.toString()===shop._id.toString(); %>
 
-                        </a>
+                                        <a href="/transactions/<%= transaction._id %>" class="transaction-row">
 
+                                            <div
+                                                class="transaction-icon <%= isSent ? 'transaction-sent' : 'transaction-received' %>">
+                                                <i
+                                                    data-lucide="<%= isSent ? 'arrow-up-right' : 'arrow-down-left' %>"></i>
+                                            </div>
 
-                        <br><br>
+                                            <div class="transaction-info">
+                                                <strong>
+                                                    <%= isSent ? 'Payment sent' : 'Payment received' %>
+                                                </strong>
 
+                                                <span>
+                                                    <% if (transaction.tradeRequest) { %>
+                                                        <%= transaction.tradeRequest.product %>
+                                                            <% } else if (transaction.type==="customer_payment" ) { %>
+                                                                Customer payment
+                                                                <% } else { %>
+                                                                    NEXA payment
+                                                                    <% } %>
+                                                </span>
 
-                        <a href="/shop">
-                            My Shop
-                        </a>
+                                                <small>
+                                                    <%= transaction.createdAt.toLocaleString() %>
+                                                </small>
+                                            </div>
 
+                                            <div class="transaction-amount <%= isSent ? '' : 'amount-received' %>">
+                                                <strong>
+                                                    <%= isSent ? '−' : '+' %>R<%=
+                                                            Number(transaction.amount).toLocaleString('en-ZA', {
+                                                            minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+                                                </strong>
+                                                <span>View receipt</span>
+                                            </div>
 
-                        <br><br>
-                        <a href="/settings">
-                            Settings
-                        </a>
+                                        </a>
 
-                        <br><br>
+                                        <% }) %>
 
+                                            <% } %>
 
-                        <a href="/logout">
-                            Logout
-                        </a>
+                    </div>
 
+                </section>
 
-                    </nav>
+            </main>
 
+            <!-- EXISTING SOCKET.IO FUNCTIONALITY -->
+            <script>
+                window.dashboardData = {
+                    currentShopId: "<%= shop._id %>"
+                };
+            </script>
 
-                    <!-- ================================= -->
-                    <!-- SOCKET DATA -->
-                    <!-- ================================= -->
+            <script src="/socket.io/socket.io.js"></script>
+            <script src="/js/notifications.js"></script>
+            <script src="/js/messages.js"></script>
 
-                    <script>
-
-                        window.dashboardData = {
-
-                            currentShopId:
-                                "<%= shop._id %>"
-
-                        };
-
-                    </script>
-
-
-                    <script src="/socket.io/socket.io.js"></script>
-
-                    <script src="/js/notifications.js"></script>
-
-                    <script src="/js/messages.js"></script>
-
+            <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+            <script src="/js/navigation.js"></script>
 
 </body>
 

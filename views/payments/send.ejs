@@ -1,100 +1,235 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Payment - NEXA
-    </title>
+    <title>Complete Payment - NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/trade-payment.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
-    <h1>
-        Complete Payment
-    </h1>
+    <main class="nexa-main trade-payment-page">
 
+        <a href="/offers/<%= offer._id %>" class="trade-payment-back">
 
-    <h2>
-        Trade
-    </h2>
+            <i data-lucide="arrow-left"></i>
 
+            Back to Offer
 
-    <p>
-        Product:
-        <strong>
-            <%= offer.tradeRequest.product %>
-        </strong>
-    </p>
+        </a>
 
 
-    <p>
-        Quantity:
-        <%= offer.quantity %>
-        <%= offer.tradeRequest.unit %>
-    </p>
+        <header class="trade-payment-heading">
+
+            <span class="trade-payment-eyebrow">
+                NEXA PAYMENTS
+            </span>
+
+            <h1>
+                Complete Payment
+            </h1>
+
+            <p>
+                Review your trade details before confirming payment.
+            </p>
+
+        </header>
 
 
-    <p>
-        Seller:
-        <strong>
-            <%= offer.seller.name %>
-        </strong>
-    </p>
+        <div class="trade-payment-layout">
+
+            <section class="trade-payment-card">
+
+                <div class="trade-payment-card-header">
+
+                    <span class="trade-payment-eyebrow">
+                        PAYMENT SUMMARY
+                    </span>
+
+                    <h2>
+                        Review Your Payment
+                    </h2>
+
+                    <p>
+                        Make sure everything is correct before proceeding.
+                    </p>
+
+                </div>
 
 
-    <p>
-        Amount:
-        <strong>
-            R<%= offer.amount %>
-        </strong>
-    </p>
+                <div class="trade-payment-details">
+
+                    <div class="trade-payment-detail-row">
+
+                        <span>
+                            Product
+                        </span>
+
+                        <strong>
+                            <%= offer.tradeRequest.product %>
+                        </strong>
+
+                    </div>
 
 
-    <p>
-        Payment Method:
-        NEXA Mock Payment
-    </p>
+                    <div class="trade-payment-detail-row">
+
+                        <span>
+                            Quantity
+                        </span>
+
+                        <strong>
+                            <%= offer.quantity %>
+                            <%= offer.tradeRequest.unit %>
+                        </strong>
+
+                    </div>
 
 
-    <form
-        action="/payments/offer/<%= offer._id %>"
-        method="POST"
-    >
+                    <div class="trade-payment-detail-row">
 
-        <button type="submit">
+                        <span>
+                            Seller
+                        </span>
 
-            Pay R<%= offer.amount %>
+                        <strong>
+                            <%= offer.seller.name %>
+                        </strong>
 
-        </button>
-
-    </form>
-
-
-    <br>
+                    </div>
 
 
-    <a href="/offers/<%= offer._id %>">
+                    <div class="trade-payment-detail-row">
 
-        Cancel
+                        <span>
+                            Payment Method
+                        </span>
 
-    </a>
+                        <strong>
+                            NEXA Mock Payment
+                        </strong>
 
+                    </div>
+
+                </div>
+
+
+                <div class="trade-payment-total">
+
+                    <div>
+
+                        <span>
+                            TOTAL PAYMENT
+                        </span>
+
+                        <strong>
+                            R<%= Number(offer.amount).toFixed(2) %>
+                        </strong>
+
+                    </div>
+
+                    <i data-lucide="receipt-text"></i>
+
+                </div>
+
+
+                <form
+                    action="/payments/offer/<%= offer._id %>"
+                    method="POST"
+                    class="trade-payment-form"
+                >
+
+                    <button type="submit" class="trade-payment-submit">
+
+                        <i data-lucide="check-circle-2"></i>
+
+                        Pay R<%= Number(offer.amount).toFixed(2) %>
+
+                    </button>
+
+                </form>
+
+
+                <a href="/offers/<%= offer._id %>" class="trade-payment-cancel">
+
+                    Cancel Payment
+
+                </a>
+
+            </section>
+
+
+            <aside class="trade-payment-sidebar">
+
+                <section class="trade-payment-info-card">
+
+                    <span class="trade-payment-eyebrow">
+                        PAYMENT METHOD
+                    </span>
+
+                    <h3>
+                        Mock Payment
+                    </h3>
+
+                    <p>
+                        This trade currently uses NEXA's mock payment flow,
+                        not a real bank or Interledger transfer.
+                    </p>
+
+                    <i data-lucide="wallet-cards" class="trade-payment-watermark"></i>
+
+                </section>
+
+
+                <section class="trade-payment-note-card">
+
+                    <i data-lucide="shield-check"></i>
+
+                    <div>
+
+                        <h3>
+                            Check Before Confirming
+                        </h3>
+
+                        <p>
+                            Verify the seller, quantity, and payment amount
+                            before submitting your payment.
+                        </p>
+
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script src="/js/navigation.js"></script>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
 
 </body>
 
