@@ -1,0 +1,445 @@
+
+/* ==========================================
+   NEXA — TRANSACTION RECEIPT
+   STAGE 7.2
+========================================== */
+
+.transaction-details-page {
+    padding-top: 18px;
+    padding-bottom: 70px;
+    color: #F7FAF8;
+}
+
+.transaction-details-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 27px;
+    color: #98A49D;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.transaction-details-back:hover {
+    color: #8CE11A;
+}
+
+.transaction-details-back svg {
+    width: 17px;
+    height: 17px;
+}
+
+.transaction-details-heading {
+    margin-bottom: 29px;
+}
+
+.transaction-details-eyebrow {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.transaction-details-heading h1 {
+    margin: 10px 0;
+    font-size: clamp(29px, 3vw, 38px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.transaction-details-heading p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+
+/* LAYOUT */
+
+.transaction-details-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
+    align-items: start;
+    gap: 20px;
+}
+
+
+/* RECEIPT */
+
+.transaction-receipt-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #101914;
+    border: 1px solid #25382B;
+    border-radius: 21px;
+}
+
+.transaction-receipt-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 34px 28px;
+    background: #0B130F;
+    border-bottom: 1px solid #25382B;
+    text-align: center;
+}
+
+.transaction-receipt-icon {
+    display: grid;
+    place-items: center;
+    width: 65px;
+    height: 65px;
+    margin-bottom: 20px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border-radius: 18px;
+}
+
+.transaction-receipt-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+.transaction-receipt-top h2 {
+    margin: 14px 0 17px;
+    color: #F7FAF8;
+    font-size: clamp(34px, 4vw, 46px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    overflow-wrap: anywhere;
+}
+
+.transaction-receipt-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 13px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: capitalize;
+}
+
+.transaction-receipt-status-dot {
+    width: 7px;
+    height: 7px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+.transaction-receipt-status.is-completed {
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.1);
+}
+
+.transaction-receipt-status.is-pending {
+    color: #E6B16A;
+    background: rgba(230, 177, 106, 0.1);
+}
+
+.transaction-receipt-status.is-failed {
+    color: #F08080;
+    background: rgba(240, 128, 128, 0.1);
+}
+
+.transaction-receipt-status.is-neutral {
+    color: #98A49D;
+    background: rgba(152, 164, 157, 0.1);
+}
+
+
+/* RECEIPT ROWS */
+
+.transaction-receipt-rows {
+    padding: 10px 29px;
+}
+
+.transaction-receipt-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 19px 0;
+    border-bottom: 1px solid #25382B;
+}
+
+.transaction-receipt-row:last-child {
+    border-bottom: none;
+}
+
+.transaction-receipt-row > span {
+    color: #98A49D;
+    font-size: 12px;
+}
+
+.transaction-receipt-row strong {
+    max-width: 60%;
+    color: #F7FAF8;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.transaction-receipt-long-value {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}
+
+
+/* RECEIPT FOOTER */
+
+.transaction-receipt-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 22px 29px;
+    background: #0B130F;
+    border-top: 1px solid #25382B;
+}
+
+.transaction-receipt-logo {
+    display: block;
+    width: 95px;
+    height: 35px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.transaction-receipt-footer p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 10px;
+    text-align: right;
+}
+
+
+/* SIDEBAR */
+
+.transaction-details-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+.transaction-details-side-card {
+    position: relative;
+    overflow: hidden;
+    padding: 27px;
+    background: #101914;
+    border: 1px solid #25382B;
+    border-radius: 19px;
+}
+
+.transaction-details-side-card > *:not(.transaction-details-watermark) {
+    position: relative;
+    z-index: 1;
+}
+
+.transaction-details-side-card h3 {
+    margin: 12px 0;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.transaction-details-side-card p {
+    margin: 0 0 25px;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.transaction-details-side-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 15px 0;
+    border-top: 1px solid #25382B;
+}
+
+.transaction-details-side-row span {
+    color: #98A49D;
+    font-size: 12px;
+}
+
+.transaction-details-side-row strong {
+    color: #F7FAF8;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+
+.transaction-details-watermark {
+    position: absolute;
+    right: -23px;
+    bottom: -27px;
+    width: 145px;
+    height: 145px;
+    color: #8CE11A;
+    opacity: 0.065;
+    pointer-events: none;
+}
+
+
+/* ACTIONS */
+
+.transaction-details-trade-link,
+.transaction-details-print-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 51px;
+    padding: 13px 17px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.transaction-details-trade-link {
+    color: #F7FAF8;
+    background: #1A2920;
+    border: 1px solid #314636;
+}
+
+.transaction-details-trade-link:hover {
+    border-color: #8CE11A;
+}
+
+.transaction-details-print-button {
+    color: #14210B;
+    background: #8CE11A;
+    border: none;
+    cursor: pointer;
+}
+
+.transaction-details-print-button:hover {
+    background: #A5F23E;
+}
+
+.transaction-details-trade-link svg,
+.transaction-details-print-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* TABLET */
+
+@media (max-width: 900px) {
+
+    .transaction-details-layout {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .transaction-details-page {
+        padding-top: 10px;
+        padding-bottom: 110px;
+    }
+
+    .transaction-details-heading h1 {
+        font-size: 30px;
+    }
+
+    .transaction-receipt-top {
+        padding: 29px 18px;
+    }
+
+    .transaction-receipt-rows {
+        padding: 8px 20px;
+    }
+
+    .transaction-receipt-row {
+        gap: 12px;
+    }
+
+    .transaction-receipt-row strong {
+        max-width: 58%;
+    }
+
+    .transaction-receipt-footer {
+        padding: 19px 20px;
+    }
+
+    .transaction-details-side-card {
+        padding: 22px;
+    }
+
+}
+
+
+/* PRINT RECEIPT */
+
+@media print {
+
+    body {
+        background: #FFFFFF !important;
+        color: #111111 !important;
+    }
+
+    .nexa-sidebar,
+    .nexa-navbar,
+    .transaction-details-back,
+    .transaction-details-heading,
+    .transaction-details-sidebar {
+        display: none !important;
+    }
+
+    .transaction-details-page {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .transaction-details-layout {
+        display: block !important;
+    }
+
+    .transaction-receipt-card {
+        width: 100%;
+        background: #FFFFFF !important;
+        border: 1px solid #DDDDDD !important;
+        border-radius: 0;
+        color: #111111 !important;
+    }
+
+    .transaction-receipt-top,
+    .transaction-receipt-footer {
+        background: #FFFFFF !important;
+    }
+
+    .transaction-receipt-top h2,
+    .transaction-receipt-row strong {
+        color: #111111 !important;
+    }
+
+    .transaction-receipt-row > span,
+    .transaction-receipt-footer p {
+        color: #555555 !important;
+    }
+
+    .transaction-receipt-status {
+        border: 1px solid #AAAAAA;
+    }
+
+    .transaction-receipt-row {
+        break-inside: avoid;
+    }
+
+}

@@ -2,114 +2,249 @@
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Pay with NEXA
-    </title>
+    <title>Pay with NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/customer-pay.css">
 
 </head>
 
-<body>
+<body class="customer-pay-body">
+
+    <main class="customer-pay-page">
+
+        <!-- BRAND HEADER -->
+
+        <header class="customer-pay-header">
+
+            <a href="/" class="customer-pay-brand" aria-label="NEXA home">
+
+                <img src="/images/branding/nexa-logo2.svg" alt="NEXA" class="customer-pay-logo">
+
+            </a>
+
+            <div class="customer-pay-header-label">
+
+                <i data-lucide="shield-check"></i>
+
+                Payment Checkout
+
+            </div>
+
+        </header>
 
 
-    <h1>
-        NEXA Payment
-    </h1>
+        <!-- CHECKOUT HEADING -->
+
+        <div class="customer-pay-heading">
+
+            <span class="customer-pay-eyebrow">
+                NEXA PAYMENTS
+            </span>
+
+            <h1>
+                Complete Your Payment<span class="nexa-title-dot">.</span>
+            </h1>
+
+            <p>
+                Review the payment request and enter your Open Payments
+                wallet address to continue.
+            </p>
+
+        </div>
 
 
-    <p>
-        Pay
-    </p>
+        <!-- CHECKOUT LAYOUT -->
+
+        <div class="customer-pay-layout">
+
+            <!-- PAYMENT SUMMARY -->
+
+            <section class="customer-pay-summary-card">
+
+                <span class="customer-pay-eyebrow">
+                    PAYMENT SUMMARY
+                </span>
+
+                <p class="customer-pay-amount-label">
+                    Amount to pay
+                </p>
+
+                <h2 class="customer-pay-amount">
+                    R<%= Number(paymentRequest.amount).toFixed(2) %>
+                </h2>
 
 
-    <h2>
-        R<%= paymentRequest.amount %>
-    </h2>
+                <div class="customer-pay-details">
+
+                    <div class="customer-pay-detail-row">
+
+                        <span>
+                            Paying to
+                        </span>
+
+                        <strong>
+                            <%= paymentRequest.shop.name %>
+                        </strong>
+
+                    </div>
 
 
-    <p>
-        To:
-        <strong>
-            <%= paymentRequest.shop.name %>
-        </strong>
-    </p>
+                    <div class="customer-pay-detail-row">
+
+                        <span>
+                            Reference
+                        </span>
+
+                        <strong>
+                            <%= paymentRequest.reference %>
+                        </strong>
+
+                    </div>
 
 
-    <p>
-        Reference:
-        <strong>
-            <%= paymentRequest.reference %>
-        </strong>
-    </p>
+                    <div class="customer-pay-detail-row">
+
+                        <span>
+                            Currency
+                        </span>
+
+                        <strong>
+                            <%= paymentRequest.currency %>
+                        </strong>
+
+                    </div>
+
+                </div>
 
 
-    <p>
-        Currency:
-        <%= paymentRequest.currency %>
-    </p>
+                <div class="customer-pay-recipient">
+
+                    <span>
+                        RECIPIENT WALLET
+                    </span>
+
+                    <p>
+                        <%= paymentRequest.walletAddress %>
+                    </p>
+
+                </div>
+
+                <i data-lucide="wallet-cards" class="customer-pay-watermark"></i>
+
+            </section>
 
 
-    <hr>
+            <!-- PAYMENT FORM -->
+
+            <section class="customer-pay-form-card">
+
+                <div class="customer-pay-form-heading">
+
+                    <span class="customer-pay-eyebrow">
+                        PAYMENT METHOD
+                    </span>
+
+                    <h2>
+                        Pay with Open Payments
+                    </h2>
+
+                    <p>
+                        Enter your wallet address to proceed with
+                        payment authorization.
+                    </p>
+
+                </div>
 
 
-    <p>
-        Recipient wallet:
-    </p>
+                <form action="/pay/<%= paymentRequest._id %>/open-payments" method="POST" class="customer-pay-form">
 
-    <p>
-        <%= paymentRequest.walletAddress %>
-    </p>
+                    <div class="customer-pay-field">
 
+                        <label for="payerWalletAddress">
+                            Your Open Payments Wallet Address
+                            <span>*</span>
+                        </label>
 
-    <form
-    action="/pay/<%= paymentRequest._id %>/open-payments"
-    method="POST"
->
+                        <div class="customer-pay-input-wrap">
 
-    <div>
+                            <i data-lucide="wallet"></i>
 
-        <label for="payerWalletAddress">
-            Your Open Payments Wallet Address
-        </label>
+                            <input type="text" id="payerWalletAddress" name="payerWalletAddress"
+                                placeholder="$ilp.interledger-test.dev/yourWalletAdress" autocomplete="off"
+                                autocapitalize="none" spellcheck="false" required>
 
-        <br>
+                        </div>
 
-        <input
-            type="text"
-            id="payerWalletAddress"
-            name="payerWalletAddress"
-            placeholder="$ilp.interledger-test.dev/devante-zar"
-            required
-        >
+                        <p class="customer-pay-field-help">
+                            Enter your Interledger-compatible wallet address
+                            to authorize this payment.
+                        </p>
 
-    </div>
-
-    <br>
-
-    <button type="submit">
-        Continue with Open Payments
-    </button>
-
-</form>
+                    </div>
 
 
-    <p>
-        Open Payments authorization
-        will be connected next.
-    </p>
+                    <div class="customer-pay-notice">
 
+                        <i data-lucide="info"></i>
+
+                        <p>
+                            Continuing will start the Open Payments
+                            authorization process. It does not
+                            confirm that payment has been completed.
+                        </p>
+
+                    </div>
+
+
+                    <button type="submit" class="customer-pay-submit">
+
+                        Continue with Open Payments
+
+                        <i data-lucide="arrow-right"></i>
+
+                    </button>
+
+                </form>
+
+            </section>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer class="customer-pay-footer">
+
+            <span>
+
+                <i data-lucide="shield-check"></i>
+
+                Verify the merchant and amount before authorizing payment.
+
+            </span>
+
+            <p>
+                Powered by <strong>NEXA</strong>
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
 
 </body>
 

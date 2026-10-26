@@ -1,279 +1,387 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Transaction Receipt - NEXA
-    </title>
+    <title>Transaction Receipt - NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/transaction-details.css">
 
 </head>
 
 <body>
 
-    <h1>
-        Transaction Receipt
-    </h1>
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
+
+    <main class="nexa-main transaction-details-page">
+
+        <a href="/transactions" class="transaction-details-back">
+
+            <i data-lucide="arrow-left"></i>
+
+            Back to Transactions
+
+        </a>
 
 
-    <!-- ============================== -->
-    <!-- TRANSACTION TYPE -->
-    <!-- ============================== -->
+        <header class="transaction-details-heading">
 
-    <p>
-        Transaction Type:
+            <span class="transaction-details-eyebrow">
+                NEXA PAYMENT RECORD
+            </span>
 
-        <strong>
+            <h1>
+                Transaction Receipt<span class="nexa-title-dot">.</span>
+            </h1>
 
-            <% if (transaction.type === "customer_payment") { %>
+            <p>
+                Review the details of this recorded transaction.
+            </p>
 
-                Customer Payment
-
-            <% } else if (transaction.type === "direct_payment") { %>
-
-                Direct Payment
-
-            <% } else { %>
-
-                Trade Payment
-
-            <% } %>
-
-        </strong>
-    </p>
+        </header>
 
 
-    <!-- ============================== -->
-    <!-- REFERENCE -->
-    <!-- ============================== -->
+        <%
 
-    <p>
-        Reference:
+            const transactionType =
+                transaction.type === "customer_payment"
+                    ? "Customer Payment"
+                    : transaction.type === "direct_payment"
+                        ? "Direct Payment"
+                        : "Trade Payment";
 
-        <strong>
-            <%= transaction.reference %>
-        </strong>
-    </p>
+            const transactionStatus =
+                String(transaction.status || "unknown").toLowerCase();
 
+            const statusClass =
+                ["paid", "completed"].includes(transactionStatus)
+                    ? "is-completed"
+                    : transactionStatus === "pending"
+                        ? "is-pending"
+                        : transactionStatus === "failed"
+                            ? "is-failed"
+                            : "is-neutral";
 
-    <!-- ============================== -->
-    <!-- FROM -->
-    <!-- ============================== -->
-
-    <p>
-        From:
-
-        <strong>
-
-            <% if (transaction.type === "customer_payment") { %>
-
-                External Customer
-
-            <% } else if (transaction.fromShop) { %>
-
-                <%= transaction.fromShop.name %>
-
-            <% } else { %>
-
-                Unknown
-
-            <% } %>
-
-        </strong>
-    </p>
-
-
-    <!-- ============================== -->
-    <!-- TO -->
-    <!-- ============================== -->
-
-    <p>
-        To:
-
-        <strong>
-
-            <% if (transaction.toShop) { %>
-
-                <%= transaction.toShop.name %>
-
-            <% } else { %>
-
-                Unknown Shop
-
-            <% } %>
-
-        </strong>
-    </p>
-
-
-    <!-- ============================== -->
-    <!-- PRODUCT -->
-    <!-- TRADE PAYMENTS ONLY -->
-    <!-- ============================== -->
-
-    <% if (
-        transaction.type === "trade_payment" &&
-        transaction.tradeRequest
-    ) { %>
-
-        <p>
-            Product:
-
-            <strong>
-                <%= transaction.tradeRequest.product %>
-            </strong>
-        </p>
-
-    <% } %>
-
-
-    <!-- ============================== -->
-    <!-- AMOUNT -->
-    <!-- ============================== -->
-
-    <p>
-        Amount:
-
-        <strong>
-            R<%= Number(transaction.amount).toFixed(2) %>
-        </strong>
-    </p>
-
-
-    <!-- ============================== -->
-    <!-- CURRENCY -->
-    <!-- ============================== -->
-
-    <p>
-        Currency:
-
-        <strong>
-            <%= transaction.currency %>
-        </strong>
-    </p>
-
-
-    <!-- ============================== -->
-    <!-- STATUS -->
-    <!-- ============================== -->
-
-    <p>
-        Status:
-
-        <strong>
-            <%= transaction.status %>
-        </strong>
-    </p>
-
-
-    <!-- ============================== -->
-    <!-- PAYMENT METHOD -->
-    <!-- ============================== -->
-
-    <p>
-        Payment Method:
-
-        <strong>
-
-            <% if (
+            const paymentMethod =
                 transaction.type === "customer_payment" ||
-                transaction.type === "direct_payment"
-            ) { %>
+                transaction.type === "direct_payment" ||
+                (transaction.payment && transaction.payment.method === "open_payments")
+                    ? "Open Payments + Interledger"
+                    : transaction.payment
+                        ? transaction.payment.method
+                        : "Unknown";
 
-                Open Payments + Interledger
-
-            <% } else if (
-                transaction.payment &&
-                transaction.payment.method === "open_payments"
-            ) { %>
-
-                Open Payments + Interledger
-
-            <% } else if (transaction.payment) { %>
-
-                <%= transaction.payment.method %>
-
-            <% } else { %>
-
-                Unknown
-
-            <% } %>
-
-        </strong>
-    </p>
+        %>
 
 
-    <!-- ============================== -->
-    <!-- OPEN PAYMENTS PROVIDER ID -->
-    <!-- ============================== -->
+        <div class="transaction-details-layout">
 
-    <% if (transaction.providerTransactionId) { %>
+            <!-- MAIN RECEIPT -->
 
-        <p>
-            Open Payments Transaction:
-        </p>
+            <section class="transaction-receipt-card">
 
-        <p>
-            <small>
-                <%= transaction.providerTransactionId %>
-            </small>
-        </p>
+                <div class="transaction-receipt-top">
 
-    <% } %>
+                    <div class="transaction-receipt-icon">
 
+                        <i data-lucide="receipt-text"></i>
 
-    <!-- ============================== -->
-    <!-- TRADE LINK -->
-    <!-- ============================== -->
+                    </div>
 
-    <% if (
-        transaction.type === "trade_payment" &&
-        transaction.tradeRequest
-    ) { %>
+                    <span class="transaction-details-eyebrow">
+                        TRANSACTION DETAILS
+                    </span>
 
-        <p>
+                    <h2>
+                        R<%= Number(transaction.amount).toFixed(2) %>
+                    </h2>
 
-            <a href="/trade/<%= transaction.tradeRequest._id %>">
-                View Trade
-            </a>
+                    <span class="transaction-receipt-status <%= statusClass %>">
 
-        </p>
+                        <span class="transaction-receipt-status-dot"></span>
 
-    <% } %>
+                        <%= transaction.status %>
+
+                    </span>
+
+                </div>
 
 
-    <!-- ============================== -->
-    <!-- DATE -->
-    <!-- ============================== -->
+                <div class="transaction-receipt-rows">
 
-    <p>
-        Date:
+                    <div class="transaction-receipt-row">
 
-        <strong>
-            <%= transaction.createdAt.toLocaleString() %>
-        </strong>
-    </p>
+                        <span>
+                            Transaction Type
+                        </span>
+
+                        <strong>
+                            <%= transactionType %>
+                        </strong>
+
+                    </div>
 
 
-    <hr>
+                    <div class="transaction-receipt-row">
+
+                        <span>
+                            Reference
+                        </span>
+
+                        <strong>
+                            <%= transaction.reference || "—" %>
+                        </strong>
+
+                    </div>
 
 
-    <a href="/transactions">
-        Back to Transactions
-    </a>
+                    <div class="transaction-receipt-row">
 
+                        <span>
+                            From
+                        </span>
+
+                        <strong>
+
+                            <% if (transaction.type === "customer_payment") { %>
+
+                                External Customer
+
+                            <% } else if (transaction.fromShop) { %>
+
+                                <%= transaction.fromShop.name %>
+
+                            <% } else { %>
+
+                                Unknown
+
+                            <% } %>
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="transaction-receipt-row">
+
+                        <span>
+                            To
+                        </span>
+
+                        <strong>
+                            <%= transaction.toShop
+                                ? transaction.toShop.name
+                                : "Unknown Shop"
+                            %>
+                        </strong>
+
+                    </div>
+
+
+                    <% if (
+                        transaction.type === "trade_payment" &&
+                        transaction.tradeRequest
+                    ) { %>
+
+                        <div class="transaction-receipt-row">
+
+                            <span>
+                                Product
+                            </span>
+
+                            <strong>
+                                <%= transaction.tradeRequest.product %>
+                            </strong>
+
+                        </div>
+
+                    <% } %>
+
+
+                    <div class="transaction-receipt-row">
+
+                        <span>
+                            Currency
+                        </span>
+
+                        <strong>
+                            <%= transaction.currency %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="transaction-receipt-row">
+
+                        <span>
+                            Payment Method
+                        </span>
+
+                        <strong>
+                            <%= paymentMethod %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="transaction-receipt-row">
+
+                        <span>
+                            Date & Time
+                        </span>
+
+                        <strong>
+                            <%= new Date(transaction.createdAt).toLocaleString() %>
+                        </strong>
+
+                    </div>
+
+
+                    <% if (transaction.providerTransactionId) { %>
+
+                        <div class="transaction-receipt-row">
+
+                            <span>
+                                Provider Transaction ID
+                            </span>
+
+                            <strong class="transaction-receipt-long-value">
+                                <%= transaction.providerTransactionId %>
+                            </strong>
+
+                        </div>
+
+                    <% } %>
+
+                </div>
+
+
+                <div class="transaction-receipt-footer">
+
+                    <img
+                        src="/images/branding/nexa-logo2.svg"
+                        alt="NEXA"
+                        class="transaction-receipt-logo"
+                    >
+
+                    <p>
+                        Transaction record provided by NEXA.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- SIDE PANEL -->
+
+            <aside class="transaction-details-sidebar">
+
+                <section class="transaction-details-side-card">
+
+                    <span class="transaction-details-eyebrow">
+                        PAYMENT INFORMATION
+                    </span>
+
+                    <h3>
+                        Transaction Overview
+                    </h3>
+
+                    <p>
+                        This receipt shows the payment details currently recorded by NEXA.
+                    </p>
+
+
+                    <div class="transaction-details-side-row">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <strong>
+                            <%= transaction.status %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="transaction-details-side-row">
+
+                        <span>
+                            Amount
+                        </span>
+
+                        <strong>
+                            R<%= Number(transaction.amount).toFixed(2) %>
+                        </strong>
+
+                    </div>
+
+                    <i data-lucide="file-check-2" class="transaction-details-watermark"></i>
+
+                </section>
+
+
+                <% if (
+                    transaction.type === "trade_payment" &&
+                    transaction.tradeRequest
+                ) { %>
+
+                    <a
+                        href="/trade/<%= transaction.tradeRequest._id %>"
+                        class="transaction-details-trade-link"
+                    >
+
+                        <i data-lucide="package"></i>
+
+                        View Related Trade
+
+                        <i data-lucide="arrow-up-right"></i>
+
+                    </a>
+
+                <% } %>
+
+
+                <button
+                    type="button"
+                    class="transaction-details-print-button"
+                    onclick="window.print()"
+                >
+
+                    <i data-lucide="printer"></i>
+
+                    Print Receipt
+
+                </button>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script src="/js/navigation.js"></script>
+
+    <script>
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+    </script>
 
 </body>
 

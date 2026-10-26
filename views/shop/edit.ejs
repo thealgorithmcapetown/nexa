@@ -1,165 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Shop - NEXA</title>
-
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
-
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/shop-account.css">
 </head>
-
 <body>
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
+    <main class="nexa-main account-page">
+        <header class="account-page-header">
+            <div><span class="account-eyebrow">BUSINESS MANAGEMENT</span><h1>Edit Shop<span class="nexa-title-dot">.</span></h1><p>Keep your shop information accurate and up to date.</p></div>
+            <a href="/shop" class="account-btn account-btn-outline"><i data-lucide="arrow-left"></i> My Shop</a>
+        </header>
 
+        <form action="/shop/edit" method="POST" class="account-form-shell">
+            <section class="account-panel">
+                <div class="account-panel-heading"><div class="account-panel-icon"><i data-lucide="store"></i></div><div><span class="account-eyebrow">BUSINESS DETAILS</span><h2>Shop Information</h2><p>How your business appears on NEXA.</p></div></div>
+                <div class="account-form-grid">
+                    <div class="account-field"><label for="name">Shop Name <em>*</em></label><input type="text" id="name" name="name" value="<%= shop.name %>" required></div>
+                    <div class="account-field"><label for="category">Category</label><input type="text" id="category" name="category" value="<%= shop.category || '' %>" placeholder="Groceries, food, clothing..."></div>
+                    <div class="account-field account-field-full"><label for="description">Description</label><textarea id="description" name="description" rows="5" placeholder="Tell customers about your shop..."><%= shop.description || '' %></textarea></div>
+                    <div class="account-field account-field-full"><label for="address">Address <em>*</em></label><input type="text" id="address" name="address" value="<%= shop.address %>" required></div>
+                </div>
+            </section>
 
-    <h1>
-        Edit Shop
-    </h1>
-
-
-    <form
-        action="/shop/edit"
-        method="POST"
-    >
-
-
-        <!-- SHOP NAME -->
-
-        <label for="name">
-            Shop Name
-        </label>
-
-        <br>
-
-        <input
-            type="text"
-            id="name"
-            name="name"
-            value="<%= shop.name %>"
-            required
-        >
-
-
-        <br><br>
-
-
-        <!-- CATEGORY -->
-
-        <label for="category">
-            Category
-        </label>
-
-        <br>
-
-        <input
-            type="text"
-            id="category"
-            name="category"
-            value="<%= shop.category || '' %>"
-            placeholder="Groceries, food, clothing..."
-        >
-
-
-        <br><br>
-
-
-        <!-- DESCRIPTION -->
-
-        <label for="description">
-            Description
-        </label>
-
-        <br>
-
-        <textarea
-            id="description"
-            name="description"
-            placeholder="Tell customers about your shop..."
-        ><%= shop.description || '' %></textarea>
-
-
-        <br><br>
-
-
-        <!-- ADDRESS -->
-
-        <label for="address">
-            Address
-        </label>
-
-        <br>
-
-        <input
-            type="text"
-            id="address"
-            name="address"
-            value="<%= shop.address %>"
-            required
-        >
-
-
-        <br><br>
-
-
-        <!-- OPEN PAYMENTS WALLET -->
-
-        <label for="walletAddress">
-            Open Payments Wallet Address
-        </label>
-
-        <br>
-
-        <input
-            type="text"
-            id="walletAddress"
-            name="walletAddress"
-            value="<%= shop.walletAddress || '' %>"
-            placeholder="https://ilp.interledger-test.dev/your-wallet"
-        >
-
-
-        <p>
-            This wallet is used to receive NEXA payments.
-        </p>
-
-
-        <br>
-
-
-        <button type="submit">
-            Save Changes
-        </button>
-
-
-    </form>
-
-
-    <br>
-
-
-    <a href="/shop">
-        ← Back to My Shop
-    </a>
-
-
-    <br><br>
-
-
-    <a href="/dashboard">
-        Dashboard
-    </a>
-
-
+            <section class="account-panel">
+                <div class="account-panel-heading"><div class="account-panel-icon"><i data-lucide="wallet"></i></div><div><span class="account-eyebrow">PAYMENT SETUP</span><h2>Open Payments Wallet</h2><p>Choose where your NEXA payments are received.</p></div></div>
+                <div class="account-field"><label for="walletAddress">Wallet Address</label><input type="text" id="walletAddress" name="walletAddress" value="<%= shop.walletAddress || '' %>" placeholder="https://ilp.interledger-test.dev/your-wallet"><small>This wallet is used to receive NEXA payments.</small></div>
+            </section>
+            <div class="account-form-actions"><a href="/shop" class="account-btn account-btn-outline">Cancel</a><button type="submit" class="account-btn account-btn-primary"><i data-lucide="save"></i> Save Changes</button></div>
+        </form>
+        <a href="/dashboard" class="account-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+    </main>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
+    <script>if (window.lucide) lucide.createIcons();</script>
 </body>
-
 </html>

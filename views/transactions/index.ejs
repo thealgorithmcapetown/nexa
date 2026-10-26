@@ -1,268 +1,528 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Transactions - NEXA
-    </title>
+    <title>Transactions - NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/transactions.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/sidebar') %>
+        <%- include('../partials/navbar') %>
 
-    <h1>
-        Transactions
-    </h1>
+            <main class="nexa-main transactions-page">
 
+                <header class="transactions-heading">
 
-    <% if (transactions.length === 0) { %>
+                    <div>
 
-        <p>
-            No transactions yet.
-        </p>
+                        <span class="transactions-eyebrow">
+                            NEXA FINANCIAL ACTIVITY
+                        </span>
 
-    <% } %>
+                        <h1>
+                            Transactions<span class="nexa-title-dot">.</span>
+                        </h1>
 
+                        <p>
+                            Track your payments, review activity and access transaction receipts.
+                        </p>
 
-    <% transactions.forEach(transaction => { %>
+                    </div>
 
-        <%
+                    <a href="/payments" class="transactions-payments-link">
 
-            // --------------------------------
-            // TRANSACTION TYPE
-            // --------------------------------
+                        <i data-lucide="wallet"></i>
 
-            const isCustomerPayment =
-                transaction.type ===
-                "customer_payment";
+                        Payments
 
+                    </a>
 
-            // Customer payments do NOT have
-            // a fromShop.
-
-            const sent =
-                !isCustomerPayment &&
-                transaction.fromShop &&
-                transaction.fromShop._id
-                    .toString() ===
-                currentShopId.toString();
-
-        %>
+                </header>
 
 
-        <div>
+                <% const totalTransactions=transactions.length; const completedTransactions=transactions.filter(
+                    transaction=> transaction.status === "completed" ||
+                    transaction.status === "paid"
+                    ).length;
 
+                    const customerPayments = transactions.filter(
+                    transaction => transaction.type === "customer_payment"
+                    ).length;
 
-            <!-- ============================== -->
-            <!-- SENT / RECEIVED -->
-            <!-- ============================== -->
-
-            <h3>
-
-                <% if (isCustomerPayment) { %>
-
-                    Payment Received
-
-                <% } else { %>
-
-                    <%= sent
-                        ? "Payment Sent"
-                        : "Payment Received"
                     %>
 
-                <% } %>
 
-            </h3>
+                    <!-- OVERVIEW -->
 
+                    <section class="transactions-overview">
 
-            <!-- ============================== -->
-            <!-- PAYMENT TYPE / PRODUCT -->
-            <!-- ============================== -->
+                        <div class="transactions-stat-card">
 
-            <p>
+                            <span class="transactions-stat-label">
+                                Total Transactions
+                            </span>
 
-                <strong>
+                            <strong>
+                                <%= totalTransactions %>
+                            </strong>
 
-                    <% if (isCustomerPayment) { %>
+                            <span class="transactions-stat-caption">
+                                All recorded activity
+                            </span>
 
-                        Customer Payment
+                            <i data-lucide="arrow-left-right" class="transactions-stat-watermark"></i>
 
-                    <% } else if (transaction.tradeRequest) { %>
+                        </div>
 
-                        <%= transaction.tradeRequest.product %>
 
-                    <% } else { %>
+                        <div class="transactions-stat-card">
 
-                        Trade Payment
+                            <span class="transactions-stat-label">
+                                Completed
+                            </span>
 
-                    <% } %>
+                            <strong>
+                                <%= completedTransactions %>
+                            </strong>
 
-                </strong>
+                            <span class="transactions-stat-caption">
+                                Transactions marked paid or completed
+                            </span>
 
-            </p>
+                            <i data-lucide="check-circle-2" class="transactions-stat-watermark"></i>
 
+                        </div>
 
-            <!-- ============================== -->
-            <!-- FROM / TO -->
-            <!-- ============================== -->
 
-            <p>
+                        <div class="transactions-stat-card">
 
-                <% if (isCustomerPayment) { %>
+                            <span class="transactions-stat-label">
+                                Customer Payments
+                            </span>
 
-                    From:
+                            <strong>
+                                <%= customerPayments %>
+                            </strong>
 
-                    <strong>
-                        External Customer
-                    </strong>
+                            <span class="transactions-stat-caption">
+                                Payments from external customers
+                            </span>
 
-                <% } else if (sent) { %>
+                            <i data-lucide="users" class="transactions-stat-watermark"></i>
 
-                    To:
+                        </div>
 
-                    <strong>
+                    </section>
 
-                        <%= transaction.toShop
-                            ? transaction.toShop.name
-                            : "Unknown Shop"
-                        %>
 
-                    </strong>
+                    <!-- TRANSACTION HISTORY -->
 
-                <% } else { %>
+                    <section class="transactions-history">
 
-                    From:
+                        <div class="transactions-history-header">
 
-                    <strong>
+                            <div>
 
-                        <%= transaction.fromShop
-                            ? transaction.fromShop.name
-                            : "Unknown Shop"
-                        %>
+                                <span class="transactions-eyebrow">
+                                    PAYMENT RECORDS
+                                </span>
 
-                    </strong>
+                                <h2>
+                                    Transaction History
+                                </h2>
 
-                <% } %>
+                                <p>
+                                    Browse your recorded transactions.
+                                </p>
 
-            </p>
+                            </div>
 
+                            <span class="transactions-history-count">
+                                <%= totalTransactions %> records
+                            </span>
 
-            <!-- ============================== -->
-            <!-- AMOUNT -->
-            <!-- ============================== -->
+                        </div>
 
-            <p>
 
-                Amount:
+                        <div class="transactions-toolbar">
 
-                <strong>
-                    R<%= Number(transaction.amount).toFixed(2) %>
-                </strong>
+                            <div class="transactions-search">
 
-            </p>
+                                <i data-lucide="search"></i>
 
+                                <input type="search" id="transaction-search" placeholder="Search transactions..."
+                                    aria-label="Search transactions">
 
-            <!-- ============================== -->
-            <!-- REFERENCE -->
-            <!-- ============================== -->
+                            </div>
 
-            <% if (transaction.reference) { %>
 
-                <p>
+                            <div class="transactions-filters">
 
-                    Reference:
+                                <select id="transaction-type-filter" aria-label="Filter by transaction type">
 
-                    <strong>
-                        <%= transaction.reference %>
-                    </strong>
+                                    <option value="all">
+                                        All Types
+                                    </option>
 
-                </p>
+                                    <option value="customer_payment">
+                                        Customer Payments
+                                    </option>
 
-            <% } %>
+                                    <option value="trade_payment">
+                                        Trade Payments
+                                    </option>
 
+                                    <option value="direct_payment">
+                                        Direct Payments
+                                    </option>
 
-            <!-- ============================== -->
-            <!-- PAYMENT METHOD -->
-            <!-- ============================== -->
+                                </select>
 
-            <% if (isCustomerPayment) { %>
 
-                <p>
-                    Method:
+                                <select id="transaction-status-filter" aria-label="Filter by status">
 
-                    <strong>
-                        Open Payments + Interledger
-                    </strong>
-                </p>
+                                    <option value="all">All Statuses</option>
+                                    <option value="successful">Successful</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="failed">Failed</option>
 
-            <% } %>
+                                </select>
 
+                            </div>
 
-            <!-- ============================== -->
-            <!-- STATUS -->
-            <!-- ============================== -->
+                        </div>
 
-            <p>
 
-                Status:
+                        <% if (transactions.length===0) { %>
 
-                <strong>
-                    <%= transaction.status %>
-                </strong>
+                            <div class="transactions-empty">
 
-            </p>
+                                <div class="transactions-empty-icon">
 
+                                    <i data-lucide="receipt-text"></i>
 
-            <!-- ============================== -->
-            <!-- DATE -->
-            <!-- ============================== -->
+                                </div>
 
-            <p>
+                                <h3>
+                                    No transactions yet
+                                </h3>
 
-                <%= transaction.createdAt.toLocaleString() %>
+                                <p>
+                                    Your payment activity will appear here once transactions are recorded.
+                                </p>
 
-            </p>
+                                <a href="/payments">
+                                    Go to Payments
+                                </a>
 
+                            </div>
 
-            <!-- ============================== -->
-            <!-- RECEIPT -->
-            <!-- ============================== -->
+                            <% } else { %>
 
-            <a href="/transactions/<%= transaction._id %>">
+                                <div class="transactions-table-wrap">
 
-                View Receipt
+                                    <table class="transactions-table">
 
-            </a>
+                                        <thead>
 
+                                            <tr>
 
-        </div>
+                                                <th>Transaction</th>
 
+                                                <th>From / To</th>
 
-        <hr>
+                                                <th>Date</th>
 
+                                                <th>Status</th>
 
-    <% }) %>
+                                                <th class="transactions-amount-column">
+                                                    Amount
+                                                </th>
 
+                                                <th>
+                                                    Receipt
+                                                </th>
 
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
+                                            </tr>
 
+                                        </thead>
+
+
+                                        <tbody>
+
+                                            <% transactions.forEach(transaction=> { %>
+
+                                                <% const isCustomerPayment=transaction.type==="customer_payment" ; const
+                                                    sent=!isCustomerPayment && transaction.fromShop &&
+                                                    transaction.fromShop._id &&
+                                                    transaction.fromShop._id.toString()===currentShopId.toString();
+                                                    const transactionTitle=isCustomerPayment ? "Customer Payment" :
+                                                    transaction.tradeRequest ? transaction.tradeRequest.product :
+                                                    transaction.type==="direct_payment" ? "Direct Payment"
+                                                    : "Trade Payment" ; const transactionParty=isCustomerPayment
+                                                    ? "External Customer" : sent ? transaction.toShop ?
+                                                    transaction.toShop.name : "Unknown Shop" : transaction.fromShop ?
+                                                    transaction.fromShop.name : "Unknown Shop" ; const direction=sent
+                                                    ? "sent" : "received" ; const
+                                                    transactionStatus=String(transaction.status || "unknown"
+                                                    ).toLowerCase(); const statusClass=["paid", "completed"
+                                                    ].includes(transactionStatus) ? "is-completed" :
+                                                    transactionStatus==="pending" ? "is-pending" :
+                                                    transactionStatus==="failed" ? "is-failed" : "is-neutral" ; %>
+
+
+                                                    <tr class="transaction-row" data-type="<%= transaction.type %>"
+                                                        data-status="<%= transactionStatus %>" data-search="<%= [
+                                        transactionTitle,
+                                        transactionParty,
+                                        transaction.reference || "",
+                                        transactionStatus,
+                                        transaction.amount
+                                    ].join(' ').toLowerCase() %>">
+
+                                                        <td>
+
+                                                            <div class="transactions-identity">
+
+                                                                <div
+                                                                    class="transactions-direction-icon <%= direction %>">
+
+                                                                    <i
+                                                                        data-lucide="<%= sent ? 'arrow-up-right' : 'arrow-down-left' %>"></i>
+
+                                                                </div>
+
+
+                                                                <div class="transactions-identity-text">
+
+                                                                    <strong>
+                                                                        <%= isCustomerPayment ? "Payment Received" :
+                                                                            sent ? "Payment Sent" : "Payment Received"
+                                                                            %>
+                                                                    </strong>
+
+                                                                    <span>
+                                                                        <%= transactionTitle %>
+                                                                    </span>
+
+                                                                    <% if (transaction.reference) { %>
+
+                                                                        <small>
+                                                                            <%= transaction.reference %>
+                                                                        </small>
+
+                                                                        <% } %>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </td>
+
+
+                                                        <td>
+
+                                                            <div class="transactions-party">
+
+                                                                <span>
+                                                                    <%= sent ? "To" : "From" %>
+                                                                </span>
+
+                                                                <strong>
+                                                                    <%= transactionParty %>
+                                                                </strong>
+
+                                                            </div>
+
+                                                        </td>
+
+
+                                                        <td>
+
+                                                            <span class="transactions-date">
+                                                                <%= new Date(transaction.createdAt).toLocaleString() %>
+                                                            </span>
+
+                                                        </td>
+
+
+                                                        <td>
+
+                                                            <span class="transactions-status <%= statusClass %>">
+
+                                                                <span class="transactions-status-dot"></span>
+
+                                                                <%= transaction.status %>
+
+                                                            </span>
+
+                                                        </td>
+
+
+                                                        <td class="transactions-amount-column">
+
+                                                            <strong class="transactions-amount <%= direction %>">
+
+                                                                <%= sent ? "-" : "+" %>R<%=
+                                                                        Number(transaction.amount).toFixed(2) %>
+
+                                                            </strong>
+
+                                                        </td>
+
+
+                                                        <td>
+
+                                                            <a href="/transactions/<%= transaction._id %>"
+                                                                class="transactions-receipt-link">
+
+                                                                View Receipt
+
+                                                                <i data-lucide="arrow-up-right"></i>
+
+                                                            </a>
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                    <% }) %>
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+
+                                <div id="transactions-no-results" class="transactions-no-results" hidden>
+
+                                    <i data-lucide="search-x"></i>
+
+                                    <p>
+                                        No transactions match your filters.
+                                    </p>
+
+                                </div>
+
+                                <% } %>
+
+                    </section>
+
+
+                    <a href="/dashboard" class="transactions-back-link">
+
+                        <i data-lucide="arrow-left"></i>
+
+                        Back to Dashboard
+
+                    </a>
+
+            </main>
+
+
+            <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+            <script src="/js/navigation.js"></script>
+
+
+            <script>
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+
+                const transactionSearch =
+                    document.getElementById("transaction-search");
+
+                const transactionTypeFilter =
+                    document.getElementById("transaction-type-filter");
+
+                const transactionStatusFilter =
+                    document.getElementById("transaction-status-filter");
+
+                const transactionRows =
+                    document.querySelectorAll(".transaction-row");
+
+                const noResults =
+                    document.getElementById("transactions-no-results");
+
+
+                function filterTransactions() {
+
+                    const search =
+                        transactionSearch.value.trim().toLowerCase();
+
+                    const type =
+                        transactionTypeFilter.value;
+
+                    const status =
+                        transactionStatusFilter.value;
+
+                    let visibleCount = 0;
+
+
+                    transactionRows.forEach(row => {
+
+                        const matchesSearch =
+                            row.dataset.search.includes(search);
+
+                        const matchesType =
+                            type === "all" ||
+                            row.dataset.type === type;
+
+                        const actualStatus =
+                            (row.dataset.status || "").toLowerCase();
+
+                        const matchesStatus =
+                            status === "all" ||
+                            (
+                                status === "successful" &&
+                                ["paid", "completed", "successful", "success"].includes(actualStatus)
+                            ) ||
+                            actualStatus === status;
+
+                        const visible =
+                            matchesSearch &&
+                            matchesType &&
+                            matchesStatus;
+
+                        row.hidden = !visible;
+
+                        if (visible) {
+                            visibleCount++;
+                        }
+
+                    });
+
+
+                    if (noResults) {
+                        noResults.hidden = visibleCount !== 0;
+                    }
+
+                }
+
+
+                transactionSearch.addEventListener("input", filterTransactions);
+
+                transactionTypeFilter.addEventListener("change", filterTransactions);
+
+                transactionStatusFilter.addEventListener("change", filterTransactions);
+
+            </script>
 
 </body>
 

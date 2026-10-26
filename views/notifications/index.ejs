@@ -2,115 +2,457 @@
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Notifications - NEXA</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/notifications.css">
 
 </head>
 
 <body>
 
-    <h1>Notifications</h1>
+    <%- include('../partials/sidebar') %>
+        <%- include('../partials/navbar') %>
 
 
-    <% if (notifications.length === 0) { %>
+            <main class="nexa-main notifications-page">
 
-        <p>
-            You have no notifications.
-        </p>
+                <% const totalNotifications=notifications.length; const
+                    unreadNotifications=notifications.filter(notification=> !notification.read).length;
 
-    <% } %>
+                    const readNotifications =
+                    totalNotifications - unreadNotifications;
 
-
-    <% notifications.forEach(notification => { %>
-
-        <div>
-
-            <p>
-
-                <% if (!notification.read) { %>
-
-                    <strong>
-                        NEW
-                    </strong>
-
-                    <br>
-
-                <% } %>
+                    %>
 
 
-                <a href="/notifications/<%= notification._id %>">
+                    <!-- PAGE HEADER -->
 
-                    <%= notification.message %>
+                    <header class="notifications-heading">
 
-                </a>
+                        <div>
 
-            </p>
+                            <span class="notifications-eyebrow">
+                                NEXA ACTIVITY CENTER
+                            </span>
 
+                            <h1>
+                                Notifications<span class="nexa-title-dot">.</span>
+                            </h1>
 
-            <p>
+                            <p>
+                                Stay updated on your trades, offers, messages and payments.
+                            </p>
 
-                <% if (notification.type === "new_offer") { %>
-
-                    New Offer
-
-                <% } else if (notification.type === "offer_accepted") { %>
-
-                    Offer Accepted
-
-                <% } else if (notification.type === "offer_declined") { %>
-
-                    Offer Declined
-
-                <% } else if (notification.type === "new_message") { %>
-
-                    New Message
-
-                <% } else if (notification.type === "payment_received") { %>
-
-                    Payment Received
-
-                <% } else if (notification.type === "trade_fulfilled") { %>
-
-                    Trade Fulfilled
-
-                <% } else if (notification.type === "trade_completed") { %>
-
-                    Trade Completed
-
-                <% } %>
-
-            </p>
+                        </div>
 
 
-            <small>
-
-                <%= notification.createdAt.toLocaleString() %>
-
-            </small>
-
-        </div>
 
 
-        <hr>
-
-    <% }) %>
+                    </header>
 
 
-    <a href="/dashboard">
-        Back to Dashboard
-    </a>
+                    <!-- OVERVIEW -->
+
+                    <section class="notifications-overview">
+
+                        <div class="notifications-stat-card">
+
+                            <span>
+                                Total Notifications
+                            </span>
+
+                            <strong>
+                                <%= totalNotifications %>
+                            </strong>
+
+                            <small>
+                                All recorded activity
+                            </small>
+
+                            <i data-lucide="bell" class="notifications-stat-watermark"></i>
+
+                        </div>
+
+                        <div class="notifications-stat-card notifications-unread-card">
+
+                            <span>
+                                Unread
+                            </span>
+
+                            <strong>
+                                <%= unreadNotifications %>
+                            </strong>
+
+                            <small>
+                                Updates waiting for you
+                            </small>
+
+                            <% if (unreadNotifications> 0) { %>
+
+                                <form action="/notifications/mark-all-read" method="POST"
+                                    class="notifications-mark-read-form">
+
+                                    <button type="submit" class="notifications-mark-read-button">
+
+                                        <i data-lucide="check-check"></i>
+
+                                        Mark all as read
+
+                                    </button>
+
+                                </form>
+
+                                <% } %>
+
+                                    <i data-lucide="bell-ring" class="notifications-stat-watermark"></i>
+
+                        </div>
+
+
+                        <div class="notifications-stat-card">
+
+                            <span>
+                                Read
+                            </span>
+
+                            <strong>
+                                <%= readNotifications %>
+                            </strong>
+
+                            <small>
+                                Previously viewed updates
+                            </small>
+
+                            <i data-lucide="check-check" class="notifications-stat-watermark"></i>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- NOTIFICATION CENTER -->
+
+                    <section class="notifications-center">
+
+                        <div class="notifications-center-header">
+
+                            <div>
+
+                                <span class="notifications-eyebrow">
+                                    RECENT ACTIVITY
+                                </span>
+
+                                <h2>
+                                    Your Notifications
+                                </h2>
+
+                                <p>
+                                    Select a notification to view its related activity.
+                                </p>
+
+                            </div>
+
+
+                        
+                            
+
+                        </div>
+
+
+                        <!-- FILTER TABS -->
+
+                        <div class="notifications-filter-bar">
+
+                            <button type="button" class="notifications-filter is-active" data-filter="all"
+                                aria-pressed="true">
+
+                                All
+
+                                <span>
+                                    <%= totalNotifications %>
+                                </span>
+
+                            </button>
+
+
+                            <button type="button" class="notifications-filter" data-filter="unread"
+                                aria-pressed="false">
+
+                                Unread
+
+                                <span>
+                                    <%= unreadNotifications %>
+                                </span>
+
+                            </button>
+
+
+                            <button type="button" class="notifications-filter" data-filter="read" aria-pressed="false">
+
+                                Read
+
+                                <span>
+                                    <%= readNotifications %>
+                                </span>
+
+                            </button>
+
+                        </div>
+
+
+                        <% if (notifications.length===0) { %>
+
+                            <!-- EMPTY STATE -->
+
+                            <div class="notifications-empty">
+
+                                <div class="notifications-empty-icon">
+
+                                    <i data-lucide="bell-off"></i>
+
+                                </div>
+
+                                <h3>
+                                    No notifications yet
+                                </h3>
+
+                                <p>
+                                    When something happens with your trades, offers,
+                                    messages or payments, you'll see it here.
+                                </p>
+
+                                <a href="/dashboard">
+                                    Back to Dashboard
+                                </a>
+
+                            </div>
+
+                            <% } else { %>
+
+                                <!-- NOTIFICATIONS LIST -->
+
+                                <div class="notifications-list">
+
+                                    <% notifications.forEach(notification=> { %>
+
+                                        <% let notificationTitle="Notification" ; let notificationIcon="bell" ; let
+                                            notificationCategory="general" ; if (notification.type==="new_offer" ) {
+                                            notificationTitle="New Offer" ; notificationIcon="tag" ;
+                                            notificationCategory="offer" ; } else if
+                                            (notification.type==="offer_accepted" ) { notificationTitle="Offer Accepted"
+                                            ; notificationIcon="badge-check" ; notificationCategory="offer" ; } else if
+                                            (notification.type==="offer_declined" ) { notificationTitle="Offer Declined"
+                                            ; notificationIcon="x-circle" ; notificationCategory="offer" ; } else if
+                                            (notification.type==="new_message" ) { notificationTitle="New Message" ;
+                                            notificationIcon="message-circle" ; notificationCategory="message" ; } else
+                                            if (notification.type==="payment_received" ) {
+                                            notificationTitle="Payment Received" ; notificationIcon="wallet" ;
+                                            notificationCategory="payment" ; } else if
+                                            (notification.type==="trade_fulfilled" ) {
+                                            notificationTitle="Trade Fulfilled" ; notificationIcon="package-check" ;
+                                            notificationCategory="trade" ; } else if
+                                            (notification.type==="trade_completed" ) {
+                                            notificationTitle="Trade Completed" ; notificationIcon="check-circle-2" ;
+                                            notificationCategory="trade" ; } %>
+
+
+                                            <a href="/notifications/<%= notification._id %>"
+                                                class="notification-item <%= !notification.read ? 'is-unread' : '' %>"
+                                                data-read="<%= notification.read ? 'read' : 'unread' %>">
+
+                                                <div class="notification-icon <%= notificationCategory %>">
+
+                                                    <i data-lucide="<%= notificationIcon %>"></i>
+
+                                                </div>
+
+
+                                                <div class="notification-content">
+
+                                                    <div class="notification-topline">
+
+                                                        <h3>
+                                                            <%= notificationTitle %>
+                                                        </h3>
+
+
+                                                        <% if (!notification.read) { %>
+
+                                                            <span class="notification-new-badge">
+                                                                NEW
+                                                            </span>
+
+                                                            <% } %>
+
+                                                    </div>
+
+
+                                                    <p class="notification-message">
+                                                        <%= notification.message %>
+                                                    </p>
+
+
+                                                    <div class="notification-meta">
+
+                                                        <span>
+
+                                                            <i data-lucide="clock-3"></i>
+
+                                                            <%= new Date(notification.createdAt).toLocaleString() %>
+
+                                                        </span>
+
+                                                        <span class="notification-open-label">
+
+                                                            View Activity
+
+                                                            <i data-lucide="arrow-up-right"></i>
+
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                                <% if (!notification.read) { %>
+
+                                                    <span class="notification-unread-dot"></span>
+
+                                                    <% } %>
+
+                                            </a>
+
+                                            <% }) %>
+
+                                </div>
+
+
+                                <div class="notifications-filter-empty" id="notifications-filter-empty" hidden>
+
+                                    <i data-lucide="bell-off"></i>
+
+                                    <p>
+                                        No notifications in this category.
+                                    </p>
+
+                                </div>
+
+                                <% } %>
+
+                    </section>
+
+
+                    <!-- BACK LINK -->
+
+                    <a href="/dashboard" class="notifications-back-link">
+
+                        <i data-lucide="arrow-left"></i>
+
+                        Back to Dashboard
+
+                    </a>
+
+            </main>
+
+
+            <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+            <script src="/js/navigation.js"></script>
+
+
+            <script>
+
+                if (window.lucide) {
+
+                    lucide.createIcons();
+
+                }
+
+
+                /* ==========================================
+                   NOTIFICATION FILTERS
+                ========================================== */
+
+                const notificationFilters =
+                    document.querySelectorAll(".notifications-filter");
+
+                const notificationItems =
+                    document.querySelectorAll(".notification-item");
+
+                const notificationFilterEmpty =
+                    document.getElementById("notifications-filter-empty");
+
+
+                notificationFilters.forEach(filterButton => {
+
+                    filterButton.addEventListener("click", () => {
+
+                        const selectedFilter =
+                            filterButton.dataset.filter;
+
+                        let visibleCount = 0;
+
+
+                        /* UPDATE ACTIVE TAB */
+
+                        notificationFilters.forEach(button => {
+
+                            const active =
+                                button === filterButton;
+
+                            button.classList.toggle("is-active", active);
+
+                            button.setAttribute(
+                                "aria-pressed",
+                                active ? "true" : "false"
+                            );
+
+                        });
+
+
+                        /* FILTER NOTIFICATIONS */
+
+                        notificationItems.forEach(item => {
+
+                            const visible =
+                                selectedFilter === "all" ||
+                                item.dataset.read === selectedFilter;
+
+                            item.hidden = !visible;
+
+
+                            if (visible) {
+
+                                visibleCount++;
+
+                            }
+
+                        });
+
+
+                        /* EMPTY FILTER RESULT */
+
+                        if (notificationFilterEmpty) {
+
+                            notificationFilterEmpty.hidden =
+                                visibleCount !== 0;
+
+                        }
+
+                    });
+
+                });
+
+            </script>
 
 </body>
 

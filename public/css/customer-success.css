@@ -1,0 +1,352 @@
+
+/* ==========================================
+   NEXA — CUSTOMER PAYMENT SUCCESS
+   STAGE 6.6
+========================================== */
+
+
+/* PAGE */
+
+.customer-success-body {
+    min-height: 100vh;
+    margin: 0;
+    color: #F7FAF8;
+    background: #080D0B;
+}
+
+.customer-success-page {
+    width: min(100% - 40px, 1080px);
+    margin: 0 auto;
+    padding: 28px 0 50px;
+    box-sizing: border-box;
+}
+
+
+/* BRAND HEADER */
+
+.customer-success-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #25382B;
+}
+
+.customer-success-brand {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.customer-success-logo {
+    display: block;
+    width: 170px;
+    max-width: 100%;
+    height: 65px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.customer-success-header-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #98A49D;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.customer-success-header-label svg {
+    width: 16px;
+    height: 16px;
+    color: #8CE11A;
+}
+
+
+/* SUCCESS CARD */
+
+.customer-success-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: min(100%, 580px);
+    margin: 65px auto 0;
+    padding: 45px 40px;
+    background: #101914;
+    border: 1px solid #25382B;
+    border-radius: 24px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+
+/* SUCCESS ICON */
+
+.customer-success-icon-wrap {
+    display: grid;
+    place-items: center;
+    width: 88px;
+    height: 88px;
+    margin-bottom: 27px;
+    color: #14210B;
+    background: #8CE11A;
+    border: 9px solid #20351A;
+    border-radius: 50%;
+    box-sizing: border-box;
+    box-shadow: 0 0 0 9px rgba(140, 225, 26, 0.045);
+}
+
+.customer-success-icon-wrap svg {
+    width: 39px;
+    height: 39px;
+    stroke-width: 3;
+}
+
+
+/* SUCCESS HEADING */
+
+.customer-success-eyebrow {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.customer-success-card h1 {
+    margin: 13px 0 10px;
+    font-size: clamp(27px, 3vw, 34px);
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.customer-success-description {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+
+/* AMOUNT */
+
+.customer-success-amount-section {
+    width: 100%;
+    margin-top: 32px;
+    padding: 28px 20px;
+    background: #0B130F;
+    border: 1px solid #25382B;
+    border-radius: 16px;
+    box-sizing: border-box;
+}
+
+.customer-success-amount-section > span {
+    color: #98A49D;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.customer-success-amount-section h2 {
+    margin: 10px 0 0;
+    color: #8CE11A;
+    font-size: clamp(35px, 4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    overflow-wrap: anywhere;
+}
+
+
+/* PAYMENT DETAILS */
+
+.customer-success-details {
+    width: 100%;
+    margin-top: 25px;
+}
+
+.customer-success-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid #25382B;
+    text-align: left;
+}
+
+.customer-success-detail-row > span:first-child {
+    color: #98A49D;
+    font-size: 12px;
+}
+
+.customer-success-detail-row strong {
+    max-width: 62%;
+    color: #F7FAF8;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+
+/* STATUS */
+
+.customer-success-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 11px;
+    color: #8CE11A;
+    background: rgba(140, 225, 26, 0.09);
+    border: 1px solid rgba(140, 225, 26, 0.19);
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.customer-success-status svg {
+    width: 15px;
+    height: 15px;
+}
+
+
+/* PAYMENT NETWORK */
+
+.customer-success-network {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    width: 100%;
+    margin-top: 26px;
+    padding: 17px;
+    background: rgba(140, 225, 26, 0.045);
+    border: 1px solid rgba(140, 225, 26, 0.13);
+    border-radius: 13px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+.customer-success-network svg {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+    color: #8CE11A;
+}
+
+.customer-success-network p {
+    margin: 0;
+    color: #AFC0B2;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.customer-success-network strong {
+    color: #F7FAF8;
+}
+
+
+/* BACK BUTTON */
+
+.customer-success-home-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 28px;
+    padding: 13px 18px;
+    color: #14210B;
+    background: #8CE11A;
+    border-radius: 13px;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.customer-success-home-button:hover {
+    background: #A5F23E;
+}
+
+.customer-success-home-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+
+/* PAGE FOOTER */
+
+.customer-success-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+    color: #98A49D;
+    font-size: 11px;
+}
+
+.customer-success-footer svg {
+    width: 16px;
+    height: 16px;
+    color: #8CE11A;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .customer-success-page {
+        width: calc(100% - 28px);
+        padding-top: 18px;
+        padding-bottom: 35px;
+    }
+
+    .customer-success-header {
+        padding-bottom: 18px;
+    }
+
+    .customer-success-logo {
+        width: 140px;
+        height: 52px;
+    }
+
+    .customer-success-header-label {
+        font-size: 10px;
+    }
+
+    .customer-success-card {
+        width: 100%;
+        margin-top: 32px;
+        padding: 32px 20px;
+        border-radius: 18px;
+    }
+
+    .customer-success-icon-wrap {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 23px;
+    }
+
+    .customer-success-card h1 {
+        font-size: 27px;
+    }
+
+    .customer-success-amount-section {
+        margin-top: 26px;
+        padding: 24px 15px;
+    }
+
+    .customer-success-amount-section h2 {
+        font-size: 38px;
+    }
+
+    .customer-success-detail-row {
+        gap: 12px;
+    }
+
+}

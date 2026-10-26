@@ -1,5 +1,82 @@
 
+<!-- MOBILE MORE MENU -->
+
+<div
+    class="nexa-more-backdrop"
+    id="nexa-more-backdrop"
+    hidden
+></div>
+
+<section
+    class="nexa-more-menu"
+    id="nexa-more-menu"
+    aria-label="More navigation options"
+    aria-hidden="true"
+    hidden
+>
+    <div class="nexa-more-header">
+        <div>
+            <span class="nexa-more-eyebrow">NEXA MENU</span>
+            <h2>Explore More<span>.</span></h2>
+        </div>
+
+        <button
+            type="button"
+            class="nexa-more-close"
+            id="nexa-more-close"
+            aria-label="Close menu"
+        >
+            <i data-lucide="x"></i>
+        </button>
+    </div>
+
+    <div class="nexa-more-links">
+
+        <a href="/trade/my-requests" data-more-nav="/trade/my-requests">
+            <i data-lucide="clipboard-list"></i>
+            <span>My Requests</span>
+            <i data-lucide="chevron-right"></i>
+        </a>
+
+        <a href="/offers" data-more-nav="/offers">
+            <i data-lucide="handshake"></i>
+            <span>My Offers</span>
+            <i data-lucide="chevron-right"></i>
+        </a>
+
+        <a href="/transactions" data-more-nav="/transactions">
+            <i data-lucide="receipt-text"></i>
+            <span>Transactions</span>
+            <i data-lucide="chevron-right"></i>
+        </a>
+
+        <a href="/notifications" data-more-nav="/notifications">
+            <i data-lucide="bell"></i>
+            <span>Notifications</span>
+            <i data-lucide="chevron-right"></i>
+        </a>
+
+        <a href="/shop" data-more-nav="/shop">
+            <i data-lucide="store"></i>
+            <span>My Shop</span>
+            <i data-lucide="chevron-right"></i>
+        </a>
+
+        <a href="/settings" data-more-nav="/settings">
+            <i data-lucide="settings"></i>
+            <span>Settings</span>
+            <i data-lucide="chevron-right"></i>
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- MOBILE BOTTOM NAVIGATION -->
+
 <nav class="nexa-mobile-nav" aria-label="Mobile navigation">
+
     <a href="/dashboard" data-nav="/dashboard">
         <i data-lucide="house"></i>
         <span>Home</span>
@@ -20,8 +97,15 @@
         <span>Pay</span>
     </a>
 
-    <a href="/settings" data-nav="/settings">
+    <button
+        type="button"
+        class="nexa-more-trigger"
+        id="nexa-more-trigger"
+        aria-controls="nexa-more-menu"
+        aria-expanded="false"
+    >
         <i data-lucide="menu"></i>
         <span>More</span>
-    </a>
+    </button>
+
 </nav>

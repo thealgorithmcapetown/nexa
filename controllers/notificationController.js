@@ -179,3 +179,39 @@ export const getUnreadNotificationCount = async (req, res) => {
     }
 
 };
+// ========================================
+// MARK ALL NOTIFICATIONS AS READ
+// ========================================
+
+export const markAllNotificationsRead = async (req, res) => {
+
+    try {
+
+        await Notification.updateMany(
+            {
+                user: req.session.userId,
+                read: false
+            },
+            {
+                $set: {
+                    read: true
+                }
+            }
+        );
+
+        return res.redirect("/notifications");
+
+    } catch (error) {
+
+        console.error(
+            "MARK ALL NOTIFICATIONS READ ERROR:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to mark notifications as read"
+        );
+
+    }
+
+};

@@ -1,9 +1,12 @@
 
-.nexa-mobile-nav {
+.nexa-mobile-nav,
+.nexa-more-menu,
+.nexa-more-backdrop {
     display: none;
 }
 
 @media (max-width: 768px) {
+
     .nexa-mobile-nav {
         position: fixed;
         bottom: calc(14px + env(safe-area-inset-bottom));
@@ -15,33 +18,156 @@
         display: flex;
         align-items: center;
         justify-content: space-around;
-        background: rgba(17, 27, 20, 0.94);
+        background: rgba(17, 27, 20, 0.96);
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
         border: 1px solid rgba(140, 225, 26, 0.16);
         border-radius: 24px;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-        z-index: 1000;
+        z-index: 1002;
     }
 
-    .nexa-mobile-nav a {
+    .nexa-mobile-nav a,
+    .nexa-mobile-nav button {
         color: #98A49D;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         gap: 5px;
+        font-family: inherit;
         font-size: 10px;
         font-weight: 600;
         min-width: 48px;
+        padding: 4px;
+        border: 0;
+        background: transparent;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.2s ease;
     }
 
-    .nexa-mobile-nav a svg {
+    .nexa-mobile-nav svg {
         width: 21px;
         height: 21px;
     }
 
-    .nexa-mobile-nav a.active {
+    .nexa-mobile-nav a.active,
+    .nexa-mobile-nav button.active {
         color: #8CE11A;
+    }
+
+    .nexa-more-backdrop:not([hidden]) {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 1000;
+    }
+
+    .nexa-more-menu:not([hidden]) {
+        display: block;
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: calc(102px + env(safe-area-inset-bottom));
+        width: calc(100% - 28px);
+        max-width: 440px;
+        max-height: min(70vh, 570px);
+        overflow-y: auto;
+        padding: 22px;
+        background: #101914;
+        border: 1px solid #25382B;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+        z-index: 1001;
+    }
+
+    .nexa-more-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 22px;
+    }
+
+    .nexa-more-eyebrow {
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        color: #8CE11A;
+    }
+
+    .nexa-more-header h2 {
+        margin: 6px 0 0;
+        color: #F7FAF8;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    .nexa-more-header h2 span {
+        color: #8CE11A;
+    }
+
+    .nexa-more-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        background: #18251B;
+        color: #F7FAF8;
+        border: 1px solid #25382B;
+        border-radius: 11px;
+        cursor: pointer;
+    }
+
+    .nexa-more-close svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .nexa-more-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .nexa-more-links a {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 15px;
+        border: 1px solid #25382B;
+        border-radius: 13px;
+        background: #0B130E;
+        color: #F7FAF8;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .nexa-more-links a svg {
+        width: 19px;
+        height: 19px;
+        color: #8CE11A;
+        flex-shrink: 0;
+    }
+
+    .nexa-more-links a svg:last-child {
+        width: 16px;
+        height: 16px;
+        color: #65766B;
+        margin-left: auto;
+    }
+
+    .nexa-more-links a.active {
+        background: #18291A;
+        border-color: #8CE11A;
+    }
+
+    .nexa-more-links a:active {
+        background: #1B2C1D;
     }
 
     body {

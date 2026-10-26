@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
     <meta
@@ -13,74 +14,462 @@
     <title>My Requests - NEXA</title>
 
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/my-requests.css">
 
 </head>
 
 <body>
 
-    <h1>My Requests</h1>
-
-    <nav>
-
-        <a href="/trade">
-            Browse Needs
-        </a>
-
-        <a href="/trade/my-requests">
-            My Requests
-        </a>
-
-        <a href="/trade/create">
-            + Post a Need
-        </a>
-
-    </nav>
-
-    <hr>
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
 
-    <% if (requests.length === 0) { %>
+    <main class="nexa-main my-requests-page">
 
-        <p>
-            You haven't posted any requests yet.
-        </p>
+        <%
 
-    <% } %>
+            const totalRequests = requests.length;
+
+            const activeRequests = requests.filter(request =>
+                ["open", "active"].includes(
+                    String(request.status || "").toLowerCase()
+                )
+            ).length;
+
+            const completedRequests = requests.filter(request =>
+                ["completed", "fulfilled"].includes(
+                    String(request.status || "").toLowerCase()
+                )
+            ).length;
+
+        %>
 
 
-    <% requests.forEach(request => { %>
+        <!-- PAGE HEADER -->
 
-        <div>
+        <header class="my-requests-heading">
 
-            <h2>
-                <%= request.product %>
-            </h2>
+            <div>
 
-            <p>
-                <%= request.quantity %>
-                ×
-                <%= request.unit %>
-            </p>
+                <span class="my-requests-eyebrow">
+                    TRADE MANAGEMENT
+                </span>
 
-            <p>
-                Budget:
-                R<%= request.budget %>
-            </p>
+                <h1>
+                    My Requests<span class="nexa-title-dot">.</span>
+                </h1>
 
-            <p>
-                Status:
-                <%= request.status %>
-            </p>
+                <p>
+                    Track the needs you've posted and manage your trade activity.
+                </p>
 
-            <a href="/trade/<%= request._id %>">
-                View Request
+            </div>
+
+
+            <a href="/trade/create" class="my-requests-create-button">
+
+                <i data-lucide="plus"></i>
+
+                Post a Need
+
             </a>
 
-        </div>
+        </header>
 
-        <hr>
 
-    <% }) %>
+        <!-- OVERVIEW -->
+
+        <section class="my-requests-overview">
+
+            <div class="my-requests-stat-card">
+
+                <span>
+                    Total Requests
+                </span>
+
+                <strong>
+                    <%= totalRequests %>
+                </strong>
+
+                <small>
+                    All your posted needs
+                </small>
+
+                <i data-lucide="clipboard-list" class="my-requests-stat-watermark"></i>
+
+            </div>
+
+
+            <div class="my-requests-stat-card">
+
+                <span>
+                    Active Requests
+                </span>
+
+                <strong>
+                    <%= activeRequests %>
+                </strong>
+
+                <small>
+                    Requests currently open
+                </small>
+
+                <i data-lucide="activity" class="my-requests-stat-watermark"></i>
+
+            </div>
+
+
+            <div class="my-requests-stat-card">
+
+                <span>
+                    Completed Requests
+                </span>
+
+                <strong>
+                    <%= completedRequests %>
+                </strong>
+
+                <small>
+                    Successfully completed trades
+                </small>
+
+                <i data-lucide="check-check" class="my-requests-stat-watermark"></i>
+
+            </div>
+
+        </section>
+
+
+        <!-- REQUESTS PANEL -->
+
+        <section class="my-requests-panel">
+
+            <div class="my-requests-panel-header">
+
+                <div>
+
+                    <span class="my-requests-eyebrow">
+                        YOUR TRADE ACTIVITY
+                    </span>
+
+                    <h2>
+                        Posted Requests
+                    </h2>
+
+                    <p>
+                        Review your needs and open any request to see its details.
+                    </p>
+
+                </div>
+
+                <a href="/trade" class="my-requests-browse-link">
+
+                    <i data-lucide="arrow-up-right"></i>
+
+                    Browse Needs
+
+                </a>
+
+            </div>
+
+
+            <!-- FILTER TABS -->
+
+            <div class="my-requests-filter-bar">
+
+                <button
+                    type="button"
+                    class="my-requests-filter is-active"
+                    data-filter="all"
+                    aria-pressed="true"
+                >
+
+                    All
+
+                    <span>
+                        <%= totalRequests %>
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="my-requests-filter"
+                    data-filter="active"
+                    aria-pressed="false"
+                >
+
+                    Active
+
+                    <span>
+                        <%= activeRequests %>
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="my-requests-filter"
+                    data-filter="completed"
+                    aria-pressed="false"
+                >
+
+                    Completed
+
+                    <span>
+                        <%= completedRequests %>
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <% if (requests.length === 0) { %>
+
+                <!-- EMPTY STATE -->
+
+                <div class="my-requests-empty">
+
+                    <div class="my-requests-empty-icon">
+
+                        <i data-lucide="clipboard-list"></i>
+
+                    </div>
+
+                    <h3>
+                        No requests posted yet
+                    </h3>
+
+                    <p>
+                        Post your first need to start receiving offers from nearby vendors.
+                    </p>
+
+                    <a href="/trade/create">
+
+                        <i data-lucide="plus"></i>
+
+                        Post Your First Need
+
+                    </a>
+
+                </div>
+
+            <% } else { %>
+
+                <!-- REQUEST LIST -->
+
+                <div class="my-requests-list">
+
+                    <% requests.forEach(request => { %>
+
+                        <%
+
+                            const requestStatus =
+                                String(request.status || "unknown").toLowerCase();
+
+                            const requestCategory =
+                                ["open", "active"].includes(requestStatus)
+                                    ? "active"
+                                    : ["completed", "fulfilled"].includes(requestStatus)
+                                        ? "completed"
+                                        : "other";
+
+                            const requestStatusLabel =
+                                requestStatus.replace(/_/g, " ");
+
+                        %>
+
+
+                        <article
+                            class="my-request-item"
+                            data-category="<%= requestCategory %>"
+                        >
+
+                            <div class="my-request-icon">
+
+                                <i data-lucide="package"></i>
+
+                            </div>
+
+
+                            <div class="my-request-content">
+
+                                <div class="my-request-title-row">
+
+                                    <h3>
+                                        <%= request.product %>
+                                    </h3>
+
+                                    <span class="my-request-status <%= requestCategory %>">
+
+                                        <span class="my-request-status-dot"></span>
+
+                                        <%= requestStatusLabel %>
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="my-request-details">
+
+                                    <span>
+
+                                        <i data-lucide="boxes"></i>
+
+                                        <%= request.quantity %> × <%= request.unit %>
+
+                                    </span>
+
+
+                                    <span>
+
+                                        <i data-lucide="wallet"></i>
+
+                                        Budget:
+                                        R<%= Number(request.budget || 0).toLocaleString("en-ZA", {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }) %>
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <a
+                                href="/trade/<%= request._id %>"
+                                class="my-request-view-button"
+                            >
+
+                                View Request
+
+                                <i data-lucide="arrow-up-right"></i>
+
+                            </a>
+
+                        </article>
+
+                    <% }) %>
+
+                </div>
+
+
+                <!-- EMPTY FILTER RESULT -->
+
+                <div
+                    class="my-requests-filter-empty"
+                    id="my-requests-filter-empty"
+                    hidden
+                >
+
+                    <i data-lucide="search-x"></i>
+
+                    <h3>
+                        No requests found
+                    </h3>
+
+                    <p>
+                        You don't have any requests in this category.
+                    </p>
+
+                </div>
+
+            <% } %>
+
+        </section>
+
+    </main>
+
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
+
+
+    <script>
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+
+        /* ==========================================
+           REQUEST FILTERS
+        ========================================== */
+
+        const requestFilters =
+            document.querySelectorAll(".my-requests-filter");
+
+        const requestItems =
+            document.querySelectorAll(".my-request-item");
+
+        const requestFilterEmpty =
+            document.getElementById("my-requests-filter-empty");
+
+
+        requestFilters.forEach(filterButton => {
+
+            filterButton.addEventListener("click", () => {
+
+                const selectedFilter =
+                    filterButton.dataset.filter;
+
+                let visibleCount = 0;
+
+
+                requestFilters.forEach(button => {
+
+                    const active =
+                        button === filterButton;
+
+                    button.classList.toggle("is-active", active);
+
+                    button.setAttribute(
+                        "aria-pressed",
+                        active ? "true" : "false"
+                    );
+
+                });
+
+
+                requestItems.forEach(item => {
+
+                    const visible =
+                        selectedFilter === "all" ||
+                        item.dataset.category === selectedFilter;
+
+                    item.hidden = !visible;
+
+                    if (visible) {
+
+                        visibleCount++;
+
+                    }
+
+                });
+
+
+                if (requestFilterEmpty) {
+
+                    requestFilterEmpty.hidden =
+                        visibleCount !== 0;
+
+                }
+
+            });
+
+        });
+
+    </script>
 
 </body>
 

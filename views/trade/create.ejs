@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
     <meta
@@ -13,131 +14,617 @@
     <title>Post a Need - NEXA</title>
 
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/trade-create.css">
 
 </head>
 
 <body>
 
-    <h1>Post a Need</h1>
-
-    <form action="/trade/create" method="POST">
-
-        <label>
-            Product
-        </label>
-
-        <input
-            type="text"
-            name="product"
-            placeholder="e.g. Cooking Oil"
-            required
-        >
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
 
-        <label>
-            Quantity
-        </label>
+    <main class="nexa-main trade-create-page">
 
-        <input
-            type="number"
-            name="quantity"
-            min="1"
-            required
-        >
+        <!-- PAGE HEADER -->
 
+        <header class="trade-create-heading">
 
-        <label>
-            Unit
-        </label>
+            <div>
 
-        <input
-            type="text"
-            name="unit"
-            placeholder="e.g. 2L bottles"
-            required
-        >
+                <span class="trade-create-eyebrow">
+                    NEXA TRADE NETWORK
+                </span>
 
+                <h1>
+                    Post a Need<span class="nexa-title-dot">.</span>
+                </h1>
 
-        <label>
-            Maximum Budget
-        </label>
+                <p>
+                    Tell nearby vendors what your business needs and start receiving offers.
+                </p>
 
-        <input
-            type="number"
-            name="budget"
-            min="0"
-            step="0.01"
-            placeholder="R1800"
-            required
-        >
+            </div>
+
+            <a href="/trade/my-requests" class="trade-create-back">
+
+                <i data-lucide="arrow-left"></i>
+
+                My Requests
+
+            </a>
+
+        </header>
 
 
-        <label>
-            Maximum Distance
-        </label>
+        <div class="trade-create-layout">
 
-        <select name="maxDistance">
+            <!-- REQUEST FORM -->
 
-            <option value="2">
-                Within 2 km
-            </option>
+            <form
+                action="/trade/create"
+                method="POST"
+                class="trade-create-form"
+                id="trade-create-form"
+            >
 
-            <option value="5" selected>
-                Within 5 km
-            </option>
+                <!-- PRODUCT DETAILS -->
 
-            <option value="10">
-                Within 10 km
-            </option>
+                <section class="trade-create-section">
 
-            <option value="50">
-                Any distance
-            </option>
+                    <div class="trade-create-section-header">
 
-        </select>
+                        <div class="trade-create-section-icon">
 
+                            <i data-lucide="package"></i>
 
-        <label>
-            Fulfilment
-        </label>
+                        </div>
 
-        <select name="fulfilment">
+                        <div>
 
-            <option value="pickup">
-                Pickup
-            </option>
+                            <span class="trade-create-eyebrow">
+                                STEP 01
+                            </span>
 
-            <option value="delivery">
-                Delivery
-            </option>
+                            <h2>
+                                Product Details
+                            </h2>
 
-            <option value="either" selected>
-                Either
-            </option>
+                            <p>
+                                What are you looking to buy?
+                            </p>
 
-        </select>
+                        </div>
+
+                    </div>
 
 
-        <label>
-            Additional Details
-        </label>
+                    <div class="trade-create-fields">
 
-        <textarea
-            name="description"
-            placeholder="Anything vendors should know..."
-        ></textarea>
+                        <div class="trade-create-field trade-create-field-full">
+
+                            <label for="trade-product">
+                                Product Name <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="trade-product"
+                                name="product"
+                                placeholder="e.g. Cooking Oil"
+                                maxlength="120"
+                                required
+                            >
+
+                            <small>
+                                Be specific so vendors can find your request.
+                            </small>
+
+                        </div>
 
 
-        <button type="submit">
-            Post Request
-        </button>
+                        <div class="trade-create-field">
 
-    </form>
+                            <label for="trade-quantity">
+                                Quantity <span>*</span>
+                            </label>
+
+                            <input
+                                type="number"
+                                id="trade-quantity"
+                                name="quantity"
+                                min="1"
+                                step="1"
+                                placeholder="e.g. 24"
+                                required
+                            >
+
+                        </div>
 
 
-    <a href="/trade">
-        Back to Trade
-    </a>
+                        <div class="trade-create-field">
+
+                            <label for="trade-unit">
+                                Unit <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="trade-unit"
+                                name="unit"
+                                placeholder="e.g. 2L bottles"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- BUDGET & DISTANCE -->
+
+                <section class="trade-create-section">
+
+                    <div class="trade-create-section-header">
+
+                        <div class="trade-create-section-icon">
+
+                            <i data-lucide="wallet"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span class="trade-create-eyebrow">
+                                STEP 02
+                            </span>
+
+                            <h2>
+                                Budget & Reach
+                            </h2>
+
+                            <p>
+                                Set your spending limit and preferred search distance.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="trade-create-fields">
+
+                        <div class="trade-create-field">
+
+                            <label for="trade-budget">
+                                Maximum Budget <span>*</span>
+                            </label>
+
+                            <div class="trade-create-money-input">
+
+                                <span>
+                                    R
+                                </span>
+
+                                <input
+                                    type="number"
+                                    id="trade-budget"
+                                    name="budget"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="1800.00"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="trade-create-field">
+
+                            <label for="trade-distance">
+                                Maximum Distance
+                            </label>
+
+                            <select
+                                id="trade-distance"
+                                name="maxDistance"
+                            >
+
+                                <option value="2">
+                                    Within 2 km
+                                </option>
+
+                                <option value="5" selected>
+                                    Within 5 km
+                                </option>
+
+                                <option value="10">
+                                    Within 10 km
+                                </option>
+
+                                <option value="50">
+                                    Any distance
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- FULFILMENT & NOTES -->
+
+                <section class="trade-create-section">
+
+                    <div class="trade-create-section-header">
+
+                        <div class="trade-create-section-icon">
+
+                            <i data-lucide="truck"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span class="trade-create-eyebrow">
+                                STEP 03
+                            </span>
+
+                            <h2>
+                                Fulfilment & Notes
+                            </h2>
+
+                            <p>
+                                Let vendors know how you'd like to receive your products.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="trade-create-fields">
+
+                        <div class="trade-create-field trade-create-field-full">
+
+                            <label for="trade-fulfilment">
+                                Fulfilment Method
+                            </label>
+
+                            <select
+                                id="trade-fulfilment"
+                                name="fulfilment"
+                            >
+
+                                <option value="pickup">
+                                    Pickup
+                                </option>
+
+                                <option value="delivery">
+                                    Delivery
+                                </option>
+
+                                <option value="either" selected>
+                                    Either Pickup or Delivery
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="trade-create-field trade-create-field-full">
+
+                            <label for="trade-description">
+                                Additional Details
+                            </label>
+
+                            <textarea
+                                id="trade-description"
+                                name="description"
+                                rows="5"
+                                placeholder="e.g. Prefer sealed bottles, delivery before Friday, or any specific product requirements..."
+                            ></textarea>
+
+                            <small>
+                                Optional — include any information that will help vendors make a better offer.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SUBMIT -->
+
+                <div class="trade-create-actions">
+
+                    <a href="/trade" class="trade-create-cancel">
+
+                        Cancel
+
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="trade-create-submit"
+                        id="trade-create-submit"
+                    >
+
+                        <i data-lucide="send"></i>
+
+                        Post Request
+
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <!-- LIVE SUMMARY -->
+
+            <aside class="trade-create-sidebar">
+
+                <div class="trade-create-summary">
+
+                    <div class="trade-create-summary-heading">
+
+                        <div class="trade-create-summary-icon">
+
+                            <i data-lucide="clipboard-list"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span class="trade-create-eyebrow">
+                                LIVE PREVIEW
+                            </span>
+
+                            <h2>
+                                Request Summary
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="trade-create-summary-product">
+
+                        <span>
+                            PRODUCT
+                        </span>
+
+                        <strong id="summary-product">
+                            Not specified yet
+                        </strong>
+
+                        <small id="summary-quantity">
+                            Add a quantity and unit
+                        </small>
+
+                    </div>
+
+
+                    <div class="trade-create-summary-rows">
+
+                        <div>
+
+                            <span>
+                                Maximum Budget
+                            </span>
+
+                            <strong id="summary-budget">
+                                R0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Search Radius
+                            </span>
+
+                            <strong id="summary-distance">
+                                Within 5 km
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Fulfilment
+                            </span>
+
+                            <strong id="summary-fulfilment">
+                                Either Pickup or Delivery
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="trade-create-summary-note">
+
+                        <i data-lucide="info"></i>
+
+                        <p>
+                            Your request will be visible to vendors through the NEXA trade network.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="trade-create-help">
+
+                    <div class="trade-create-help-icon">
+
+                        <i data-lucide="lightbulb"></i>
+
+                    </div>
+
+                    <h3>
+                        Get better offers
+                    </h3>
+
+                    <p>
+                        Include the correct quantity, a realistic budget and useful product details
+                        so vendors understand exactly what you need.
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
+
+
+    <script>
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+
+        /* ==========================================
+           LIVE REQUEST SUMMARY
+        ========================================== */
+
+        const tradeProduct =
+            document.getElementById("trade-product");
+
+        const tradeQuantity =
+            document.getElementById("trade-quantity");
+
+        const tradeUnit =
+            document.getElementById("trade-unit");
+
+        const tradeBudget =
+            document.getElementById("trade-budget");
+
+        const tradeDistance =
+            document.getElementById("trade-distance");
+
+        const tradeFulfilment =
+            document.getElementById("trade-fulfilment");
+
+
+        function updateTradeSummary() {
+
+            const product =
+                tradeProduct.value.trim();
+
+            const quantity =
+                tradeQuantity.value.trim();
+
+            const unit =
+                tradeUnit.value.trim();
+
+            const budget =
+                Number(tradeBudget.value || 0);
+
+
+            document.getElementById("summary-product").textContent =
+                product || "Not specified yet";
+
+
+            document.getElementById("summary-quantity").textContent =
+                quantity || unit
+                    ? `${quantity || "—"} × ${unit || "units"}`
+                    : "Add a quantity and unit";
+
+
+            document.getElementById("summary-budget").textContent =
+                `R${budget.toLocaleString("en-ZA", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+
+
+            document.getElementById("summary-distance").textContent =
+                tradeDistance.options[tradeDistance.selectedIndex].text.trim();
+
+
+            document.getElementById("summary-fulfilment").textContent =
+                tradeFulfilment.options[tradeFulfilment.selectedIndex].text.trim();
+
+        }
+
+
+        [
+            tradeProduct,
+            tradeQuantity,
+            tradeUnit,
+            tradeBudget,
+            tradeDistance,
+            tradeFulfilment
+        ].forEach(field => {
+
+            field.addEventListener("input", updateTradeSummary);
+
+            field.addEventListener("change", updateTradeSummary);
+
+        });
+
+
+        updateTradeSummary();
+
+
+        /* ==========================================
+           PREVENT ACCIDENTAL DOUBLE SUBMISSION
+        ========================================== */
+
+        const tradeCreateForm =
+            document.getElementById("trade-create-form");
+
+        const tradeCreateSubmit =
+            document.getElementById("trade-create-submit");
+
+
+        tradeCreateForm.addEventListener("submit", () => {
+
+            if (!tradeCreateForm.checkValidity()) {
+
+                return;
+
+            }
+
+            tradeCreateSubmit.disabled = true;
+
+            tradeCreateSubmit.innerHTML =
+                "Posting Request...";
+
+        });
+
+    </script>
 
 </body>
 

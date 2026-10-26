@@ -1,0 +1,471 @@
+
+/* ==========================================
+   NEXA — CUSTOMER QR CHECKOUT
+   STAGE 6.5
+========================================== */
+
+
+/* PAGE */
+
+.customer-pay-body {
+    min-height: 100vh;
+    margin: 0;
+    color: #F7FAF8;
+    background: #080D0B;
+}
+
+.customer-pay-page {
+    width: min(100% - 40px, 1080px);
+    margin: 0 auto;
+    padding: 28px 0 45px;
+    box-sizing: border-box;
+}
+
+
+/* BRAND HEADER */
+
+.customer-pay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #25382B;
+}
+
+.customer-pay-brand {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+    color: #F7FAF8;
+    text-decoration: none;
+}
+
+
+/* OFFICIAL NEXA LOGO */
+
+.customer-pay-logo {
+    display: block;
+    flex-shrink: 0;
+    width: 170px;
+    max-width: none;
+    height: 65px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.customer-pay-header-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #98A49D;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.customer-pay-header-label svg {
+    width: 16px;
+    height: 16px;
+    color: #8CE11A;
+}
+
+
+/* HEADING */
+
+.customer-pay-heading {
+    margin: 38px 0 30px;
+}
+
+.customer-pay-eyebrow {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.customer-pay-heading h1 {
+    margin: 10px 0;
+    font-size: clamp(29px, 3.5vw, 41px);
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.customer-pay-heading p {
+    max-width: 580px;
+    margin: 0;
+    color: #98A49D;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+
+/* CHECKOUT LAYOUT */
+
+.customer-pay-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: start;
+    gap: 20px;
+}
+
+.customer-pay-summary-card,
+.customer-pay-form-card {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    padding: 30px;
+    background: #101914;
+    border: 1px solid #25382B;
+    border-radius: 21px;
+    box-sizing: border-box;
+}
+
+
+/* PAYMENT SUMMARY */
+
+.customer-pay-summary-card > *:not(.customer-pay-watermark) {
+    position: relative;
+    z-index: 1;
+}
+
+.customer-pay-amount-label {
+    margin: 25px 0 7px;
+    color: #98A49D;
+    font-size: 12px;
+}
+
+.customer-pay-amount {
+    margin: 0 0 27px;
+    color: #8CE11A;
+    font-size: clamp(34px, 4vw, 47px);
+    font-weight: 800;
+    letter-spacing: -1.4px;
+    overflow-wrap: anywhere;
+}
+
+.customer-pay-details {
+    border-top: 1px solid #25382B;
+}
+
+.customer-pay-detail-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 17px 0;
+    border-bottom: 1px solid #25382B;
+}
+
+.customer-pay-detail-row span {
+    color: #98A49D;
+    font-size: 12px;
+}
+
+.customer-pay-detail-row strong {
+    max-width: 62%;
+    color: #F7FAF8;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.customer-pay-recipient {
+    margin-top: 24px;
+}
+
+.customer-pay-recipient span {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+.customer-pay-recipient p {
+    margin: 10px 0 0;
+    color: #B8C7BB;
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.customer-pay-watermark {
+    position: absolute;
+    right: -25px;
+    bottom: -30px;
+    width: 180px;
+    height: 180px;
+    color: #8CE11A;
+    opacity: 0.07;
+    pointer-events: none;
+}
+
+
+/* PAYMENT FORM */
+
+.customer-pay-form-heading h2 {
+    margin: 10px 0;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.customer-pay-form-heading p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.customer-pay-form {
+    margin-top: 29px;
+}
+
+.customer-pay-field label {
+    display: block;
+    margin-bottom: 11px;
+    color: #F7FAF8;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.customer-pay-field label span {
+    color: #8CE11A;
+}
+
+.customer-pay-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 0 15px;
+    background: #1A2920;
+    border: 1px solid #314636;
+    border-radius: 13px;
+}
+
+.customer-pay-input-wrap:focus-within {
+    border-color: #8CE11A;
+}
+
+.customer-pay-input-wrap svg {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+    color: #8CE11A;
+}
+
+.customer-pay-input-wrap input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    min-height: 54px;
+    padding: 12px 0;
+    color: #F7FAF8;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    font-size: 16px;
+}
+
+.customer-pay-input-wrap input::placeholder {
+    color: #819487;
+}
+
+.customer-pay-input-wrap input:-webkit-autofill,
+.customer-pay-input-wrap input:-webkit-autofill:hover,
+.customer-pay-input-wrap input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #F7FAF8;
+    -webkit-box-shadow: 0 0 0 1000px #1A2920 inset;
+    caret-color: #F7FAF8;
+}
+
+.customer-pay-field-help {
+    margin: 9px 0 0;
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+
+/* NOTICE */
+
+.customer-pay-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 27px;
+    padding: 15px;
+    background: rgba(140, 225, 26, 0.06);
+    border: 1px solid rgba(140, 225, 26, 0.13);
+    border-radius: 12px;
+}
+
+.customer-pay-notice svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: #8CE11A;
+}
+
+.customer-pay-notice p {
+    margin: 0;
+    color: #B4C4B7;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+
+/* SUBMIT */
+
+.customer-pay-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 54px;
+    margin-top: 23px;
+    padding: 14px 18px;
+    color: #14210B;
+    background: #8CE11A;
+    border: none;
+    border-radius: 13px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.customer-pay-submit:hover {
+    background: #A5F23E;
+}
+
+.customer-pay-submit svg {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* FOOTER */
+
+.customer-pay-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 27px;
+    padding-top: 23px;
+    border-top: 1px solid #25382B;
+}
+
+.customer-pay-footer > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.customer-pay-footer > span svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: #8CE11A;
+}
+
+.customer-pay-footer p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 11px;
+}
+
+.customer-pay-footer strong {
+    color: #8CE11A;
+}
+
+
+/* TABLET */
+
+@media (max-width: 850px) {
+
+    .customer-pay-layout {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .customer-pay-page {
+        width: calc(100% - 28px);
+        padding-top: 18px;
+        padding-bottom: 35px;
+    }
+
+    .customer-pay-header {
+        padding-bottom: 18px;
+    }
+
+    .customer-pay-brand {
+        gap: 9px;
+    }
+
+    .customer-pay-logo {
+        width: 140px;
+        max-width: none;
+        height: 52px;
+    }
+
+    .customer-pay-header-label {
+        font-size: 10px;
+    }
+
+    .customer-pay-heading {
+        margin: 27px 0 22px;
+    }
+
+    .customer-pay-heading h1 {
+        font-size: 29px;
+    }
+
+    .customer-pay-layout {
+        gap: 15px;
+    }
+
+    .customer-pay-summary-card,
+    .customer-pay-form-card {
+        width: 100%;
+        max-width: none;
+        padding: 21px;
+        border-radius: 17px;
+    }
+
+    .customer-pay-form-heading h2 {
+        font-size: 20px;
+    }
+
+    .customer-pay-amount {
+        font-size: 39px;
+    }
+
+    .customer-pay-detail-row {
+        gap: 12px;
+    }
+
+    .customer-pay-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}

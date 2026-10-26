@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
     <meta
@@ -11,198 +12,384 @@
     >
 
     <title>Settings - NEXA</title>
+    <%- include('../partials/head') %>
 
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/shop-account.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/sidebar') %>
+    <%- include('../partials/navbar') %>
 
-    <h1>
-        Account Settings
-    </h1>
 
+    <main class="nexa-main account-page">
 
-    <!-- ================================= -->
-    <!-- ACCOUNT DETAILS -->
-    <!-- ================================= -->
+        <!-- PAGE HEADER -->
 
+        <header class="account-page-header">
 
-    <h2>
-        Account Details
-    </h2>
+            <div>
 
+                <span class="account-eyebrow">
+                    PERSONAL ACCOUNT
+                </span>
 
-    <form
-        action="/settings"
-        method="POST"
-    >
+                <h1>
+                    Settings<span class="nexa-title-dot">.</span>
+                </h1>
 
+                <p>
+                    Update your personal information and keep your account secure.
+                </p>
 
-        <label for="name">
-            Name
-        </label>
+            </div>
 
-        <br>
 
-        <input
-            type="text"
-            id="name"
-            name="name"
-            value="<%= user.name %>"
-            required
-        >
+            <a href="/shop" class="account-btn account-btn-outline">
 
+                <i data-lucide="store"></i>
 
-        <br><br>
+                My Shop
 
+            </a>
 
-        <label for="email">
-            Email
-        </label>
+        </header>
 
-        <br>
 
-        <input
-            type="email"
-            id="email"
-            name="email"
-            value="<%= user.email %>"
-            required
-        >
+        <div class="account-settings-layout">
 
+            <!-- ACCOUNT DETAILS -->
 
-        <br><br>
+            <section class="account-panel">
 
+                <div class="account-panel-heading">
 
-        <label for="phone">
-            Phone
-        </label>
+                    <div class="account-panel-icon">
 
-        <br>
+                        <i data-lucide="user-round"></i>
 
-        <input
-            type="text"
-            id="phone"
-            name="phone"
-            value="<%= user.phone || '' %>"
-            placeholder="Phone number"
-        >
+                    </div>
 
+                    <div>
 
-        <br><br>
+                        <span class="account-eyebrow">
+                            YOUR DETAILS
+                        </span>
 
+                        <h2>
+                            Account Details
+                        </h2>
 
-        <button type="submit">
-            Save Settings
-        </button>
+                        <p>
+                            Manage the information linked to your account.
+                        </p>
 
+                    </div>
 
-    </form>
+                </div>
 
 
-    <hr>
+                <form action="/settings" method="POST">
 
+                    <div class="account-form-grid">
 
-    <!-- ================================= -->
-    <!-- PASSWORD -->
-    <!-- ================================= -->
+                        <div class="account-field">
 
+                            <label for="name">
+                                Name <em>*</em>
+                            </label>
 
-    <h2>
-        Change Password
-    </h2>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value="<%= user.name %>"
+                                autocomplete="name"
+                                required
+                            >
 
+                        </div>
 
-    <form
-        action="/settings/password"
-        method="POST"
-    >
 
+                        <div class="account-field">
 
-        <label for="currentPassword">
-            Current Password
-        </label>
+                            <label for="email">
+                                Email <em>*</em>
+                            </label>
 
-        <br>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value="<%= user.email %>"
+                                autocomplete="email"
+                                required
+                            >
 
-        <input
-            type="password"
-            id="currentPassword"
-            name="currentPassword"
-            autocomplete="current-password"
-            required
-        >
+                        </div>
 
 
-        <br><br>
+                        <div class="account-field account-field-full">
 
+                            <label for="phone">
+                                Phone
+                            </label>
 
-        <label for="newPassword">
-            New Password
-        </label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                value="<%= user.phone || '' %>"
+                                placeholder="Phone number"
+                                autocomplete="tel"
+                            >
 
-        <br>
+                        </div>
 
-        <input
-            type="password"
-            id="newPassword"
-            name="newPassword"
-            minlength="8"
-            autocomplete="new-password"
-            required
-        >
+                    </div>
 
 
-        <br><br>
+                    <div class="account-form-actions">
 
+                        <button
+                            type="submit"
+                            class="account-btn account-btn-primary"
+                        >
 
-        <label for="confirmPassword">
-            Confirm New Password
-        </label>
+                            <i data-lucide="save"></i>
 
-        <br>
+                            Save Settings
 
-        <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            minlength="8"
-            autocomplete="new-password"
-            required
-        >
+                        </button>
 
+                    </div>
 
-        <br><br>
+                </form>
 
+            </section>
 
-        <button type="submit">
-            Change Password
-        </button>
 
+            <!-- CHANGE PASSWORD -->
 
-    </form>
+            <section class="account-panel">
 
+                <div class="account-panel-heading">
 
-    <hr>
+                    <div class="account-panel-icon">
 
+                        <i data-lucide="shield-check"></i>
 
-    <a href="/shop">
-        My Shop
-    </a>
+                    </div>
 
+                    <div>
 
-    <br><br>
+                        <span class="account-eyebrow">
+                            ACCOUNT SECURITY
+                        </span>
 
+                        <h2>
+                            Change Password
+                        </h2>
 
-    <a href="/dashboard">
-        ← Dashboard
-    </a>
+                        <p>
+                            Use a strong password to protect your account.
+                        </p>
 
+                    </div>
+
+                </div>
+
+
+                <form
+                    action="/settings/password"
+                    method="POST"
+                    id="account-password-form"
+                >
+
+                    <div class="account-form-grid">
+
+                        <div class="account-field account-field-full">
+
+                            <label for="currentPassword">
+                                Current Password <em>*</em>
+                            </label>
+
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                name="currentPassword"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="account-field account-field-full">
+
+                            <label for="newPassword">
+                                New Password <em>*</em>
+                            </label>
+
+                            <input
+                                type="password"
+                                id="newPassword"
+                                name="newPassword"
+                                minlength="8"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <small>
+                                At least 8 characters.
+                            </small>
+
+                        </div>
+
+
+                        <div class="account-field account-field-full">
+
+                            <label for="confirmPassword">
+                                Confirm New Password <em>*</em>
+                            </label>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                minlength="8"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <p
+                        id="password-match-error"
+                        class="account-validation-error"
+                        role="alert"
+                        hidden
+                    >
+                        New passwords do not match.
+                    </p>
+
+
+                    <div class="account-form-actions">
+
+                        <button
+                            type="submit"
+                            class="account-btn account-btn-primary"
+                        >
+
+                            <i data-lucide="lock-keyhole"></i>
+
+                            Change Password
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+        </div>
+
+
+        <!-- BACK LINK -->
+
+        <a href="/dashboard" class="account-back">
+
+            <i data-lucide="arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
+    </main>
+
+
+    <!-- SCRIPTS -->
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script src="/js/navigation.js"></script>
+
+
+    <script>
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+
+        /* ==========================================
+           PASSWORD CONFIRMATION VALIDATION
+        ========================================== */
+
+        const passwordForm =
+            document.getElementById("account-password-form");
+
+        const passwordError =
+            document.getElementById("password-match-error");
+
+        const newPassword =
+            document.getElementById("newPassword");
+
+        const confirmPassword =
+            document.getElementById("confirmPassword");
+
+
+        passwordForm.addEventListener("submit", function (event) {
+
+            const matches =
+                newPassword.value === confirmPassword.value;
+
+            passwordError.hidden = matches;
+
+            confirmPassword.setCustomValidity(
+                matches ? "" : "Passwords do not match"
+            );
+
+            if (!matches) {
+
+                event.preventDefault();
+
+                confirmPassword.reportValidity();
+
+            }
+
+        });
+
+
+        confirmPassword.addEventListener("input", function () {
+
+            this.setCustomValidity("");
+
+            passwordError.hidden = true;
+
+        });
+
+
+        newPassword.addEventListener("input", function () {
+
+            confirmPassword.setCustomValidity("");
+
+            passwordError.hidden = true;
+
+        });
+
+    </script>
 
 </body>
 

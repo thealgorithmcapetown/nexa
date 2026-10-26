@@ -1,42 +1,60 @@
 
 /* ========================================
    NEXA — GLOBAL DESIGN SYSTEM
-   ======================================== */
+======================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
-    /* Brand colours */
+
+    /* Brand Colours */
+
     --nexa-primary: #8CE11A;
     --nexa-primary-hover: #A5F23E;
 
     /* Backgrounds */
+
     --nexa-bg: #080D0B;
     --nexa-surface: #0D1511;
     --nexa-glass: rgba(20, 32, 25, 0.70);
 
     /* Text */
+
     --nexa-white: #F7FAF8;
     --nexa-muted: #98A49D;
 
     /* Borders */
+
     --nexa-border: rgba(140, 225, 26, 0.14);
 
     /* Effects */
+
     --nexa-blur: blur(18px);
     --nexa-radius: 20px;
     --nexa-radius-sm: 12px;
 
     /* Typography */
+
     --nexa-font: 'Manrope', sans-serif;
+
 }
+
 
 /* ========================================
    GLOBAL RESET
-   ======================================== */
+======================================== */
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
 }
 
 body {
@@ -59,9 +77,14 @@ select {
     font: inherit;
 }
 
+button {
+    cursor: pointer;
+}
+
+
 /* ========================================
    REUSABLE NEXA COMPONENTS
-   ======================================== */
+======================================== */
 
 .nexa-glass {
     background: var(--nexa-glass);
@@ -78,6 +101,11 @@ select {
     padding: 24px;
 }
 
+
+/* ========================================
+   BUTTONS
+======================================== */
+
 .nexa-btn {
     display: inline-flex;
     align-items: center;
@@ -87,8 +115,9 @@ select {
     border: 0;
     border-radius: 999px;
     font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .nexa-btn-primary {
@@ -107,14 +136,25 @@ select {
     border: 1px solid var(--nexa-border);
 }
 
+
+/* ========================================
+   INPUTS
+======================================== */
+
 .nexa-input {
     width: 100%;
     padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--nexa-border);
+    background: #0B130E;
+    border: 1px solid #25382B;
     border-radius: var(--nexa-radius-sm);
     color: var(--nexa-white);
     outline: none;
+    color-scheme: dark;
+}
+
+.nexa-input::placeholder {
+    color: #65766B;
+    opacity: 1;
 }
 
 .nexa-input:focus {
@@ -122,9 +162,10 @@ select {
     box-shadow: 0 0 0 3px rgba(140, 225, 26, 0.10);
 }
 
+
 /* ========================================
    EXISTING CHAT STYLES — PRESERVED
-   ======================================== */
+======================================== */
 
 #messages-container {
     display: flex;
@@ -169,29 +210,86 @@ select {
     opacity: 0.6;
     font-size: 12px;
 }
+
+
+/* ========================================
+   MAIN PAGE LAYOUT — DESKTOP
+======================================== */
+
 .nexa-main {
     margin-left: 250px;
     padding: 32px;
     min-height: 100vh;
 }
 
-@media (max-width: 768px) {
-    .nexa-main {
-        margin-left: 0;
-        padding: 20px 16px;
-    }
-}
-html,
-body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: clip;
-}
 
-/* ==========================================
-   NEXA — GLOBAL PAGE TITLE ACCENT
-========================================== */
+/* ========================================
+   GLOBAL PAGE TITLE ACCENT
+======================================== */
 
 .nexa-title-dot {
-    color: #8CE11A;
+    color: var(--nexa-primary);
+}
+
+
+/* ========================================
+   TABLET LAYOUT
+======================================== */
+
+@media (min-width: 769px) and (max-width: 1100px) {
+
+    .nexa-main {
+        padding: 24px;
+    }
+
+}
+
+
+/* ========================================
+   MOBILE LAYOUT
+======================================== */
+
+@media (max-width: 768px) {
+
+    html,
+    body {
+        margin: 0;
+        padding-top: 0;
+    }
+
+    .nexa-main {
+        margin-left: 0;
+        margin-top: 0;
+        padding: 12px 16px 24px;
+        min-height: 100vh;
+    }
+
+    /* Remove extra margin above first page element */
+
+    .nexa-main > :first-child {
+        margin-top: 0;
+    }
+
+    /* Keep page headings compact */
+
+    .nexa-main > header:first-child,
+    .nexa-main > .page-header:first-child {
+        margin-top: 0;
+    }
+
+    /* Responsive cards */
+
+    .nexa-card {
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    /* Prevent iPhone input zoom */
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
 }

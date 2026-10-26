@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+    <%- include('../partials/head') %>
     <meta charset="UTF-8">
 
     <meta
@@ -17,54 +18,200 @@
         href="/css/main.css"
     >
 
+    <link
+        rel="stylesheet"
+        href="/css/customer-success.css"
+    >
+
 </head>
 
-<body>
+<body class="customer-success-body">
 
-    <main>
+    <main class="customer-success-page">
 
-        <h1>Payment Successful ✓</h1>
+        <!-- BRAND HEADER -->
 
-        <h2>
-            R<%= Number(paymentRequest.amount).toFixed(2) %>
-        </h2>
+        <header class="customer-success-header">
 
-        <% if (paymentRequest.shop) { %>
+            <a
+                href="/"
+                class="customer-success-brand"
+                aria-label="NEXA home"
+            >
 
-            <p>
-                Paid to:
-                <strong>
-                    <%= paymentRequest.shop.name %>
-                </strong>
+                <img
+                    src="/images/branding/nexa-logo2.svg"
+                    alt="NEXA"
+                    class="customer-success-logo"
+                >
+
+            </a>
+
+            <div class="customer-success-header-label">
+
+                <i data-lucide="shield-check"></i>
+
+                Payment Confirmation
+
+            </div>
+
+        </header>
+
+
+        <!-- SUCCESS CARD -->
+
+        <section class="customer-success-card">
+
+            <div class="customer-success-icon-wrap">
+
+                <i data-lucide="check"></i>
+
+            </div>
+
+
+            <span class="customer-success-eyebrow">
+                PAYMENT CONFIRMATION
+            </span>
+
+
+            <h1>
+                Payment Successful<span class="nexa-title-dot">.</span>
+            </h1>
+
+
+            <p class="customer-success-description">
+                Your payment has been recorded as completed.
             </p>
 
-        <% } %>
+
+            <!-- PAYMENT AMOUNT -->
+
+            <div class="customer-success-amount-section">
+
+                <span>
+                    AMOUNT PAID
+                </span>
+
+                <h2>
+                    R<%= Number(paymentRequest.amount).toFixed(2) %>
+                </h2>
+
+            </div>
 
 
-        <% if (paymentRequest.reference) { %>
+            <!-- PAYMENT DETAILS -->
 
-            <p>
-                Reference:
-                <strong>
-                    <%= paymentRequest.reference %>
-                </strong>
-            </p>
+            <div class="customer-success-details">
 
-        <% } %>
+                <% if (paymentRequest.shop) { %>
+
+                    <div class="customer-success-detail-row">
+
+                        <span>
+                            Paid to
+                        </span>
+
+                        <strong>
+                            <%= paymentRequest.shop.name %>
+                        </strong>
+
+                    </div>
+
+                <% } %>
 
 
-        <p>
-            Status:
-            <strong>PAID</strong>
-        </p>
+                <% if (paymentRequest.reference) { %>
+
+                    <div class="customer-success-detail-row">
+
+                        <span>
+                            Reference
+                        </span>
+
+                        <strong>
+                            <%= paymentRequest.reference %>
+                        </strong>
+
+                    </div>
+
+                <% } %>
 
 
-        <p>
-            Payment completed through
-            Open Payments + Interledger.
-        </p>
+                <div class="customer-success-detail-row">
+
+                    <span>
+                        Payment status
+                    </span>
+
+                    <span class="customer-success-status">
+
+                        <i data-lucide="check-circle-2"></i>
+
+                        PAID
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT NETWORK -->
+
+            <div class="customer-success-network">
+
+                <i data-lucide="network"></i>
+
+                <p>
+                    Payment completed through
+                    <strong>Open Payments + Interledger</strong>.
+                </p>
+
+            </div>
+
+
+            <!-- FOOTER ACTION -->
+
+            <a
+                href="/"
+                class="customer-success-home-button"
+            >
+
+                <i data-lucide="arrow-left"></i>
+
+                Back to NEXA
+
+            </a>
+
+        </section>
+
+
+        <!-- PAGE FOOTER -->
+
+        <footer class="customer-success-footer">
+
+            <i data-lucide="shield-check"></i>
+
+            <span>
+                Powered by NEXA 
+            </span>
+
+        </footer>
 
     </main>
+
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script>
+
+        if (window.lucide) {
+
+            lucide.createIcons();
+
+        }
+
+    </script>
 
 </body>
 
