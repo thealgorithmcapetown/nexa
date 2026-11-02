@@ -1,55 +1,252 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <%- include('../partials/head') %>
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>NEXA — Log In</title>
 
-    <title>NEXA - Login</title>
-
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/auth.css">
 
 </head>
 
-<body>
+<body class="nexa-auth-body">
 
-    <h1>Login to NEXA</h1>
+    <!-- NEXA animated wave background -->
+    <div class="nexa-wave-background" aria-hidden="true">
 
-    <form action="/login" method="POST">
-
-        <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
+        <svg
+            class="nexa-wave-svg"
+            viewBox="0 0 1440 900"
+            preserveAspectRatio="xMidYMid slice"
+            xmlns="http://www.w3.org/2000/svg"
         >
 
-        <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-        >
+            <defs>
 
-        <button type="submit">
-            Login
-        </button>
+                <linearGradient
+                    id="nexaWaveGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                >
+                    <stop offset="0%" stop-color="#8CE11A" stop-opacity="0.15"/>
+                    <stop offset="35%" stop-color="#8CE11A" stop-opacity="0.85"/>
+                    <stop offset="70%" stop-color="#8CE11A" stop-opacity="0.75"/>
+                    <stop offset="100%" stop-color="#8CE11A" stop-opacity="0.12"/>
+                </linearGradient>
 
-    </form>
+                <filter
+                    id="nexaWaveGlow"
+                    x="-30%"
+                    y="-100%"
+                    width="160%"
+                    height="300%"
+                >
+                    <feGaussianBlur stdDeviation="4"/>
+                </filter>
 
+            </defs>
 
-    <p>
-        Don't have an account?
-        <a href="/signup">Create one</a>
-    </p>
+            <!-- Wave 1 — upper-left to upper-right -->
+            <path
+                class="nexa-wave-glow"
+                d="M -150 140
+                   C 120 10, 260 70, 480 230
+                   S 850 420, 1110 290
+                   S 1430 110, 1590 190"
+            />
+
+            <path
+                class="nexa-wave-line nexa-wave-line-one"
+                d="M -150 140
+                   C 120 10, 260 70, 480 230
+                   S 850 420, 1110 290
+                   S 1430 110, 1590 190"
+            />
+
+            <!-- Wave 2 — middle background -->
+            <path
+                class="nexa-wave-glow"
+                d="M -180 490
+                   C 130 370, 300 590, 550 490
+                   S 960 340, 1190 470
+                   S 1480 600, 1620 450"
+            />
+
+            <path
+                class="nexa-wave-line nexa-wave-line-two"
+                d="M -180 490
+                   C 130 370, 300 590, 550 490
+                   S 960 340, 1190 470
+                   S 1480 600, 1620 450"
+            />
+
+            <!-- Wave 3 — lower-left to lower-right -->
+            <path
+                class="nexa-wave-glow"
+                d="M -150 800
+                   C 150 620, 300 700, 530 790
+                   S 900 920, 1110 720
+                   S 1440 620, 1600 690"
+            />
+
+            <path
+                class="nexa-wave-line nexa-wave-line-three"
+                d="M -150 800
+                   C 150 620, 300 700, 530 790
+                   S 900 920, 1110 720
+                   S 1440 620, 1600 690"
+            />
+
+        </svg>
+
+    </div>
+
+    <main class="nexa-auth-main">
+
+        <section class="nexa-auth-card">
+
+            <!-- NEXA Branding -->
+            <div class="nexa-auth-brand">
+
+            </div>
+
+            <!-- Header -->
+            <div class="nexa-auth-heading">
+
+                <span class="nexa-auth-eyebrow">
+                    WELCOME BACK
+                </span>
+
+                <h1>Log in to your account</h1>
+
+                <p>
+                    Your marketplace is waiting for you.
+                </p>
+
+            </div>
+
+            <!-- Login Form -->
+            <form
+                action="/login"
+                method="POST"
+                class="nexa-auth-form"
+            >
+
+                <div class="nexa-auth-field">
+
+                    <label for="email">
+                        Email address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+                <div class="nexa-auth-field">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="nexa-auth-password">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="nexa-password-toggle"
+                            aria-label="Show password"
+                            aria-pressed="false"
+                        >
+                            <i data-lucide="eye"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="nexa-auth-submit"
+                >
+                    Log In
+                    <i data-lucide="arrow-right"></i>
+                </button>
+
+            </form>
+
+            <!-- Sign Up Link -->
+            <p class="nexa-auth-switch">
+                Don't have an account?
+                <a href="/signup">Create an account</a>
+            </p>
+
+        </section>
+
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            const passwordInput = document.getElementById("password");
+            const passwordToggle = document.querySelector(".nexa-password-toggle");
+
+            passwordToggle.addEventListener("click", () => {
+
+                const isHidden = passwordInput.type === "password";
+
+                passwordInput.type = isHidden ? "text" : "password";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    isHidden ? "Hide password" : "Show password"
+                );
+
+                passwordToggle.setAttribute(
+                    "aria-pressed",
+                    String(isHidden)
+                );
+
+                passwordToggle.innerHTML = isHidden
+                    ? '<i data-lucide="eye-off"></i>'
+                    : '<i data-lucide="eye"></i>';
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+            });
+
+        });
+    </script>
 
 </body>
 

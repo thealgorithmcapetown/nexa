@@ -1,0 +1,122 @@
+
+/* ========================================
+   NEXA — GLOBAL LOADING SCREEN
+======================================== */
+
+.nexa-loader[hidden] {
+    display: none !important;
+}
+
+.nexa-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #8CE11A;
+    color: #080D0B;
+}
+
+.nexa-loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    text-align: center;
+}
+
+.nexa-loader-icon {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    animation: nexaSpin 1.6s linear infinite;
+}
+
+.nexa-loader-title {
+    margin: 24px 0 8px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: 6px;
+}
+
+.nexa-loader-message {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #263615;
+}
+
+.nexa-loader-track {
+    width: 180px;
+    height: 4px;
+    margin-top: 26px;
+    overflow: hidden;
+    border-radius: 100px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.nexa-loader-bar {
+    width: 40%;
+    height: 100%;
+    border-radius: inherit;
+    background: #080D0B;
+    animation: nexaProgress 1.3s ease-in-out infinite alternate;
+}
+
+.nexa-loader.is-hiding {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+@keyframes nexaSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes nexaProgress {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(350%);
+    }
+}
+@media (max-width: 600px) {
+    .nexa-loader-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .nexa-loader-title {
+        font-size: 30px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nexa-loader-icon,
+    .nexa-loader-bar {
+        animation: none;
+    }
+
+    .nexa-loader.is-hiding {
+        transition: none;
+    }
+}
+.nexa-loader-message {
+    margin-top: 20px;
+}
+
+/* ========================================
+   DISABLE LOADER ON DESKTOP
+======================================== */
+
+@media (min-width: 769px) {
+    .nexa-loader {
+        display: none !important;
+    }
+}

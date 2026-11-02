@@ -1,0 +1,439 @@
+
+/* ========================================
+   NEXA — AUTHENTICATION
+======================================== */
+
+.nexa-auth-body {
+    position: relative;
+    isolation: isolate;
+    overflow-x: hidden;
+
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+
+    background: #080D0B;
+    color: #F7FAF8;
+    font-family: 'Manrope', sans-serif;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.nexa-auth-main {
+    position: relative;
+    z-index: 1;
+
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 48px 20px 24px;
+}
+
+/* ========================================
+   GLASS AUTH CARD
+======================================== */
+
+.nexa-auth-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    width: 100%;
+    max-width: 440px;
+    box-sizing: border-box;
+    padding: 38px;
+
+    background: rgba(16, 25, 20, 0.68);
+
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 24px;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* ========================================
+   NEXA — EMBOSSED TEXT WATERMARK
+======================================== */
+
+.nexa-auth-card::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+
+    background-image: url('/images/branding/nexa-logo2.svg');
+    background-repeat: no-repeat;
+    background-position: center 20px;
+    background-size: 85% auto;
+
+    opacity: 0.16;
+
+    filter:
+        drop-shadow(1px 1px 0 rgba(255, 255, 255, 0.65))
+        drop-shadow(-1px -1px 0 rgba(0, 0, 0, 0.9))
+        drop-shadow(0 3px 5px rgba(0, 0, 0, 0.35));
+
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Keep content above the watermark */
+
+.nexa-auth-heading,
+.nexa-auth-form,
+.nexa-auth-switch {
+    position: relative;
+    z-index: 1;
+}
+
+/* ========================================
+   HEADINGS
+======================================== */
+
+.nexa-auth-heading {
+    margin-top: 110px;
+    margin-bottom: 30px;
+}
+
+.nexa-auth-eyebrow {
+    color: #8CE11A;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.nexa-auth-heading h1 {
+    margin: 10px 0;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    line-height: 1.3;
+}
+
+.nexa-auth-heading p {
+    margin: 0;
+    color: #98A49D;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* ========================================
+   FORM
+======================================== */
+
+.nexa-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.nexa-auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.nexa-auth-field label {
+    color: #D8E1DA;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.nexa-auth-field input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 15px 16px;
+    min-height: 50px;
+
+    background: #0B130E;
+    color: #F7FAF8;
+
+    border: 1px solid #25382B;
+    border-radius: 12px;
+
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.nexa-auth-field input::placeholder {
+    color: #65766B;
+}
+
+.nexa-auth-field input:focus {
+    border-color: #8CE11A;
+    box-shadow: 0 0 0 3px rgba(140, 225, 26, 0.10);
+}
+
+/* ========================================
+   PASSWORD TOGGLE
+======================================== */
+
+.nexa-auth-password {
+    position: relative;
+}
+
+.nexa-auth-password input {
+    padding-right: 52px;
+}
+
+.nexa-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    background: transparent;
+    border: 0;
+    color: #98A49D;
+
+    cursor: pointer;
+}
+
+.nexa-password-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+.nexa-password-toggle:hover {
+    color: #8CE11A;
+}
+
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+
+.nexa-auth-submit {
+    width: 100%;
+    min-height: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    margin-top: 8px;
+    padding: 14px 18px;
+
+    background: #8CE11A;
+    color: #080D0B;
+
+    border: none;
+    border-radius: 12px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nexa-auth-submit:hover {
+    background: #A5F23E;
+}
+
+.nexa-auth-submit:active {
+    transform: scale(0.98);
+}
+
+.nexa-auth-submit svg {
+    width: 17px;
+    height: 17px;
+}
+
+/* ========================================
+   SIGN UP LINK
+======================================== */
+
+.nexa-auth-switch {
+    margin: 28px 0 0;
+    text-align: center;
+    color: #98A49D;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.nexa-auth-switch a {
+    color: #8CE11A;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.nexa-auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* ========================================
+   NEXA — ANIMATED DASHED WAVE BACKGROUND
+======================================== */
+
+.nexa-wave-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+
+    overflow: hidden;
+    pointer-events: none;
+
+    opacity: 0.75;
+}
+
+.nexa-wave-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Soft glow underneath each wave */
+
+.nexa-wave-glow {
+    fill: none;
+    stroke: #8CE11A;
+    stroke-width: 7;
+    stroke-opacity: 0.13;
+    filter: url(#nexaWaveGlow);
+}
+
+/* Dashed green lines */
+
+.nexa-wave-line {
+    fill: none;
+    stroke: url(#nexaWaveGradient);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 12 20;
+    vector-effect: non-scaling-stroke;
+    will-change: stroke-dashoffset;
+}
+
+/* Different speeds and directions */
+
+.nexa-wave-line-one {
+    animation: nexaWaveForward 18s linear infinite;
+}
+
+.nexa-wave-line-two {
+    animation: nexaWaveBackward 22s linear infinite;
+}
+
+.nexa-wave-line-three {
+    animation: nexaWaveForward 26s linear infinite;
+}
+
+@keyframes nexaWaveForward {
+    from {
+        stroke-dashoffset: 0;
+    }
+
+    to {
+        stroke-dashoffset: -320;
+    }
+}
+
+@keyframes nexaWaveBackward {
+    from {
+        stroke-dashoffset: 0;
+    }
+
+    to {
+        stroke-dashoffset: 320;
+    }
+}
+
+/* ========================================
+   FOOTER LAYER
+======================================== */
+
+.nexa-footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 768px) {
+
+    .nexa-auth-main {
+        padding: 28px 16px 16px;
+    }
+
+    .nexa-auth-card {
+        padding: 28px 22px;
+        border-radius: 20px;
+    }
+
+    .nexa-auth-heading {
+        margin-top: 90px;
+    }
+
+    .nexa-auth-heading h1 {
+        font-size: 22px;
+    }
+
+    .nexa-auth-field input {
+        font-size: 16px;
+    }
+
+    .nexa-wave-background {
+        opacity: 0.85;
+    }
+
+    .nexa-wave-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .nexa-wave-line {
+        stroke-width: 1.7;
+        stroke-dasharray: 9 15;
+    }
+
+    .nexa-wave-glow {
+        stroke-width: 5;
+        stroke-opacity: 0.1;
+    }
+
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .nexa-wave-line-one,
+    .nexa-wave-line-two,
+    .nexa-wave-line-three {
+        animation: none;
+    }
+
+}

@@ -1,0 +1,26 @@
+
+/* ========================================
+   NEXA — GLOBAL FOOTER
+======================================== */
+
+.nexa-footer {
+    width: 100%;
+    padding: 24px 16px;
+    text-align: center;
+    background: transparent;
+}
+
+.nexa-footer p {
+    margin: 0;
+    color: #65766B;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+@media (max-width: 768px) {
+    .nexa-footer {
+        padding: 20px 16px 110px;
+    }
+}
