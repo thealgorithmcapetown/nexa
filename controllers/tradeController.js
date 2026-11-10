@@ -3,68 +3,69 @@ import mongoose from "mongoose";
 import TradeRequest from "../models/TradeRequest.js";
 import Shop from "../models/Shop.js";
 import Offer from "../models/Offer.js";
-import Payment from "../models/Payment.js"; 
+import Payment from "../models/Payment.js";
 import Notification from "../models/Notification.js";
+import Rating from "../models/Rating.js";
 
-import {
-    calculateDistance
-} from "../utils/calculateDistance.js";
+import { calculateDistance } from "../utils/calculateDistance.js";
 
 
-// ========================================
-// SHOW TRADE BOARD
-// ========================================
+const hasValidCoordinates = (coordinates) => {
+
+    if (
+        coordinates?.latitude == null ||
+        coordinates?.longitude == null ||
+        coordinates.latitude === "" ||
+        coordinates.longitude === ""
+    ) {
+        return false;
+    }
+
+    const latitude = Number(coordinates.latitude);
+    const longitude = Number(coordinates.longitude);
+
+    return (
+        Number.isFinite(latitude) &&
+        Number.isFinite(longitude) &&
+        latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180
+    );
+};
+
 
 export const showTradeBoard = async (req, res) => {
 
     try {
 
-        const currentShop =
-            await Shop.findById(
-                req.session.shopId
-            );
-
+        const currentShop = await Shop.findById(
+            req.session.shopId
+        );
 
         if (!currentShop) {
-
-            return res.status(404).send(
-                "Shop not found"
-            );
-
+            return res.status(404).send("Shop not found");
         }
 
-
-        // --------------------------------
-        // GET FILTERS FROM URL
-        // --------------------------------
 
         const search =
             typeof req.query.search === "string"
                 ? req.query.search.trim()
                 : "";
 
-
         const fulfilment =
             typeof req.query.fulfilment === "string"
                 ? req.query.fulfilment
                 : "";
 
+        const maxBudget = req.query.maxBudget
+            ? Number(req.query.maxBudget)
+            : null;
 
-        const maxBudget =
-            req.query.maxBudget
-                ? Number(req.query.maxBudget)
-                : null;
+        const distanceFilter = req.query.distance
+            ? Number(req.query.distance)
+            : null;
 
-
-        const distanceFilter =
-            req.query.distance
-                ? Number(req.query.distance)
-                : null;
-
-
-        // --------------------------------
-        // BUILD DATABASE FILTER
-        // --------------------------------
 
         const query = {
 
@@ -77,22 +78,15 @@ export const showTradeBoard = async (req, res) => {
         };
 
 
-        // Product search
-
         if (search) {
 
             query.product = {
-
                 $regex: search,
-
                 $options: "i"
-
             };
 
         }
 
-
-        // Fulfilment filter
 
         if (
             fulfilment === "pickup" ||
@@ -100,18 +94,11 @@ export const showTradeBoard = async (req, res) => {
         ) {
 
             query.fulfilment = {
-
-                $in: [
-                    fulfilment,
-                    "either"
-                ]
-
+                $in: [fulfilment, "either"]
             };
 
         }
 
-
-        // Maximum budget filter
 
         if (
             maxBudget !== null &&
@@ -126,182 +113,124 @@ export const showTradeBoard = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // GET OPEN REQUESTS
-        // --------------------------------
-
-        const requests =
-            await TradeRequest
-                .find(query)
-                .populate("shop")
-                .sort({
-                    createdAt: -1
-                });
+        const requests = await TradeRequest
+            .find(query)
+            .populate("shop")
+            .sort({ createdAt: -1 });
 
 
-        // --------------------------------
-        // CALCULATE DISTANCE
-        // --------------------------------
+        const requestsWithDistance = requests
 
-        const requestsWithDistance =
-            requests
-                .map(request => {
+            .filter(request => request.shop)
 
-                    let distance = null;
+            .map(request => {
 
+                let distance = null;
 
-                    const currentCoordinates =
-                        currentShop.coordinates;
+                const currentCoordinates =
+                    currentShop.coordinates;
 
-
-                    const requestCoordinates =
-                        request.coordinates;
+                const requestCoordinates =
+                    hasValidCoordinates(request.coordinates)
+                        ? request.coordinates
+                        : request.shop.coordinates;
 
 
-                    if (
-                        currentCoordinates?.latitude != null &&
-                        currentCoordinates?.longitude != null &&
-                        requestCoordinates?.latitude != null &&
-                        requestCoordinates?.longitude != null
-                    ) {
+                if (
+                    hasValidCoordinates(currentCoordinates) &&
+                    hasValidCoordinates(requestCoordinates)
+                ) {
 
-                        distance =
-                            calculateDistance(
+                    distance = calculateDistance(
 
-                                currentCoordinates.latitude,
+                        Number(currentCoordinates.latitude),
+                        Number(currentCoordinates.longitude),
 
-                                currentCoordinates.longitude,
+                        Number(requestCoordinates.latitude),
+                        Number(requestCoordinates.longitude)
 
-                                requestCoordinates.latitude,
-
-                                requestCoordinates.longitude
-
-                            );
-
-                    }
-
-
-                    return {
-
-                        request,
-
-                        distance
-
-                    };
-
-                })
-
-                // --------------------------------
-                // ENFORCE DISTANCE
-                // --------------------------------
-
-                .filter(item => {
-
-                    /*
-                        If distance cannot be calculated,
-                        keep the request visible.
-
-                        We do not want missing coordinates
-                        to silently hide a trade request.
-                    */
-
-                    if (item.distance === null) {
-
-                        return true;
-
-                    }
-
-
-                    // Respect the request owner's
-                    // maximum trading distance.
-
-                    const requestMaxDistance =
-                        Number(
-                            item.request.maxDistance
-                        );
-
-
-                    if (
-                        Number.isFinite(
-                            requestMaxDistance
-                        ) &&
-                        requestMaxDistance > 0 &&
-                        item.distance >
-                        requestMaxDistance
-                    ) {
-
-                        return false;
-
-                    }
-
-
-                    // Respect the viewing vendor's
-                    // selected distance filter.
-
-                    if (
-                        distanceFilter !== null &&
-                        Number.isFinite(
-                            distanceFilter
-                        ) &&
-                        distanceFilter > 0 &&
-                        item.distance >
-                        distanceFilter
-                    ) {
-
-                        return false;
-
-                    }
-
-
-                    return true;
-
-                });
-
-
-        // --------------------------------
-        // RENDER
-        // --------------------------------
-
-        return res.render(
-
-            "trade/index",
-
-            {
-
-                requestsWithDistance,
-
-                filters: {
-
-                    search,
-
-                    fulfilment,
-
-                    maxBudget:
-                        Number.isFinite(maxBudget)
-                            ? maxBudget
-                            : "",
-
-                    distance:
-                        Number.isFinite(
-                            distanceFilter
-                        )
-                            ? distanceFilter
-                            : ""
+                    );
 
                 }
 
+
+                return {
+                    request,
+                    distance
+                };
+
+            })
+
+
+            .filter(item => {
+
+                const requestMaxDistance = Number(
+                    item.request.maxDistance
+                );
+
+                const validDistanceFilter =
+                    distanceFilter !== null &&
+                    Number.isFinite(distanceFilter) &&
+                    distanceFilter > 0;
+
+
+                if (item.distance === null) {
+                    return !validDistanceFilter;
+                }
+
+
+                if (
+                    Number.isFinite(requestMaxDistance) &&
+                    requestMaxDistance > 0 &&
+                    item.distance > requestMaxDistance
+                ) {
+                    return false;
+                }
+
+
+                if (
+                    validDistanceFilter &&
+                    item.distance > distanceFilter
+                ) {
+                    return false;
+                }
+
+
+                return true;
+
+            });
+
+
+        return res.render("trade/index", {
+
+            requestsWithDistance,
+
+            filters: {
+
+                search,
+
+                fulfilment,
+
+                maxBudget:
+                    Number.isFinite(maxBudget)
+                        ? maxBudget
+                        : "",
+
+                distance:
+                    Number.isFinite(distanceFilter)
+                        ? distanceFilter
+                        : ""
+
             }
 
-        );
+        });
 
-
-    } catch (error) {
+    } catch (error) { // DONT TOUCH THIS CATCH , I STOOD HERE FOR 5 HOURS AND FIXED IT, MATTER FACT DONT TOUCH THE WHOLE FUNCTION ILL BE THE ONLY ONE HERE BRO
 
         console.error(
             "TRADE BOARD ERROR:",
             error.message
         );
-
 
         return res.status(500).send(
             "Unable to load trade board"
@@ -312,22 +241,12 @@ export const showTradeBoard = async (req, res) => {
 };
 
 
-// ========================================
-// SHOW CREATE TRADE PAGE
-// ========================================
-
 export const showCreateTrade = (req, res) => {
 
-    return res.render(
-        "trade/create"
-    );
+    return res.render("trade/create");
 
 };
 
-
-// ========================================
-// CREATE TRADE REQUEST
-// ========================================
 
 export const createTradeRequest = async (req, res) => {
 
@@ -344,12 +263,8 @@ export const createTradeRequest = async (req, res) => {
         } = req.body;
 
 
-        // --------------------------------
-        // VALIDATE REQUIRED TEXT
-        // --------------------------------
-
         if (
-            !product ||
+            typeof product !== "string" ||
             product.trim() === ""
         ) {
 
@@ -359,9 +274,8 @@ export const createTradeRequest = async (req, res) => {
 
         }
 
-
         if (
-            !unit ||
+            typeof unit !== "string" ||
             unit.trim() === ""
         ) {
 
@@ -372,19 +286,9 @@ export const createTradeRequest = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // VALIDATE NUMBERS
-        // --------------------------------
-
-        const parsedQuantity =
-            Number(quantity);
-
-        const parsedBudget =
-            Number(budget);
-
-        const parsedMaxDistance =
-            Number(maxDistance);
-
+        const parsedQuantity = Number(quantity);
+        const parsedBudget = Number(budget);
+        const parsedMaxDistance = Number(maxDistance);
 
         if (
             !Number.isFinite(parsedQuantity) ||
@@ -397,7 +301,6 @@ export const createTradeRequest = async (req, res) => {
 
         }
 
-
         if (
             !Number.isFinite(parsedBudget) ||
             parsedBudget <= 0
@@ -408,7 +311,6 @@ export const createTradeRequest = async (req, res) => {
             );
 
         }
-
 
         if (
             !Number.isFinite(parsedMaxDistance) ||
@@ -422,22 +324,13 @@ export const createTradeRequest = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // VALIDATE FULFILMENT
-        // --------------------------------
-
         const allowedFulfilment = [
             "pickup",
             "delivery",
             "either"
         ];
 
-
-        if (
-            !allowedFulfilment.includes(
-                fulfilment
-            )
-        ) {
+        if (!allowedFulfilment.includes(fulfilment)) {
 
             return res.status(400).send(
                 "Invalid fulfilment option"
@@ -446,15 +339,9 @@ export const createTradeRequest = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // FIND CURRENT SHOP
-        // --------------------------------
-
-        const shop =
-            await Shop.findById(
-                req.session.shopId
-            );
-
+        const shop = await Shop.findById(
+            req.session.shopId
+        );
 
         if (!shop) {
 
@@ -465,50 +352,47 @@ export const createTradeRequest = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // CREATE REQUEST
-        // --------------------------------
+        if (!hasValidCoordinates(shop.coordinates)) {
+
+            return res.status(400).send(
+                "Your shop does not have a confirmed map location"
+            );
+
+        }
+
 
         await TradeRequest.create({
 
-            shop:
-                shop._id,
+            shop: shop._id,
 
-            product:
-                product.trim(),
+            product: product.trim(),
 
-            quantity:
-                parsedQuantity,
+            quantity: parsedQuantity,
 
-            unit:
-                unit.trim(),
+            unit: unit.trim(),
 
-            budget:
-                parsedBudget,
+            budget: parsedBudget,
 
-            address:
-                shop.address,
+            address: shop.address,
 
-            coordinates:
-                shop.coordinates,
+            coordinates: {
+                latitude: Number(shop.coordinates.latitude),
+                longitude: Number(shop.coordinates.longitude)
+            },
 
-            maxDistance:
-                parsedMaxDistance,
+            maxDistance: parsedMaxDistance,
 
             fulfilment,
 
             description:
-                description
+                typeof description === "string"
                     ? description.trim()
                     : ""
 
         });
 
 
-        return res.redirect(
-            "/trade"
-        );
-
+        return res.redirect("/trade");
 
     } catch (error) {
 
@@ -516,7 +400,6 @@ export const createTradeRequest = async (req, res) => {
             "CREATE TRADE ERROR:",
             error.message
         );
-
 
         return res.status(500).send(
             "Unable to create trade request"
@@ -526,10 +409,6 @@ export const createTradeRequest = async (req, res) => {
 
 };
 
-
-// ========================================
-// SHOW TRADE DETAILS
-// ========================================
 
 export const showTradeDetails = async (req, res) => {
 
@@ -548,12 +427,9 @@ export const showTradeDetails = async (req, res) => {
         }
 
 
-        const request =
-            await TradeRequest
-                .findById(
-                    req.params.id
-                )
-                .populate("shop");
+        const request = await TradeRequest
+            .findById(req.params.id)
+            .populate("shop");
 
 
         if (!request) {
@@ -564,7 +440,6 @@ export const showTradeDetails = async (req, res) => {
 
         }
 
-
         if (!request.shop) {
 
             return res.status(404).send(
@@ -574,20 +449,15 @@ export const showTradeDetails = async (req, res) => {
         }
 
 
-        const currentShopId =
-            req.session.shopId;
+        const currentShopId = req.session.shopId;
 
+        let acceptedOffer = null;
+        let successfulPayment = null;
 
-        let acceptedOffer =
-            null;
+        let existingRating = null;
+        let buyerShopName = null;
+        let sellerShopName = null;
 
-        let successfulPayment =
-            null;
-
-
-        // --------------------------------
-        // FIND ACCEPTED OFFER
-        // --------------------------------
 
         if (
             [
@@ -597,59 +467,82 @@ export const showTradeDetails = async (req, res) => {
             ].includes(request.status)
         ) {
 
-            acceptedOffer =
-                await Offer.findOne({
+            acceptedOffer = await Offer.findOne({
 
-                    tradeRequest:
-                        request._id,
+                tradeRequest: request._id,
 
-                    status:
-                        "accepted"
+                status: "accepted"
+
+            });
+
+
+            if (acceptedOffer) {
+
+                successfulPayment = await Payment.findOne({
+
+                    offer: acceptedOffer._id,
+
+                    tradeRequest: request._id,
+
+                    payer: acceptedOffer.buyer,
+
+                    payee: acceptedOffer.seller,
+
+                    status: "successful"
 
                 });
 
 
-            // --------------------------------
-            // FIND SUCCESSFUL PAYMENT
-            // --------------------------------
+                const [buyerShop, sellerShop] = await Promise.all([
 
-            if (acceptedOffer) {
+                    Shop.findById(acceptedOffer.buyer),
 
-                successfulPayment =
-                    await Payment.findOne({
+                    Shop.findById(acceptedOffer.seller)
 
-                        offer:
-                            acceptedOffer._id,
+                ]);
 
-                        tradeRequest:
-                            request._id,
+                buyerShopName = buyerShop?.name || "the buyer";
+                sellerShopName = sellerShop?.name || "the seller";
 
-                        payer:
-                            acceptedOffer.buyer,
 
-                        payee:
-                            acceptedOffer.seller,
+                if (request.status === "completed") {
 
-                        status:
-                            "successful"
+                    const currentShopString = String(currentShopId || "");
 
-                    });
+                    const isParticipant =
+                        currentShopString === String(acceptedOffer.buyer) ||
+                        currentShopString === String(acceptedOffer.seller);
+
+                    if (isParticipant) {
+
+                        existingRating = await Rating.findOne({
+
+                            tradeRequest: request._id,
+
+                            fromShop: currentShopId
+
+                        });
+
+                    }
+
+                }
 
             }
 
         }
 
 
-        return res.render(
-            "trade/details",
-            {
-                request,
-                currentShopId,
-                acceptedOffer,
-                successfulPayment
-            }
-        );
+        return res.render("trade/details", {
 
+            request,
+            currentShopId,
+            acceptedOffer,
+            successfulPayment,
+            existingRating,
+            buyerShopName,
+            sellerShopName
+
+        });
 
     } catch (error) {
 
@@ -657,7 +550,6 @@ export const showTradeDetails = async (req, res) => {
             "SHOW TRADE DETAILS ERROR:",
             error.message
         );
-
 
         return res.status(500).send(
             "Unable to load trade request"
@@ -668,32 +560,22 @@ export const showTradeDetails = async (req, res) => {
 };
 
 
-// ========================================
-// SHOW MY REQUESTS
-// ========================================
-
 export const showMyRequests = async (req, res) => {
 
     try {
 
-        const requests =
-            await TradeRequest
-                .find({
-                    shop:
-                        req.session.shopId
-                })
-                .sort({
-                    createdAt: -1
-                });
+        const requests = await TradeRequest
+            .find({
+                shop: req.session.shopId
+            })
+            .sort({
+                createdAt: -1
+            });
 
 
-        return res.render(
-            "trade/myRequests",
-            {
-                requests
-            }
-        );
-
+        return res.render("trade/myRequests", {
+            requests
+        });
 
     } catch (error) {
 
@@ -701,7 +583,6 @@ export const showMyRequests = async (req, res) => {
             "SHOW MY REQUESTS ERROR:",
             error.message
         );
-
 
         return res.status(500).send(
             "Unable to load your requests"
@@ -711,11 +592,6 @@ export const showMyRequests = async (req, res) => {
 
 };
 
-
-// ========================================
-// MARK PAID TRADE AS FULFILLED
-// SELLER ONLY
-// ========================================
 
 export const fulfillTrade = async (req, res) => {
 
@@ -734,11 +610,9 @@ export const fulfillTrade = async (req, res) => {
         }
 
 
-        const tradeRequest =
-            await TradeRequest.findById(
-                req.params.id
-            );
-
+        const tradeRequest = await TradeRequest.findById(
+            req.params.id
+        );
 
         if (!tradeRequest) {
 
@@ -749,13 +623,9 @@ export const fulfillTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // PREVENT DUPLICATE FULFILMENT
-        // --------------------------------
-
         if (
-            tradeRequest.status ===
-            "fulfilled"
+            tradeRequest.status === "fulfilled" ||
+            tradeRequest.status === "completed"
         ) {
 
             return res.redirect(
@@ -764,23 +634,7 @@ export const fulfillTrade = async (req, res) => {
 
         }
 
-
-        if (
-            tradeRequest.status ===
-            "completed"
-        ) {
-
-            return res.redirect(
-                `/trade/${tradeRequest._id}`
-            );
-
-        }
-
-
-        if (
-            tradeRequest.status !==
-            "accepted"
-        ) {
+        if (tradeRequest.status !== "accepted") {
 
             return res.status(400).send(
                 "This trade cannot be marked as fulfilled"
@@ -789,21 +643,13 @@ export const fulfillTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // FIND ACCEPTED OFFER
-        // --------------------------------
+        const offer = await Offer.findOne({
 
-        const offer =
-            await Offer.findOne({
+            tradeRequest: tradeRequest._id,
 
-                tradeRequest:
-                    tradeRequest._id,
+            status: "accepted"
 
-                status:
-                    "accepted"
-
-            });
-
+        });
 
         if (!offer) {
 
@@ -813,10 +659,6 @@ export const fulfillTrade = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // SELLER ONLY
-        // --------------------------------
 
         if (
             offer.seller.toString() !==
@@ -830,30 +672,19 @@ export const fulfillTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // VERIFIED SUCCESSFUL PAYMENT
-        // --------------------------------
+        const payment = await Payment.findOne({
 
-        const payment =
-            await Payment.findOne({
+            offer: offer._id,
 
-                offer:
-                    offer._id,
+            tradeRequest: tradeRequest._id,
 
-                tradeRequest:
-                    tradeRequest._id,
+            payer: offer.buyer,
 
-                payer:
-                    offer.buyer,
+            payee: offer.seller,
 
-                payee:
-                    offer.seller,
+            status: "successful"
 
-                status:
-                    "successful"
-
-            });
-
+        });
 
         if (!payment) {
 
@@ -864,46 +695,29 @@ export const fulfillTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // MARK FULFILLED
-        // --------------------------------
+        tradeRequest.status = "fulfilled";
 
-        tradeRequest.status =
-            "fulfilled";
-
-        tradeRequest.fulfilledAt =
-            new Date();
-
+        tradeRequest.fulfilledAt = new Date();
 
         await tradeRequest.save();
 
 
-        // --------------------------------
-        // NOTIFY BUYER
-        // --------------------------------
-
-        const buyerShop =
-            await Shop.findById(
-                offer.buyer
-            );
-
+        const buyerShop = await Shop.findById(
+            offer.buyer
+        );
 
         if (buyerShop?.owner) {
 
             const existingNotification =
                 await Notification.findOne({
 
-                    user:
-                        buyerShop.owner,
+                    user: buyerShop.owner,
 
-                    type:
-                        "trade_fulfilled",
+                    type: "trade_fulfilled",
 
-                    relatedTrade:
-                        tradeRequest._id,
+                    relatedTrade: tradeRequest._id,
 
-                    relatedOffer:
-                        offer._id
+                    relatedOffer: offer._id
 
                 });
 
@@ -912,26 +726,20 @@ export const fulfillTrade = async (req, res) => {
 
                 await Notification.create({
 
-                    user:
-                        buyerShop.owner,
+                    user: buyerShop.owner,
 
-                    type:
-                        "trade_fulfilled",
+                    type: "trade_fulfilled",
 
                     message:
                         `${tradeRequest.product} has been marked as fulfilled. Confirm when you receive it.`,
 
-                    relatedTrade:
-                        tradeRequest._id,
+                    relatedTrade: tradeRequest._id,
 
-                    relatedOffer:
-                        offer._id,
+                    relatedOffer: offer._id,
 
-                    relatedShop:
-                        offer.seller,
+                    relatedShop: offer.seller,
 
-                    relatedPayment:
-                        payment._id
+                    relatedPayment: payment._id
 
                 });
 
@@ -944,14 +752,12 @@ export const fulfillTrade = async (req, res) => {
             `/trade/${tradeRequest._id}`
         );
 
-
     } catch (error) {
 
         console.error(
             "FULFILL TRADE ERROR:",
             error.message
         );
-
 
         return res.status(500).send(
             "Unable to mark trade as fulfilled"
@@ -961,11 +767,6 @@ export const fulfillTrade = async (req, res) => {
 
 };
 
-
-// ========================================
-// COMPLETE FULFILLED TRADE
-// BUYER ONLY
-// ========================================
 
 export const completeTrade = async (req, res) => {
 
@@ -984,11 +785,9 @@ export const completeTrade = async (req, res) => {
         }
 
 
-        const tradeRequest =
-            await TradeRequest.findById(
-                req.params.id
-            );
-
+        const tradeRequest = await TradeRequest.findById(
+            req.params.id
+        );
 
         if (!tradeRequest) {
 
@@ -999,14 +798,7 @@ export const completeTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // PREVENT DUPLICATE COMPLETION
-        // --------------------------------
-
-        if (
-            tradeRequest.status ===
-            "completed"
-        ) {
+        if (tradeRequest.status === "completed") {
 
             return res.redirect(
                 `/trade/${tradeRequest._id}`
@@ -1014,11 +806,7 @@ export const completeTrade = async (req, res) => {
 
         }
 
-
-        if (
-            tradeRequest.status !==
-            "fulfilled"
-        ) {
+        if (tradeRequest.status !== "fulfilled") {
 
             return res.status(400).send(
                 "This trade is not ready to be completed"
@@ -1027,21 +815,13 @@ export const completeTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // FIND ACCEPTED OFFER
-        // --------------------------------
+        const offer = await Offer.findOne({
 
-        const offer =
-            await Offer.findOne({
+            tradeRequest: tradeRequest._id,
 
-                tradeRequest:
-                    tradeRequest._id,
+            status: "accepted"
 
-                status:
-                    "accepted"
-
-            });
-
+        });
 
         if (!offer) {
 
@@ -1051,10 +831,6 @@ export const completeTrade = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // BUYER ONLY
-        // --------------------------------
 
         if (
             offer.buyer.toString() !==
@@ -1068,30 +844,19 @@ export const completeTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // VERIFIED SUCCESSFUL PAYMENT
-        // --------------------------------
+        const payment = await Payment.findOne({
 
-        const payment =
-            await Payment.findOne({
+            offer: offer._id,
 
-                offer:
-                    offer._id,
+            tradeRequest: tradeRequest._id,
 
-                tradeRequest:
-                    tradeRequest._id,
+            payer: offer.buyer,
 
-                payer:
-                    offer.buyer,
+            payee: offer.seller,
 
-                payee:
-                    offer.seller,
+            status: "successful"
 
-                status:
-                    "successful"
-
-            });
-
+        });
 
         if (!payment) {
 
@@ -1102,46 +867,29 @@ export const completeTrade = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // COMPLETE TRADE
-        // --------------------------------
+        tradeRequest.status = "completed";
 
-        tradeRequest.status =
-            "completed";
-
-        tradeRequest.completedAt =
-            new Date();
-
+        tradeRequest.completedAt = new Date();
 
         await tradeRequest.save();
 
 
-        // --------------------------------
-        // NOTIFY SELLER
-        // --------------------------------
-
-        const sellerShop =
-            await Shop.findById(
-                offer.seller
-            );
-
+        const sellerShop = await Shop.findById(
+            offer.seller
+        );
 
         if (sellerShop?.owner) {
 
             const existingNotification =
                 await Notification.findOne({
 
-                    user:
-                        sellerShop.owner,
+                    user: sellerShop.owner,
 
-                    type:
-                        "trade_completed",
+                    type: "trade_completed",
 
-                    relatedTrade:
-                        tradeRequest._id,
+                    relatedTrade: tradeRequest._id,
 
-                    relatedOffer:
-                        offer._id
+                    relatedOffer: offer._id
 
                 });
 
@@ -1150,26 +898,20 @@ export const completeTrade = async (req, res) => {
 
                 await Notification.create({
 
-                    user:
-                        sellerShop.owner,
+                    user: sellerShop.owner,
 
-                    type:
-                        "trade_completed",
+                    type: "trade_completed",
 
                     message:
                         `${tradeRequest.product} has been confirmed as completed.`,
 
-                    relatedTrade:
-                        tradeRequest._id,
+                    relatedTrade: tradeRequest._id,
 
-                    relatedOffer:
-                        offer._id,
+                    relatedOffer: offer._id,
 
-                    relatedShop:
-                        offer.buyer,
+                    relatedShop: offer.buyer,
 
-                    relatedPayment:
-                        payment._id
+                    relatedPayment: payment._id
 
                 });
 
@@ -1182,14 +924,12 @@ export const completeTrade = async (req, res) => {
             `/trade/${tradeRequest._id}`
         );
 
-
     } catch (error) {
 
         console.error(
             "COMPLETE TRADE ERROR:",
             error.message
         );
-
 
         return res.status(500).send(
             "Unable to complete trade"
@@ -1198,20 +938,15 @@ export const completeTrade = async (req, res) => {
     }
 
 };
-// ========================================
-// CANCEL TRADE REQUEST
-// Trade owner only
-// ========================================
+
 
 export const cancelTrade = async (req, res) => {
 
     try {
 
-        const tradeRequest =
-            await TradeRequest.findById(
-                req.params.id
-            );
-
+        const tradeRequest = await TradeRequest.findById(
+            req.params.id
+        );
 
         if (!tradeRequest) {
 
@@ -1221,9 +956,7 @@ export const cancelTrade = async (req, res) => {
 
         }
 
-
-        // Only the shop that created
-        // the request can cancel it
+        // (teamWaterMark) theAlgorithm made this webApp with love and care, it took us 1.2 months but we finally got it!
 
         if (
             tradeRequest.shop.toString() !==
@@ -1236,9 +969,6 @@ export const cancelTrade = async (req, res) => {
 
         }
 
-
-        // Once accepted/payment process begins,
-        // it cannot simply be cancelled
 
         if (tradeRequest.status !== "open") {
 
@@ -1254,19 +984,19 @@ export const cancelTrade = async (req, res) => {
         await tradeRequest.save();
 
 
-        // Withdraw every pending offer
-        // attached to this request
-
         await Offer.updateMany(
+
             {
                 tradeRequest: tradeRequest._id,
                 status: "pending"
             },
+
             {
                 $set: {
                     status: "withdrawn"
                 }
             }
+
         );
 
 
@@ -1280,14 +1010,12 @@ export const cancelTrade = async (req, res) => {
             "/trade/my-requests"
         );
 
-
     } catch (error) {
 
         console.error(
             "CANCEL TRADE ERROR:",
             error
         );
-
 
         return res.status(500).send(
             "Unable to cancel trade request"

@@ -1,7 +1,4 @@
 
-/* ========================================
-   NEXA — GLOBAL LOADING SCREEN
-======================================== */
 
 .nexa-loader[hidden] {
     display: none !important;
@@ -110,10 +107,6 @@
 .nexa-loader-message {
     margin-top: 20px;
 }
-
-/* ========================================
-   DISABLE LOADER ON DESKTOP
-======================================== */
 
 @media (min-width: 769px) {
     .nexa-loader {

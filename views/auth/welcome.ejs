@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NEXA — Welcome</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #8CE11A;
+            overflow: hidden;
+        }
+
+        .welcome-screen {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            background: #8CE11A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.55s ease;
+        }
+
+        .welcome-screen.fade-out {
+            opacity: 0;
+        }
+
+        .welcome-content {
+            width: 100%;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .greeting-container {
+            width: 100%;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .greeting,
+        .brand-reveal {
+            opacity: 0;
+            transform: translateY(35px) scale(0.96);
+            filter: blur(8px);
+            transition:
+                opacity 0.38s ease,
+                transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                filter 0.38s ease;
+        }
+
+        .greeting.visible,
+        .brand-reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        .greeting {
+            color: #071A10;
+            font-size: clamp(48px, 10vw, 100px);
+            font-weight: 800;
+            letter-spacing: -0.055em;
+            line-height: 1.15;
+            text-align: center;
+        }
+
+        .brand-reveal {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(14px, 3vw, 28px);
+            max-width: 100%;
+        }
+
+        .brand-reveal.active {
+            display: flex;
+        }
+
+        .brand-text {
+            width: clamp(155px, 30vw, 300px);
+            max-height: 90px;
+            object-fit: contain;
+        }
+
+        .brand-divider {
+            width: 2px;
+            height: clamp(42px, 6vw, 65px);
+            background: #071A10;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            width: clamp(48px, 8vw, 78px);
+            height: clamp(48px, 8vw, 78px);
+            object-fit: contain;
+        }
+
+        .loading-track {
+            margin-top: 35px;
+            width: 180px;
+            height: 3px;
+            background: rgba(7, 26, 16, 0.18);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            width: 35%;
+            height: 100%;
+            background: #071A10;
+            border-radius: 10px;
+            animation: loading 1.4s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                transform: translateX(-110%);
+            }
+
+            100% {
+                transform: translateX(400%);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .greeting-container {
+                min-height: 100px;
+            }
+
+            .greeting {
+                font-size: clamp(38px, 11vw, 60px);
+            }
+
+            .brand-reveal {
+                gap: 12px;
+            }
+
+            .brand-text {
+                width: clamp(130px, 42vw, 180px);
+            }
+
+            .brand-divider {
+                height: 42px;
+            }
+
+            .brand-icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            .loading-track {
+                width: 150px;
+                margin-top: 25px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .greeting,
+            .brand-reveal {
+                transition: opacity 0.2s ease;
+                transform: none;
+                filter: none;
+            }
+
+            .loading-bar {
+                animation: none;
+                width: 100%;
+            }
+
+            .welcome-screen {
+                transition-duration: 0.2s;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <main class="welcome-screen" id="welcomeScreen">
+
+        <div class="welcome-content">
+
+            <div class="greeting-container">
+
+                <h1
+                    class="greeting"
+                    id="welcomeGreeting"
+                    aria-live="polite"
+                >
+                    Hello!
+                </h1>
+
+                <div
+                    class="brand-reveal"
+                    id="brandReveal"
+                    aria-label="NEXA"
+                >
+
+                    <img
+                        src="/images/branding/nexa-logo2black.svg"
+                        alt="NEXA"
+                        class="brand-text"
+                    >
+
+                    <span
+                        class="brand-divider"
+                        aria-hidden="true"
+                    ></span>
+
+                    <img
+                        src="/images/branding/nexa-loading-icon.png"
+                        alt=""
+                        class="brand-icon"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="loading-track">
+                <div class="loading-bar"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const greetingElement =
+                document.getElementById("welcomeGreeting");
+
+            const brandReveal =
+                document.getElementById("brandReveal");
+
+            const welcomeScreen =
+                document.getElementById("welcomeScreen");
+
+            const greetings = [
+                "Hello!",
+                "Sawubona!",
+                "Hallo!",
+                "नमस्ते!",
+                "سلام!",
+                "Sanibonani!"
+            ];
+
+            const greetingDuration = 1400;
+            const transitionDuration = 380;
+            const brandDuration = 1600;
+            const fadeDuration = 550;
+
+            let currentGreeting = 0;
+
+            function showGreeting() {
+
+                greetingElement.classList.remove("visible");
+
+                setTimeout(() => {
+
+                    greetingElement.textContent =
+                        greetings[currentGreeting];
+
+                    greetingElement.classList.add("visible");
+
+                }, transitionDuration);
+
+            }
+
+            function showBrand() {
+
+                greetingElement.classList.remove("visible");
+
+                setTimeout(() => {
+
+                    greetingElement.style.display = "none";
+
+                    brandReveal.classList.add("active");
+
+                    requestAnimationFrame(() => {
+
+                        requestAnimationFrame(() => {
+                            brandReveal.classList.add("visible");
+                        });
+
+                    });
+
+                }, transitionDuration);
+
+                setTimeout(() => {
+
+                    welcomeScreen.classList.add("fade-out");
+
+                    setTimeout(() => {
+
+                        window.location.replace("/dashboard");
+
+                    }, fadeDuration);
+
+                }, transitionDuration + brandDuration);
+
+            }
+
+            showGreeting();
+
+            const greetingInterval = setInterval(() => {
+
+                currentGreeting++;
+
+                if (currentGreeting >= greetings.length) {
+
+                    clearInterval(greetingInterval);
+                    showBrand();
+
+                    return;
+                }
+
+                showGreeting();
+
+            }, greetingDuration);
+
+        });
+    </script>
+
+</body>
+
+</html>

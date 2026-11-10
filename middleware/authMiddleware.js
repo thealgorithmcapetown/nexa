@@ -1,6 +1,6 @@
 export const requireAuth = (req, res, next) => {
 
-    // User must have a valid login session
+   
     if (!req.session.userId) {
 
         return res.redirect("/login");
@@ -8,7 +8,7 @@ export const requireAuth = (req, res, next) => {
     }
 
 
-    // Vendor routes also require a shop session
+    
     if (!req.session.shopId) {
 
         console.error(

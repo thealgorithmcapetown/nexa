@@ -1,0 +1,614 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title><%= typeof statusCode !== "undefined" ? statusCode : 500 %> | NEXA</title>
+
+    <link rel="icon" href="/images/branding/nexa-logo2.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #07110c;
+            --lime: #9bec00;
+            --white: #f4f8f2;
+            --muted: #9aada0;
+            --border: rgba(175, 223, 164, 0.14);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--white);
+            font-family: "DM Sans", sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .error-background {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .error-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.28;
+        }
+
+        .error-orb-one {
+            width: 520px;
+            height: 520px;
+            top: -220px;
+            left: -180px;
+            background: radial-gradient(circle, #8cf500, #245d12 50%, transparent 72%);
+            animation: floatOne 19s ease-in-out infinite alternate;
+        }
+
+        .error-orb-two {
+            width: 620px;
+            height: 620px;
+            top: 20%;
+            right: -270px;
+            background: radial-gradient(circle, #48d633, #12472c 50%, transparent 72%);
+            animation: floatTwo 24s ease-in-out infinite alternate;
+        }
+
+        .error-orb-three {
+            width: 450px;
+            height: 450px;
+            bottom: -200px;
+            left: 20%;
+            background: radial-gradient(circle, #9bec00, #285d15 45%, transparent 72%);
+            animation: floatThree 21s ease-in-out infinite alternate;
+        }
+
+        .error-page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .error-header {
+            width: 100%;
+            border-bottom: 1px solid var(--border);
+            background: rgba(7, 17, 12, 0.58);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .error-header-inner {
+            width: min(1180px, calc(100% - 48px));
+            min-height: 82px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .error-logo img {
+            width: 145px;
+            max-height: 55px;
+            display: block;
+            object-fit: contain;
+            object-position: left center;
+        }
+
+        .error-header-label {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .error-header-label span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--lime);
+            box-shadow: 0 0 12px rgba(155, 236, 0, 0.5);
+        }
+
+        .error-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 65px 24px;
+        }
+
+        .error-glass {
+            position: relative;
+            isolation: isolate;
+            width: min(100%, 650px);
+            overflow: hidden;
+            padding: 13px;
+            border: 1px solid rgba(235, 255, 225, 0.23);
+            border-radius: 32px;
+            background: linear-gradient(
+                145deg,
+                rgba(215, 255, 202, 0.12),
+                rgba(108, 178, 101, 0.045) 45%,
+                rgba(255, 255, 255, 0.035)
+            );
+            backdrop-filter: blur(32px) saturate(160%);
+            -webkit-backdrop-filter: blur(32px) saturate(160%);
+            box-shadow:
+                inset 0 1px rgba(255, 255, 255, 0.25),
+                0 35px 100px rgba(0, 0, 0, 0.3),
+                0 0 80px rgba(116, 220, 44, 0.05);
+            animation: appear 0.75s ease both;
+        }
+
+        .error-glass::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 370px;
+            height: 370px;
+            top: -230px;
+            right: -110px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(190, 255, 143, 0.28), transparent 70%);
+            filter: blur(28px);
+            animation: glassMove 12s ease-in-out infinite alternate;
+        }
+
+        .error-glass::after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 300px;
+            height: 300px;
+            bottom: -200px;
+            left: -100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(125, 240, 56, 0.2), transparent 70%);
+            filter: blur(25px);
+        }
+
+        .error-glass-inner {
+            padding: 65px 45px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 23px;
+            background: rgba(6, 19, 12, 0.45);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.07);
+            text-align: center;
+        }
+
+        .error-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 15px;
+            border: 1px solid rgba(155, 236, 0, 0.2);
+            border-radius: 50px;
+            background: rgba(155, 236, 0, 0.07);
+            color: var(--lime);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+        }
+
+        .error-badge span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--lime);
+            box-shadow: 0 0 10px var(--lime);
+        }
+
+        .error-code {
+            position: relative;
+            margin: 23px 0 8px;
+            color: var(--lime);
+            font-size: clamp(100px, 20vw, 160px);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -12px;
+            text-shadow: 0 0 75px rgba(155, 236, 0, 0.17);
+        }
+
+        .error-code::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 2px;
+            left: 50%;
+            bottom: -7px;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, transparent, var(--lime), transparent);
+            opacity: 0.45;
+        }
+
+        .error-title {
+            margin-top: 32px;
+            font-size: clamp(25px, 4vw, 35px);
+            font-weight: 800;
+            letter-spacing: -1.4px;
+            line-height: 1.2;
+        }
+
+        .error-title span {
+            color: var(--lime);
+        }
+
+        .error-description {
+            max-width: 440px;
+            margin: 18px auto 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.9;
+            overflow-wrap: anywhere;
+        }
+
+        .error-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 35px;
+        }
+
+        .error-btn {
+            min-height: 46px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 13px 21px;
+            border-radius: 11px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.25s, background 0.25s, border-color 0.25s;
+        }
+
+        .error-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .error-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .error-btn-primary {
+            border: 1px solid var(--lime);
+            background: var(--lime);
+            color: #091109;
+        }
+
+        .error-btn-primary:hover {
+            background: #b0ff27;
+        }
+
+        .error-btn-secondary {
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.045);
+            color: var(--white);
+        }
+
+        .error-btn-secondary:hover {
+            border-color: rgba(155, 236, 0, 0.4);
+            background: rgba(155, 236, 0, 0.07);
+        }
+
+        .error-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 36px;
+            padding-top: 22px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #829785;
+            font-size: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .error-bottom svg {
+            width: 14px;
+            height: 14px;
+            color: var(--lime);
+        }
+
+        .error-footer {
+            padding: 25px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 11px;
+            text-align: center;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(25px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes floatOne {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(200px, 140px) scale(1.2);
+            }
+        }
+
+        @keyframes floatTwo {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(-180px, -120px) scale(0.9);
+            }
+        }
+
+        @keyframes floatThree {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(140px, -200px) scale(1.25);
+            }
+        }
+
+        @keyframes glassMove {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(-80px, 75px) scale(1.2);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .error-header-inner {
+                width: calc(100% - 32px);
+                min-height: 70px;
+            }
+
+            .error-logo img {
+                width: 115px;
+            }
+
+            .error-header-label {
+                font-size: 9px;
+            }
+
+            .error-main {
+                padding: 45px 16px;
+            }
+
+            .error-glass {
+                padding: 9px;
+                border-radius: 24px;
+            }
+
+            .error-glass-inner {
+                padding: 47px 20px;
+                border-radius: 18px;
+            }
+
+            .error-code {
+                font-size: clamp(85px, 22vw, 120px);
+                letter-spacing: -7px;
+            }
+
+            .error-description {
+                font-size: 12px;
+            }
+
+            .error-actions {
+                flex-direction: column;
+            }
+
+            .error-btn {
+                width: 100%;
+            }
+
+            .error-bottom {
+                font-size: 9px;
+            }
+
+            .error-orb {
+                opacity: 0.18;
+                filter: blur(65px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <%
+        const code = typeof statusCode !== "undefined" ? Number(statusCode) : 500;
+
+        const errorTitles = {
+            400: "Something isn't <span>quite right.</span>",
+            401: "You need to <span>sign in.</span>",
+            403: "Access <span>restricted.</span>",
+            404: "This page got <span>lost.</span>",
+            409: "There's a <span>conflict.</span>",
+            429: "Slow down <span>a little.</span>",
+            500: "Something went <span>wrong.</span>",
+            502: "Connection <span>interrupted.</span>",
+            503: "We'll be <span>right back.</span>"
+        };
+
+        const errorDescriptions = {
+            400: "We couldn't process that request. Please review your information and try again.",
+            401: "Please sign in to your NEXA account to continue.",
+            403: "You don't have permission to access this part of NEXA.",
+            404: "The page you're looking for doesn't exist or may have been moved.",
+            409: "This request conflicts with information that already exists.",
+            429: "Too many requests were made. Please wait a moment before trying again.",
+            500: "We ran into an unexpected issue. Please try again in a moment.",
+            502: "We're having trouble connecting to a service. Please try again shortly.",
+            503: "NEXA is temporarily unavailable. Please check back soon."
+        };
+
+        const title = errorTitles[code] || "Something went <span>wrong.</span>";
+        const description = typeof message !== "undefined" && message
+            ? message
+            : errorDescriptions[code] || errorDescriptions[500];
+    %>
+
+    <div class="error-background" aria-hidden="true">
+        <div class="error-orb error-orb-one"></div>
+        <div class="error-orb error-orb-two"></div>
+        <div class="error-orb error-orb-three"></div>
+    </div>
+
+    <div class="error-page">
+
+        <header class="error-header">
+
+            <div class="error-header-inner">
+
+                <a href="/" class="error-logo" aria-label="NEXA home">
+                    <img src="/images/branding/nexa-logo2.svg" alt="NEXA">
+                </a>
+
+                <div class="error-header-label">
+                    <span></span>
+                    Network Exchange Alliance
+                </div>
+
+            </div>
+
+        </header>
+
+        <main class="error-main">
+
+            <section class="error-glass" aria-labelledby="error-heading">
+
+                <div class="error-glass-inner">
+
+                    <div class="error-badge">
+                        <span></span>
+                        NEXA SYSTEM MESSAGE
+                    </div>
+
+                    <div class="error-code">
+                        <%= code %>
+                    </div>
+
+                    <h1 class="error-title" id="error-heading">
+                        <%- title %>
+                    </h1>
+
+                    <p class="error-description">
+                        <%= description %>
+                    </p>
+
+                    <div class="error-actions">
+
+                        <a href="/" class="error-btn error-btn-primary">
+                            <i data-lucide="house"></i>
+                            Return Home
+                        </a>
+
+                        <button type="button" class="error-btn error-btn-secondary" id="errorBackButton">
+                            <i data-lucide="arrow-left"></i>
+                            Go Back
+                        </button>
+
+                    </div>
+
+                    <div class="error-bottom">
+                        <i data-lucide="shield-check"></i>
+                        Connect. Trade. Get Paid.
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer class="error-footer">
+            © 2026 TheAlgorithm. All rights reserved.
+        </footer>
+
+    </div>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+        const backButton = document.getElementById("errorBackButton");
+
+        backButton.addEventListener("click", () => {
+            if (window.history.length > 1 && document.referrer) {
+                window.history.back();
+            } else {
+                window.location.href = "/";
+            }
+        });
+    </script>
+
+</body>
+
+</html>

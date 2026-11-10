@@ -1,227 +1,115 @@
+
 import express from "express";
 
 import {
-
     showPayments,
-
     showOfferPayment,
-
     processOfferPayment,
-
     finishOfferOpenPayment,
-
     showPaymentSuccess,
-
     showSendMoney,
     processSendMoney,
     finishSendMoney,
     showReceiveMoney,
-
     createPaymentRequest,
-
     showGeneratedPaymentRequest,
-
     showCustomerPayment,
-
     startCustomerOpenPayment,
-
     finishCustomerOpenPayment,
-
     getPaymentRequestStatus
-
 } from "../controllers/paymentController.js";
 
-
 import {
-
     requireAuth
-
 } from "../middleware/authMiddleware.js";
 
-
-const router =
-    express.Router();
-
-
-// --------------------------------
-// PAYMENT DASHBOARD
-// --------------------------------
+const router = express.Router();
 
 router.get(
-
     "/payments",
-
     requireAuth,
-
     showPayments
-
 );
 
-
-// --------------------------------
-// CUSTOMER PAYMENT STATUS
-// --------------------------------
-
 router.get(
-
     "/payments/requests/:paymentRequestId/status",
-
     requireAuth,
-
     getPaymentRequestStatus
-
 );
 
-
-// --------------------------------
-// SEND / RECEIVE
-// --------------------------------
-
 router.get(
-
     "/payments/send",
-
     requireAuth,
-
     showSendMoney
-
 );
 
-
 router.get(
-
     "/payments/receive",
-
     requireAuth,
-
     showReceiveMoney
-
 );
 
-
 router.post(
-
     "/payments/receive",
-
     requireAuth,
-
     createPaymentRequest
-
 );
 
-
 router.get(
-
     "/payments/receive/:paymentRequestId",
-
     requireAuth,
-
     showGeneratedPaymentRequest
-
 );
-router.post(
 
+router.post(
     "/payments/send",
-
     requireAuth,
-
     processSendMoney
-
 );
 
-
 router.get(
-
     "/payments/send/open-payments/callback",
-
     requireAuth,
-
     finishSendMoney
-
 );
 
-
-// --------------------------------
-// CUSTOMER OPEN PAYMENTS
-// --------------------------------
-
 router.post(
-
     "/pay/:paymentRequestId/open-payments",
-
     startCustomerOpenPayment
-
 );
 
-
 router.get(
-
     "/pay/:paymentRequestId/open-payments/callback",
-
     finishCustomerOpenPayment
-
 );
 
-
 router.get(
-
     "/pay/:paymentRequestId",
-
     showCustomerPayment
-
 );
-
-
-// --------------------------------
-// VENDOR → VENDOR PAYMENT
-// --------------------------------
 
 router.get(
-
     "/payments/offer/:offerId",
-
     requireAuth,
-
     showOfferPayment
-
 );
-
 
 router.post(
-
     "/payments/offer/:offerId",
-
     requireAuth,
-
     processOfferPayment
-
 );
 
-
 router.get(
-
     "/payments/offer/:offerId/open-payments/callback",
-
     requireAuth,
-
     finishOfferOpenPayment
-
 );
-
-
-// --------------------------------
-// PAYMENT SUCCESS
-// --------------------------------
 
 router.get(
-
     "/payments/:paymentId/success",
-
     requireAuth,
-
     showPaymentSuccess
-
 );
-
 
 export default router;

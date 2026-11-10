@@ -19,10 +19,6 @@ export const startRealPaymentTest =
             );
 
 
-            // ----------------------------
-            // 1. Bruno receives R10
-            // ----------------------------
-
             const incomingResult =
                 await createIncomingPayment({
 
@@ -40,10 +36,6 @@ export const startRealPaymentTest =
                 incomingResult.incomingPayment.id
             );
 
-
-            // ----------------------------
-            // 2. Quote for Devante
-            // ----------------------------
 
             const quoteResult =
                 await createQuote({
@@ -63,26 +55,14 @@ export const startRealPaymentTest =
             );
 
 
-            // ----------------------------
-            // 3. Generate random nonce
-            // ----------------------------
-
             const nonce =
                 crypto.randomUUID();
 
-
-            // ----------------------------
-            // 4. NEXA callback
-            // ----------------------------
 
             const finishUri =
                 `${req.protocol}://${req.get("host")}` +
                 "/open-payments/test/callback";
 
-
-            // ----------------------------
-            // 5. Request Devante permission
-            // ----------------------------
 
             const outgoingGrantResult =
                 await requestOutgoingPaymentGrant({
@@ -103,11 +83,6 @@ export const startRealPaymentTest =
             const grant =
                 outgoingGrantResult.grant;
 
-
-            // ----------------------------
-            // TEMPORARILY store everything
-            // in the session
-            // ----------------------------
 
             req.session.openPaymentsTest = {
 
@@ -130,11 +105,6 @@ export const startRealPaymentTest =
 
             };
 
-
-            // Make sure session is saved
-            // BEFORE leaving NEXA.
-            // PRESSSSSSSSSSLY LOCK TF IN HERE I THINK THE TRY CATCH BUGS SOMETIMES CP INTO AI BUT KEEP THE 
-            // DETAILS PRIV USE SUPPOSITIONS
 
             req.session.save(
                 (error) => {
@@ -182,6 +152,8 @@ export const startRealPaymentTest =
         }
 
     };
+
+
 export const finishRealPaymentTest =
     async (req, res) => {
 
@@ -223,10 +195,6 @@ export const finishRealPaymentTest =
             );
 
 
-            // --------------------------------
-            // 1. FINALIZE DEVANTE'S GRANT
-            // --------------------------------
-
             const finalizedGrant =
                 await continueOutgoingPaymentGrant({
 
@@ -245,10 +213,6 @@ export const finishRealPaymentTest =
                 "OUTGOING GRANT FINALIZED"
             );
 
-
-            // --------------------------------
-            // 2. EXECUTE PAYMENT
-            // --------------------------------
 
             console.log(
                 "Creating outgoing payment..."
@@ -307,9 +271,6 @@ export const finishRealPaymentTest =
                 outgoingPayment.failed
             );
 
-
-            // We no longer need the temporary
-            // authorization session.
 
             delete req.session.openPaymentsTest;
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,19 +15,95 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/customer-pay.css">
 
+    <style>
+        /* ========================================
+           OPEN PAYMENTS WALLET NOTICE
+        ======================================== */
+
+        .customer-wallet-warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 17px 18px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(181, 243, 75, 0.3);
+            border-radius: 13px;
+            background: rgba(181, 243, 75, 0.07);
+        }
+
+        .customer-wallet-warning-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            background: rgba(181, 243, 75, 0.12);
+            color: #b5f34b;
+        }
+
+        .customer-wallet-warning-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .customer-wallet-warning-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .customer-wallet-warning-content strong {
+            display: block;
+            margin-bottom: 7px;
+            color: #d7f8b5;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .customer-wallet-warning-content p {
+            margin: 0;
+            color: #a9bdb0;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .customer-wallet-warning-content p + p {
+            margin-top: 8px;
+        }
+
+        .customer-wallet-warning-content b {
+            color: #d7f8b5;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .customer-wallet-warning {
+                padding: 14px;
+                gap: 10px;
+            }
+        }
+    </style>
+
 </head>
 
 <body class="customer-pay-body">
 
     <main class="customer-pay-page">
 
-        <!-- BRAND HEADER -->
+        <!-- ========================================
+             BRAND HEADER
+        ======================================== -->
 
         <header class="customer-pay-header">
 
             <a href="/" class="customer-pay-brand" aria-label="NEXA home">
 
-                <img src="/images/branding/nexa-logo2.svg" alt="NEXA" class="customer-pay-logo">
+                <img
+                    src="/images/branding/nexa-logo2.svg"
+                    alt="NEXA"
+                    class="customer-pay-logo"
+                >
 
             </a>
 
@@ -41,7 +118,9 @@
         </header>
 
 
-        <!-- CHECKOUT HEADING -->
+        <!-- ========================================
+             CHECKOUT HEADING
+        ======================================== -->
 
         <div class="customer-pay-heading">
 
@@ -61,7 +140,9 @@
         </div>
 
 
-        <!-- CHECKOUT LAYOUT -->
+        <!-- ========================================
+             CHECKOUT LAYOUT
+        ======================================== -->
 
         <div class="customer-pay-layout">
 
@@ -142,7 +223,9 @@
             </section>
 
 
-            <!-- PAYMENT FORM -->
+            <!-- ========================================
+                 PAYMENT FORM
+            ======================================== -->
 
             <section class="customer-pay-form-card">
 
@@ -164,7 +247,50 @@
                 </div>
 
 
-                <form action="/pay/<%= paymentRequest._id %>/open-payments" method="POST" class="customer-pay-form">
+                <!-- ========================================
+                     WALLET LOGIN WARNING
+                ======================================== -->
+
+                <div class="customer-wallet-warning" role="note">
+
+                    <div class="customer-wallet-warning-icon">
+                        <i data-lucide="shield-alert"></i>
+                    </div>
+
+                    <div class="customer-wallet-warning-content">
+
+                        <strong>
+                            Before you continue
+                        </strong>
+
+                        <p>
+                            You need a compatible
+                            <b>Open Payments wallet</b>
+                            to complete this transaction.
+                            Make sure you are signed in to your
+                            wallet provider before continuing.
+                        </p>
+
+                        <p>
+                            Your wallet provider may ask you to
+                            sign in again and approve the payment
+                            during authorization.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ========================================
+                     OPEN PAYMENTS FORM
+                ======================================== -->
+
+                <form
+                    action="/pay/<%= paymentRequest._id %>/open-payments"
+                    method="POST"
+                    class="customer-pay-form"
+                >
 
                     <div class="customer-pay-field">
 
@@ -177,9 +303,16 @@
 
                             <i data-lucide="wallet"></i>
 
-                            <input type="text" id="payerWalletAddress" name="payerWalletAddress"
-                                placeholder="$ilp.interledger-test.dev/yourWalletAdress" autocomplete="off"
-                                autocapitalize="none" spellcheck="false" required>
+                            <input
+                                type="text"
+                                id="payerWalletAddress"
+                                name="payerWalletAddress"
+                                placeholder="$ilp.interledger-test.dev/yourWalletAdress"
+                                autocomplete="off"
+                                autocapitalize="none"
+                                spellcheck="false"
+                                required
+                            >
 
                         </div>
 
@@ -190,6 +323,8 @@
 
                     </div>
 
+
+                    <!-- PAYMENT AUTHORIZATION NOTICE -->
 
                     <div class="customer-pay-notice">
 
@@ -204,7 +339,10 @@
                     </div>
 
 
-                    <button type="submit" class="customer-pay-submit">
+                    <button
+                        type="submit"
+                        class="customer-pay-submit"
+                    >
 
                         Continue with Open Payments
 
@@ -219,7 +357,9 @@
         </div>
 
 
-        <!-- FOOTER -->
+        <!-- ========================================
+             FOOTER
+        ======================================== -->
 
         <footer class="customer-pay-footer">
 
@@ -240,6 +380,8 @@
     </main>
 
 
+    <!-- SHARED SCRIPTS -->
+
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 
     <script>
@@ -247,7 +389,9 @@
             lucide.createIcons();
         }
     </script>
+
     <script src="/js/loader.js"></script>
+
 </body>
 
 </html>

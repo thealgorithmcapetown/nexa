@@ -1,0 +1,93 @@
+.nexa-shop-location {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nexa-shop-location-heading label {
+    color: #D8E1DA;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.nexa-shop-location-heading p {
+    margin: 7px 0 0;
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+#shopLocationMap {
+    width: 100%;
+    height: 260px;
+
+    background: #0B130E;
+    border: 1px solid #25382B;
+    border-radius: 14px;
+
+    overflow: hidden;
+    z-index: 0;
+}
+
+.nexa-shop-location-search,
+.nexa-shop-location-confirm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    width: 100%;
+    min-height: 44px;
+    padding: 12px;
+
+    border-radius: 11px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+.nexa-shop-location-search {
+    background: #162119;
+    color: #F7FAF8;
+    border: 1px solid #304234;
+}
+
+.nexa-shop-location-search:hover {
+    border-color: #8CE11A;
+}
+
+.nexa-shop-location-confirm {
+    background: #8CE11A;
+    color: #080D0B;
+    border: none;
+}
+
+.nexa-shop-location-confirm:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.nexa-shop-location-search svg,
+.nexa-shop-location-confirm svg {
+    width: 16px;
+    height: 16px;
+}
+
+.nexa-shop-location-status {
+    margin: 0;
+    color: #98A49D;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.nexa-shop-location-status.confirmed {
+    color: #8CE11A;
+}
+
+@media (max-width: 768px) {
+    #shopLocationMap {
+        height: 230px;
+    }
+}

@@ -1,48 +1,672 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <%- include('../partials/head') %>
     <%- include('../partials/loader') %>
-    <link rel="stylesheet" href="/css/loader.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Edit Shop - NEXA</title>
+
+    <link rel="stylesheet" href="/css/loader.css">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/shop-account.css">
+    <link rel="stylesheet" href="/css/shop-location.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        .nexa-shop-location {
+            margin-top: 22px;
+        }
+
+        .nexa-shop-location-heading label {
+            font-size: 14px;
+        }
+
+        .nexa-shop-location-heading p {
+            font-size: 12px;
+        }
+
+        .nexa-edit-location-hint {
+            display: block;
+            margin-top: 8px;
+            color: #98A49D;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .nexa-edit-location-note {
+            padding: 12px 14px;
+            background: #162119;
+            border: 1px solid #304234;
+            border-radius: 11px;
+            color: #D8E1DA;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .nexa-edit-location-note strong {
+            color: #8CE11A;
+        }
+
+        #shopLocationMap {
+            height: 300px;
+        }
+
+        @media (max-width: 768px) {
+            #shopLocationMap {
+                height: 250px;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <%- include('../partials/sidebar') %>
     <%- include('../partials/navbar') %>
+
     <main class="nexa-main account-page">
+
         <header class="account-page-header">
-            <div><span class="account-eyebrow">BUSINESS MANAGEMENT</span><h1>Edit Shop<span class="nexa-title-dot">.</span></h1><p>Keep your shop information accurate and up to date.</p></div>
-            <a href="/shop" class="account-btn account-btn-outline"><i data-lucide="arrow-left"></i> My Shop</a>
+            <div>
+                <span class="account-eyebrow">BUSINESS MANAGEMENT</span>
+
+                <h1>
+                    Edit Shop<span class="nexa-title-dot">.</span>
+                </h1>
+
+                <p>
+                    Keep your shop information accurate and up to date.
+                </p>
+            </div>
+
+            <a href="/shop" class="account-btn account-btn-outline">
+                <i data-lucide="arrow-left"></i>
+                My Shop
+            </a>
         </header>
 
-        <form action="/shop/edit" method="POST" class="account-form-shell">
+        <form
+            action="/shop/edit"
+            method="POST"
+            class="account-form-shell"
+            id="editShopForm"
+        >
+
             <section class="account-panel">
-                <div class="account-panel-heading"><div class="account-panel-icon"><i data-lucide="store"></i></div><div><span class="account-eyebrow">BUSINESS DETAILS</span><h2>Shop Information</h2><p>How your business appears on NEXA.</p></div></div>
-                <div class="account-form-grid">
-                    <div class="account-field"><label for="name">Shop Name <em>*</em></label><input type="text" id="name" name="name" value="<%= shop.name %>" required></div>
-                    <div class="account-field"><label for="category">Category</label><input type="text" id="category" name="category" value="<%= shop.category || '' %>" placeholder="Groceries, food, clothing..."></div>
-                    <div class="account-field account-field-full"><label for="description">Description</label><textarea id="description" name="description" rows="5" placeholder="Tell customers about your shop..."><%= shop.description || '' %></textarea></div>
-                    <div class="account-field account-field-full"><label for="address">Address <em>*</em></label><input type="text" id="address" name="address" value="<%= shop.address %>" required></div>
+
+                <div class="account-panel-heading">
+                    <div class="account-panel-icon">
+                        <i data-lucide="store"></i>
+                    </div>
+
+                    <div>
+                        <span class="account-eyebrow">BUSINESS DETAILS</span>
+                        <h2>Shop Information</h2>
+                        <p>How your business appears on NEXA.</p>
+                    </div>
                 </div>
+
+                <div class="account-form-grid">
+
+                    <div class="account-field">
+                        <label for="name">
+                            Shop Name <em>*</em>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value="<%= shop.name %>"
+                            required
+                        >
+                    </div>
+
+                    <div class="account-field">
+                        <label for="category">Category</label>
+
+                        <input
+                            type="text"
+                            id="category"
+                            name="category"
+                            value="<%= shop.category || '' %>"
+                            placeholder="Groceries, food, clothing..."
+                        >
+                    </div>
+
+                    <div class="account-field account-field-full">
+                        <label for="description">Description</label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            placeholder="Tell customers about your shop..."
+                        ><%= shop.description || '' %></textarea>
+                    </div>
+
+                    <div class="account-field account-field-full">
+                        <label for="address">
+                            Address <em>*</em>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="address"
+                            name="address"
+                            value="<%= shop.address %>"
+                            placeholder="Street number, street name, area and city"
+                            autocomplete="street-address"
+                            required
+                        >
+
+                        <small class="nexa-edit-location-hint">
+                            Enter your exact street address, including the
+                            street number, street name, area and city.
+                            Double-check the spelling before searching.
+                        </small>
+                    </div>
+
+                </div>
+
+                <div class="nexa-shop-location">
+
+                    <div class="nexa-shop-location-heading">
+                        <label>Confirm your shop location</label>
+
+                        <p>
+                            Select "Find address on map" to locate your shop.
+                            If the pin is not exact, drag it to your shop's
+                            correct position before confirming.
+                        </p>
+                    </div>
+
+                    <div class="nexa-edit-location-note" id="locationNotice">
+                        Checking your saved shop location...
+                    </div>
+
+                    <button
+                        type="button"
+                        id="findShopLocation"
+                        class="nexa-shop-location-search"
+                    >
+                        <i data-lucide="search"></i>
+                        Find address on map
+                    </button>
+
+                    <div
+                        id="shopLocationMap"
+                        aria-label="Interactive shop location map"
+                    ></div>
+
+                    <p
+                        id="shopLocationStatus"
+                        class="nexa-shop-location-status"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        Select a location on the map to get started.
+                    </p>
+
+                    <button
+                        type="button"
+                        id="confirmShopLocation"
+                        class="nexa-shop-location-confirm"
+                        disabled
+                    >
+                        <i data-lucide="map-pin"></i>
+                        Confirm this location
+                    </button>
+
+                    <input
+                        type="hidden"
+                        id="shopLatitude"
+                        name="latitude"
+                        value="<%= shop.coordinates && Number.isFinite(shop.coordinates.latitude) ? shop.coordinates.latitude : '' %>"
+                    >
+
+                    <input
+                        type="hidden"
+                        id="shopLongitude"
+                        name="longitude"
+                        value="<%= shop.coordinates && Number.isFinite(shop.coordinates.longitude) ? shop.coordinates.longitude : '' %>"
+                    >
+
+                    <input
+                        type="hidden"
+                        id="locationConfirmed"
+                        name="locationConfirmed"
+                        value=""
+                    >
+
+                </div>
+
             </section>
 
             <section class="account-panel">
-                <div class="account-panel-heading"><div class="account-panel-icon"><i data-lucide="wallet"></i></div><div><span class="account-eyebrow">PAYMENT SETUP</span><h2>Open Payments Wallet</h2><p>Choose where your NEXA payments are received.</p></div></div>
-                <div class="account-field"><label for="walletAddress">Wallet Address</label><input type="text" id="walletAddress" name="walletAddress" value="<%= shop.walletAddress || '' %>" placeholder="https://ilp.interledger-test.dev/your-wallet"><small>This wallet is used to receive NEXA payments.</small></div>
+
+                <div class="account-panel-heading">
+                    <div class="account-panel-icon">
+                        <i data-lucide="wallet"></i>
+                    </div>
+
+                    <div>
+                        <span class="account-eyebrow">PAYMENT SETUP</span>
+                        <h2>Open Payments Wallet</h2>
+                        <p>Choose where your NEXA payments are received.</p>
+                    </div>
+                </div>
+
+                <div class="account-field">
+                    <label for="walletAddress">Wallet Address</label>
+
+                    <input
+                        type="text"
+                        id="walletAddress"
+                        name="walletAddress"
+                        value="<%= shop.walletAddress || '' %>"
+                        placeholder="https://ilp.interledger-test.dev/your-wallet"
+                    >
+
+                    <small>
+                        This wallet is used to receive NEXA payments.
+                    </small>
+                </div>
+
             </section>
-            <div class="account-form-actions"><a href="/shop" class="account-btn account-btn-outline">Cancel</a><button type="submit" class="account-btn account-btn-primary"><i data-lucide="save"></i> Save Changes</button></div>
+
+            <div class="account-form-actions">
+                <a
+                    href="/shop"
+                    class="account-btn account-btn-outline"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="account-btn account-btn-primary"
+                    id="saveShopButton"
+                >
+                    <i data-lucide="save"></i>
+                    Save Changes
+                </button>
+            </div>
+
         </form>
-        <a href="/dashboard" class="account-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+
+        <a href="/dashboard" class="account-back">
+            <i data-lucide="arrow-left"></i>
+            Back to Dashboard
+        </a>
+
     </main>
+
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/js/navigation.js"></script>
-    <script>if (window.lucide) lucide.createIcons();</script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            const form = document.getElementById("editShopForm");
+            const addressInput = document.getElementById("address");
+            const latitudeInput = document.getElementById("shopLatitude");
+            const longitudeInput = document.getElementById("shopLongitude");
+            const confirmationInput = document.getElementById("locationConfirmed");
+
+            const findButton = document.getElementById("findShopLocation");
+            const confirmButton = document.getElementById("confirmShopLocation");
+            const saveButton = document.getElementById("saveShopButton");
+
+            const status = document.getElementById("shopLocationStatus");
+            const notice = document.getElementById("locationNotice");
+
+            const originalAddress = addressInput.value.trim();
+
+            const savedLatitude = latitudeInput.value.trim() === ""
+                ? NaN
+                : Number(latitudeInput.value);
+
+            const savedLongitude = longitudeInput.value.trim() === ""
+                ? NaN
+                : Number(longitudeInput.value);
+
+            function validCoordinates(latitude, longitude) {
+                return Number.isFinite(latitude) &&
+                    Number.isFinite(longitude) &&
+                    latitude >= -90 &&
+                    latitude <= 90 &&
+                    longitude >= -180 &&
+                    longitude <= 180;
+            }
+
+            const hasSavedCoordinates = validCoordinates(
+                savedLatitude,
+                savedLongitude
+            );
+
+            let map = null;
+            let marker = null;
+            let selectedCoordinates = null;
+            let confirmedAddress = "";
+            let locationConfirmed = false;
+            let searchController = null;
+
+            function setStatus(message, confirmed = false) {
+                status.textContent = message;
+                status.classList.toggle("confirmed", confirmed);
+            }
+
+            function clearConfirmation() {
+                locationConfirmed = false;
+                confirmedAddress = "";
+
+                confirmationInput.value = "";
+                latitudeInput.value = "";
+                longitudeInput.value = "";
+
+                confirmButton.disabled = !selectedCoordinates;
+            }
+
+            function setMarker(latitude, longitude) {
+
+                if (!validCoordinates(latitude, longitude) || !map) {
+                    return;
+                }
+
+                selectedCoordinates = {
+                    latitude,
+                    longitude
+                };
+
+                if (!marker) {
+
+                    marker = L.marker(
+                        [latitude, longitude],
+                        {
+                            draggable: true
+                        }
+                    ).addTo(map);
+
+                    marker.on("dragend", () => {
+                        const position = marker.getLatLng();
+
+                        setMarker(
+                            position.lat,
+                            position.lng
+                        );
+                    });
+
+                } else {
+                    marker.setLatLng([latitude, longitude]);
+                }
+
+                clearConfirmation();
+
+                setStatus(
+                    "Pin selected. Drag it if necessary, then confirm your location."
+                );
+            }
+
+            function initializeMap() {
+
+                if (!window.L) {
+                    setStatus(
+                        "The map could not load. Check your internet connection and refresh."
+                    );
+                    return;
+                }
+
+                const initialLatitude = hasSavedCoordinates
+                    ? savedLatitude
+                    : -28.5;
+
+                const initialLongitude = hasSavedCoordinates
+                    ? savedLongitude
+                    : 24.5;
+
+                map = L.map("shopLocationMap").setView(
+                    [initialLatitude, initialLongitude],
+                    hasSavedCoordinates ? 17 : 5
+                );
+
+                L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                        maxZoom: 19,
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }
+                ).addTo(map);
+
+                map.on("click", (event) => {
+                    setMarker(
+                        event.latlng.lat,
+                        event.latlng.lng
+                    );
+                });
+
+                if (hasSavedCoordinates) {
+
+                    setMarker(savedLatitude, savedLongitude);
+
+                    latitudeInput.value = String(savedLatitude);
+                    longitudeInput.value = String(savedLongitude);
+
+                    confirmationInput.value = "true";
+                    confirmedAddress = originalAddress;
+                    locationConfirmed = true;
+
+                    confirmButton.disabled = true;
+
+                    notice.innerHTML =
+                        "<strong>Location saved.</strong> Your shop already has map coordinates. You can update the pin if necessary.";
+
+                    setStatus(
+                        "Existing shop location loaded successfully.",
+                        true
+                    );
+
+                } else {
+
+                    notice.innerHTML =
+                        "<strong>Location required.</strong> This shop does not have a saved map location yet. Find your address or click the map, then confirm the pin.";
+
+                    setStatus(
+                        "Search for your address or click the map to place your shop pin."
+                    );
+
+                }
+
+                setTimeout(() => {
+                    map.invalidateSize();
+                }, 100);
+            }
+
+            async function findAddress() {
+
+                const address = addressInput.value.trim();
+
+                if (!address) {
+                    addressInput.reportValidity();
+                    return;
+                }
+
+                if (!map) {
+                    return;
+                }
+
+                if (searchController) {
+                    searchController.abort();
+                }
+
+                const controller = new AbortController();
+                searchController = controller;
+
+                findButton.disabled = true;
+                setStatus("Searching for your shop address...");
+
+                try {
+
+                    const url = new URL(
+                        "https://nominatim.openstreetmap.org/search"
+                    );
+
+                    url.searchParams.set("q", address);
+                    url.searchParams.set("format", "json");
+                    url.searchParams.set("limit", "1");
+
+                    const response = await fetch(url.toString(), {
+                        signal: controller.signal,
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Address lookup failed");
+                    }
+
+                    const results = await response.json();
+
+                    if (!results.length) {
+
+                        setStatus(
+                            "Address not found. Try a more recognizable address, or click the map to place the pin manually."
+                        );
+
+                        return;
+                    }
+
+                    const latitude = Number(results[0].lat);
+                    const longitude = Number(results[0].lon);
+
+                    if (!validCoordinates(latitude, longitude)) {
+                        throw new Error("Invalid map coordinates");
+                    }
+
+                    setMarker(latitude, longitude);
+
+                    map.setView(
+                        [latitude, longitude],
+                        17
+                    );
+
+                    setStatus(
+                        "Address found. Check the pin, adjust it if needed, then confirm."
+                    );
+
+                } catch (error) {
+
+                    if (error.name !== "AbortError") {
+                        setStatus(
+                            "Address search failed. Try again or select your location directly on the map."
+                        );
+                    }
+
+                } finally {
+
+                    if (searchController === controller) {
+                        findButton.disabled = false;
+                        searchController = null;
+                    }
+
+                }
+            }
+
+            findButton.addEventListener("click", findAddress);
+
+            addressInput.addEventListener("input", () => {
+
+                clearConfirmation();
+
+                setStatus(
+                    "Address changed. Find your shop again or adjust the pin, then confirm."
+                );
+
+            });
+
+            confirmButton.addEventListener("click", () => {
+
+                if (!selectedCoordinates) {
+                    return;
+                }
+
+                latitudeInput.value = String(
+                    selectedCoordinates.latitude
+                );
+
+                longitudeInput.value = String(
+                    selectedCoordinates.longitude
+                );
+
+                confirmationInput.value = "true";
+                confirmedAddress = addressInput.value.trim();
+                locationConfirmed = true;
+
+                confirmButton.disabled = true;
+
+                notice.innerHTML =
+                    "<strong>Location confirmed.</strong> Your shop coordinates are ready to save.";
+
+                setStatus(
+                    "Shop location confirmed. Select Save Changes to update your shop.",
+                    true
+                );
+
+            });
+
+            form.addEventListener("submit", (event) => {
+
+                const latitude = Number(latitudeInput.value);
+                const longitude = Number(longitudeInput.value);
+
+                const coordinatesPresent =
+                    latitudeInput.value.trim() !== "" &&
+                    longitudeInput.value.trim() !== "";
+
+                const isValid =
+                    locationConfirmed &&
+                    confirmationInput.value === "true" &&
+                    confirmedAddress === addressInput.value.trim() &&
+                    coordinatesPresent &&
+                    validCoordinates(latitude, longitude);
+
+                if (!isValid) {
+
+                    event.preventDefault();
+
+                    setStatus(
+                        "Please select and confirm your shop's exact map location before saving."
+                    );
+
+                    document.getElementById("shopLocationMap")
+                        .scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+
+                    return;
+                }
+
+                saveButton.disabled = true;
+
+            });
+
+            initializeMap();
+
+        });
+    </script>
+
     <script src="/js/loader.js"></script>
 </body>
 </html>

@@ -3,31 +3,24 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="/css/footer.css">
     <%- include('../partials/head') %>
-    <meta charset="UTF-8">
-    <%- include('../partials/loader') %>
-    <link rel="stylesheet" href="/css/loader.css">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
 
     <title>Settings - NEXA</title>
-    <%- include('../partials/head') %>
 
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/footer.css">
     <link rel="stylesheet" href="/css/shop-account.css">
+    <link rel="stylesheet" href="/css/loader.css">
 
 </head>
 
 <body>
 
+    <%- include('../partials/loader') %>
     <%- include('../partials/sidebar') %>
     <%- include('../partials/navbar') %>
-
 
     <main class="nexa-main account-page">
 
@@ -46,11 +39,10 @@
                 </h1>
 
                 <p>
-                    Update your personal information and keep your account secure.
+                    Manage your account, security, and payment wallet.
                 </p>
 
             </div>
-
 
             <a href="/shop" class="account-btn account-btn-outline">
 
@@ -62,7 +54,6 @@
 
         </header>
 
-
         <div class="account-settings-layout">
 
             <!-- ACCOUNT DETAILS -->
@@ -72,9 +63,7 @@
                 <div class="account-panel-heading">
 
                     <div class="account-panel-icon">
-
                         <i data-lucide="user-round"></i>
-
                     </div>
 
                     <div>
@@ -83,9 +72,7 @@
                             YOUR DETAILS
                         </span>
 
-                        <h2>
-                            Account Details
-                        </h2>
+                        <h2>Account Details</h2>
 
                         <p>
                             Manage the information linked to your account.
@@ -94,7 +81,6 @@
                     </div>
 
                 </div>
-
 
                 <form action="/settings" method="POST">
 
@@ -117,7 +103,6 @@
 
                         </div>
 
-
                         <div class="account-field">
 
                             <label for="email">
@@ -134,7 +119,6 @@
                             >
 
                         </div>
-
 
                         <div class="account-field account-field-full">
 
@@ -155,7 +139,6 @@
 
                     </div>
 
-
                     <div class="account-form-actions">
 
                         <button
@@ -164,7 +147,6 @@
                         >
 
                             <i data-lucide="save"></i>
-
                             Save Settings
 
                         </button>
@@ -175,7 +157,6 @@
 
             </section>
 
-
             <!-- CHANGE PASSWORD -->
 
             <section class="account-panel">
@@ -183,9 +164,7 @@
                 <div class="account-panel-heading">
 
                     <div class="account-panel-icon">
-
                         <i data-lucide="shield-check"></i>
-
                     </div>
 
                     <div>
@@ -194,9 +173,7 @@
                             ACCOUNT SECURITY
                         </span>
 
-                        <h2>
-                            Change Password
-                        </h2>
+                        <h2>Change Password</h2>
 
                         <p>
                             Use a strong password to protect your account.
@@ -205,7 +182,6 @@
                     </div>
 
                 </div>
-
 
                 <form
                     action="/settings/password"
@@ -231,7 +207,6 @@
 
                         </div>
 
-
                         <div class="account-field account-field-full">
 
                             <label for="newPassword">
@@ -253,7 +228,6 @@
 
                         </div>
 
-
                         <div class="account-field account-field-full">
 
                             <label for="confirmPassword">
@@ -273,7 +247,6 @@
 
                     </div>
 
-
                     <p
                         id="password-match-error"
                         class="account-validation-error"
@@ -283,7 +256,6 @@
                         New passwords do not match.
                     </p>
 
-
                     <div class="account-form-actions">
 
                         <button
@@ -292,7 +264,6 @@
                         >
 
                             <i data-lucide="lock-keyhole"></i>
-
                             Change Password
 
                         </button>
@@ -303,37 +274,170 @@
 
             </section>
 
-        </div>
+            <!-- PAYMENT WALLET -->
 
+            <section class="account-panel account-wallet-settings-panel">
+
+                <div class="account-panel-heading">
+
+                    <div class="account-panel-icon">
+                        <i data-lucide="wallet"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="account-eyebrow">
+                            PAYMENT SETTINGS
+                        </span>
+
+                        <h2>Payment Wallet</h2>
+
+                        <p>
+                            Manage your shop's Open Payments wallet address.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="account-wallet-status-row">
+
+                    <% if (shop.walletAddress) { %>
+
+                        <span class="account-status account-status-ready">
+
+                            <i data-lucide="check-circle-2"></i>
+
+                            Wallet Configured
+
+                        </span>
+
+                    <% } else { %>
+
+                        <span class="account-status">
+
+                            <i data-lucide="alert-circle"></i>
+
+                            No Wallet Configured
+
+                        </span>
+
+                    <% } %>
+
+                </div>
+
+                <p class="account-help">
+                    Your wallet address is used for Open Payments.
+                    You can add or change it at any time.
+                </p>
+
+                <form
+                    action="/settings/wallet"
+                    method="POST"
+                    id="account-wallet-form"
+                >
+
+                    <div class="account-form-grid">
+
+                        <div class="account-field account-field-full">
+
+                            <label for="walletAddress">
+                                Open Payments Wallet Address
+                            </label>
+
+                            <input
+                                type="url"
+                                id="walletAddress"
+                                name="walletAddress"
+                                value="<%= shop.walletAddress || '' %>"
+                                placeholder="https://wallet.example.com/yourname"
+                                autocomplete="off"
+                            >
+
+                            <small>
+                                Enter your wallet address using HTTPS.
+                                Saving an address does not automatically
+                                authorize or verify the wallet.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="account-form-actions account-wallet-actions">
+
+                        <% if (shop.walletAddress) { %>
+
+                            <button
+                                type="submit"
+                                form="account-wallet-remove-form"
+                                class="account-btn account-btn-danger"
+                                id="removeWalletButton"
+                            >
+
+                                <i data-lucide="trash-2"></i>
+                                Remove Wallet
+
+                            </button>
+
+                        <% } %>
+
+                        <button
+                            type="submit"
+                            class="account-btn account-btn-primary"
+                        >
+
+                            <i data-lucide="save"></i>
+                            Save Wallet
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+                <form
+                    action="/settings/wallet/remove"
+                    method="POST"
+                    id="account-wallet-remove-form"
+                ></form>
+
+                <div class="account-wallet-notice">
+
+                    <i data-lucide="info"></i>
+
+                    <p>
+                        A configured wallet address is not the same
+                        as an authorized payment connection.
+                        Wallet verification and payment permissions
+                        will be handled separately.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </div>
 
         <!-- BACK LINK -->
 
         <a href="/dashboard" class="account-back">
 
             <i data-lucide="arrow-left"></i>
-
             Back to Dashboard
 
         </a>
 
     </main>
 
-
-    <!-- SCRIPTS -->
-
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-
     <script src="/js/navigation.js"></script>
-
 
     <script>
 
         if (window.lucide) {
-
             lucide.createIcons();
-
         }
-
 
         /* ==========================================
            PASSWORD CONFIRMATION VALIDATION
@@ -350,7 +454,6 @@
 
         const confirmPassword =
             document.getElementById("confirmPassword");
-
 
         passwordForm.addEventListener("submit", function (event) {
 
@@ -373,28 +476,49 @@
 
         });
 
-
         confirmPassword.addEventListener("input", function () {
 
             this.setCustomValidity("");
-
             passwordError.hidden = true;
 
         });
-
 
         newPassword.addEventListener("input", function () {
 
             confirmPassword.setCustomValidity("");
-
             passwordError.hidden = true;
 
         });
 
+        /* ==========================================
+           WALLET REMOVAL CONFIRMATION
+        ========================================== */
+
+        const removeWalletButton =
+            document.getElementById("removeWalletButton");
+
+        if (removeWalletButton) {
+
+            removeWalletButton.addEventListener("click", function (event) {
+
+                const confirmed = window.confirm(
+                    "Remove your saved wallet address? You can add another wallet later."
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+
+            });
+
+        }
+
     </script>
 
-<script src="/js/loader.js"></script>
-<%- include('../partials/footer') %>
+    <script src="/js/loader.js"></script>
+
+    <%- include('../partials/footer') %>
+
 </body>
 
 </html>

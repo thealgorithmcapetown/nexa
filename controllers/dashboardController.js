@@ -11,10 +11,6 @@ export const showDashboard = async (req, res) => {
 
     try {
 
-        // ========================================
-        // USER + SHOP
-        // ========================================
-
         const user =
             await User.findById(
                 req.session.userId
@@ -47,10 +43,6 @@ export const showDashboard = async (req, res) => {
             shop._id;
 
 
-        // ========================================
-        // ACTIVE TRADES
-        // ========================================
-
         const activeTrades =
             await TradeRequest.countDocuments({
 
@@ -67,10 +59,6 @@ export const showDashboard = async (req, res) => {
             });
 
 
-        // ========================================
-        // PENDING OFFERS RECEIVED
-        // ========================================
-
         const pendingOffers =
             await Offer.countDocuments({
 
@@ -80,10 +68,6 @@ export const showDashboard = async (req, res) => {
 
             });
 
-
-        // ========================================
-        // UNREAD MESSAGES
-        // ========================================
 
         const unreadMessages =
             await Message.countDocuments({
@@ -95,10 +79,6 @@ export const showDashboard = async (req, res) => {
             });
 
 
-        // ========================================
-        // UNREAD NOTIFICATIONS
-        // ========================================
-
         const unreadNotifications =
             await Notification.countDocuments({
 
@@ -108,10 +88,6 @@ export const showDashboard = async (req, res) => {
 
             });
 
-
-        // ========================================
-        // RECENT TRANSACTIONS
-        // ========================================
 
         const recentTransactions =
             await Transaction.find({
@@ -137,10 +113,6 @@ export const showDashboard = async (req, res) => {
                 })
                 .limit(5);
 
-
-        // ========================================
-        // TOTAL MONEY SENT
-        // ========================================
 
         const sentResult =
             await Transaction.aggregate([
@@ -176,10 +148,6 @@ export const showDashboard = async (req, res) => {
                 : 0;
 
 
-        // ========================================
-        // TOTAL MONEY RECEIVED
-        // ========================================
-
         const receivedResult =
             await Transaction.aggregate([
 
@@ -213,10 +181,6 @@ export const showDashboard = async (req, res) => {
                 ? receivedResult[0].total
                 : 0;
 
-
-        // ========================================
-        // RENDER
-        // ========================================
 
         return res.render(
             "dashboard/dashboard",

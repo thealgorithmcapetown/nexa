@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const shopSchema = new mongoose.Schema({
@@ -6,6 +7,7 @@ const shopSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
     walletAddress: {
         type: String,
         trim: true,
@@ -45,9 +47,19 @@ const shopSchema = new mongoose.Schema({
         type: String
     },
 
+    // Average rating from completed trades
     rating: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0,
+        max: 5
+    },
+
+    // Total number of ratings received
+    ratingCount: {
+        type: Number,
+        default: 0,
+        min: 0
     }
 
 }, {

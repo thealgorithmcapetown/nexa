@@ -1,48 +1,27 @@
-
-/* ========================================
-   NEXA — GLOBAL DESIGN SYSTEM
-======================================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
 
-    /* Brand Colours */
-
     --nexa-primary: #8CE11A;
     --nexa-primary-hover: #A5F23E;
-
-    /* Backgrounds */
 
     --nexa-bg: #080D0B;
     --nexa-surface: #0D1511;
     --nexa-glass: rgba(20, 32, 25, 0.70);
 
-    /* Text */
-
     --nexa-white: #F7FAF8;
     --nexa-muted: #98A49D;
 
-    /* Borders */
-
     --nexa-border: rgba(140, 225, 26, 0.14);
-
-    /* Effects */
 
     --nexa-blur: blur(18px);
     --nexa-radius: 20px;
     --nexa-radius-sm: 12px;
 
-    /* Typography */
-
     --nexa-font: 'Manrope', sans-serif;
 
 }
 
-
-/* ========================================
-   GLOBAL RESET
-======================================== */
 
 *,
 *::before,
@@ -82,10 +61,6 @@ button {
 }
 
 
-/* ========================================
-   REUSABLE NEXA COMPONENTS
-======================================== */
-
 .nexa-glass {
     background: var(--nexa-glass);
     backdrop-filter: var(--nexa-blur);
@@ -101,10 +76,6 @@ button {
     padding: 24px;
 }
 
-
-/* ========================================
-   BUTTONS
-======================================== */
 
 .nexa-btn {
     display: inline-flex;
@@ -137,10 +108,6 @@ button {
 }
 
 
-/* ========================================
-   INPUTS
-======================================== */
-
 .nexa-input {
     width: 100%;
     padding: 14px 16px;
@@ -163,9 +130,6 @@ button {
 }
 
 
-/* ========================================
-   EXISTING CHAT STYLES — PRESERVED
-======================================== */
 
 #messages-container {
     display: flex;
@@ -212,10 +176,6 @@ button {
 }
 
 
-/* ========================================
-   MAIN PAGE LAYOUT — DESKTOP
-======================================== */
-
 .nexa-main {
     margin-left: 250px;
     padding: 32px;
@@ -223,18 +183,10 @@ button {
 }
 
 
-/* ========================================
-   GLOBAL PAGE TITLE ACCENT
-======================================== */
-
 .nexa-title-dot {
     color: var(--nexa-primary);
 }
 
-
-/* ========================================
-   TABLET LAYOUT
-======================================== */
 
 @media (min-width: 769px) and (max-width: 1100px) {
 
@@ -244,10 +196,6 @@ button {
 
 }
 
-
-/* ========================================
-   MOBILE LAYOUT
-======================================== */
 
 @media (max-width: 768px) {
 
@@ -264,20 +212,14 @@ button {
         min-height: 100vh;
     }
 
-    /* Remove extra margin above first page element */
-
     .nexa-main > :first-child {
         margin-top: 0;
     }
-
-    /* Keep page headings compact */
 
     .nexa-main > header:first-child,
     .nexa-main > .page-header:first-child {
         margin-top: 0;
     }
-
-    /* Responsive cards */
 
     .nexa-card {
         padding: 18px;
@@ -285,7 +227,6 @@ button {
     }
 
     /* Prevent iPhone input zoom */
-
     input,
     select,
     textarea {

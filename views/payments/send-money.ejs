@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <%- include('../partials/head') %>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Send Money - NEXA</title>
@@ -14,276 +14,645 @@
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/send-money.css">
 
+    <style>
+        .send-money-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            margin-bottom: 25px;
+            padding: 17px 19px;
+            border: 1px solid rgba(255, 100, 100, 0.25);
+            border-radius: 14px;
+            background: rgba(255, 75, 75, 0.065);
+            color: #f6f8f4;
+            animation: sendMoneyAlertIn 0.25s ease;
+        }
+
+        .send-money-alert[hidden] {
+            display: none;
+        }
+
+        .send-money-alert-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 37px;
+            height: 37px;
+            border-radius: 11px;
+            background: rgba(255, 90, 90, 0.12);
+            color: #ff8b8b;
+        }
+
+        .send-money-alert-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .send-money-alert-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .send-money-alert-content strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .send-money-alert-content p {
+            margin: 0;
+            color: #c7cfc9;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .send-money-alert-close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 25px;
+            height: 25px;
+            border: none;
+            border-radius: 7px;
+            background: transparent;
+            color: #aebbb0;
+            cursor: pointer;
+        }
+
+        .send-money-alert-close:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+
+        .send-money-alert-close svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .send-money-input-invalid {
+            border-color: rgba(255, 105, 105, 0.7) !important;
+            box-shadow: 0 0 0 3px rgba(255, 105, 105, 0.08);
+        }
+
+        .send-money-wallet-warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 13px 15px;
+            border: 1px solid rgba(255, 187, 65, 0.22);
+            border-radius: 11px;
+            background: rgba(255, 187, 65, 0.065);
+            color: #e9c987;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .send-money-wallet-warning svg {
+            width: 17px;
+            height: 17px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .send-money-wallet-warning a {
+            color: #dfff9b;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .send-money-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .send-money-submit-loading {
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .send-money-submit.is-loading .send-money-submit-default {
+            display: none;
+        }
+
+        .send-money-submit.is-loading .send-money-submit-loading {
+            display: inline-flex;
+        }
+
+        .send-money-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: sendMoneySpin 0.75s linear infinite;
+        }
+
+        @keyframes sendMoneySpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes sendMoneyAlertIn {
+            from {
+                opacity: 0;
+                transform: translateY(-7px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
 </head>
 
 <body>
 
     <%- include('../partials/sidebar') %>
-        <%- include('../partials/navbar') %>
+    <%- include('../partials/navbar') %>
 
-            <main class="nexa-main send-money-page">
+    <main class="nexa-main send-money-page">
 
-                <a href="/payments" class="send-money-back">
+        <a href="/payments" class="send-money-back">
+            <i data-lucide="arrow-left"></i>
+            Back to Payments
+        </a>
 
-                    <i data-lucide="arrow-left"></i>
+        <header class="send-money-heading">
 
-                    Back to Payments
+            <span class="send-money-eyebrow">
+                NEXA PAYMENTS
+            </span>
 
-                </a>
+            <h1>
+                Send Money<span class="nexa-title-dot">.</span>
+            </h1>
 
+            <p>
+                Transfer money to another vendor using
+                Open Payments and Interledger.
+            </p>
 
-                <!-- PAGE HEADING -->
+        </header>
 
-                <header class="send-money-heading">
+        <div class="send-money-layout">
 
-                    <span class="send-money-eyebrow">
-                        NEXA PAYMENTS
-                    </span>
+            <section class="send-money-card">
 
+                <div class="send-money-card-heading">
 
-                    <h1>
-                        Send Money<span class="nexa-title-dot">.</span>
-                    </h1>
+                    <div>
 
+                        <span class="send-money-section-label">
+                            NEW TRANSFER
+                        </span>
 
-                    <p>
-                        Transfer money to another vendor using
-                        Open Payments and Interledger.
-                    </p>
+                        <h2>
+                            Payment Details
+                        </h2>
 
-                </header>
+                        <p>
+                            Enter the recipient's wallet and the amount to send.
+                        </p>
 
+                    </div>
 
-                <div class="send-money-layout">
-
-                    <!-- PAYMENT FORM -->
-
-                    <section class="send-money-card">
-
-                        <div class="send-money-card-heading">
-
-                            <div>
-
-                                <span class="send-money-section-label">
-                                    NEW TRANSFER
-                                </span>
-
-                                <h2>
-                                    Payment Details
-                                </h2>
-
-                                <p>
-                                    Enter the recipient's wallet and the amount to send.
-                                </p>
-
-                            </div>
-
-                            <div class="send-money-heading-icon">
-
-                                <i data-lucide="send"></i>
-
-                            </div>
-
-                        </div>
-
-
-                        <form action="/payments/send" method="POST" class="send-money-form">
-
-                            <div class="send-money-field">
-
-                                <label for="walletAddress">
-                                    Recipient Wallet Address
-                                    <span>*</span>
-                                </label>
-
-                                <div class="send-money-input-wrap">
-
-                                    <i data-lucide="wallet"></i>
-
-                                    <input id="walletAddress" type="text" name="walletAddress"
-                                        placeholder="https://ilp.interledger-test.dev/vendor" autocomplete="off"
-                                        required>
-
-                                </div>
-
-                                <p class="send-money-field-help">
-                                    Enter the recipient's complete Interledger wallet address.
-                                </p>
-
-                            </div>
-
-
-                            <div class="send-money-field">
-
-                                <label for="amount">
-                                    Amount (ZAR)
-                                    <span>*</span>
-                                </label>
-
-                                <div class="send-money-input-wrap">
-
-                                    <span class="send-money-currency">
-                                        R
-                                    </span>
-
-                                    <input id="amount" type="number" name="amount" min="0.01" step="0.01"
-                                        placeholder="100.00" inputmode="decimal" required>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="send-money-field">
-
-                                <label for="reference">
-                                    Payment Reference
-                                    <span>*</span>
-                                </label>
-
-                                <div class="send-money-input-wrap">
-
-                                    <i data-lucide="file-text"></i>
-
-                                    <input id="reference" type="text" name="reference" maxlength="100"
-                                        placeholder="e.g. Stock payment" required>
-
-                                </div>
-
-                                <p class="send-money-field-help">
-                                    A short description to help identify this transaction.
-                                </p>
-
-                            </div>
-
-
-                            <div class="send-money-form-footer">
-
-                                <div class="send-money-security-note">
-
-                                    <i data-lucide="shield-check"></i>
-
-                                    <span>
-                                        Double-check the recipient wallet address
-                                        before sending your payment.
-                                    </span>
-
-                                </div>
-
-                                <button type="submit" class="send-money-submit">
-
-                                    <i data-lucide="arrow-up-right"></i>
-
-                                    Send with Open Payments
-
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                    </section>
-
-
-                    <!-- PAYMENT INFORMATION -->
-
-                    <aside class="send-money-sidebar">
-
-                        <section class="send-money-info-card">
-
-                            <div class="send-money-info-heading">
-
-                                <div class="send-money-info-icon">
-
-                                    <i data-lucide="store"></i>
-
-                                </div>
-
-                                <span>
-                                    SENDING FROM
-                                </span>
-
-                            </div>
-
-                            <h3>
-                                <%= currentShop.name %>
-                            </h3>
-
-                            <div class="send-money-wallet-details">
-
-                                <span>
-                                    Your Wallet Address
-                                </span>
-
-                                <p>
-                                    <%= currentShop.walletAddress || "No wallet configured" %>
-                                </p>
-
-                            </div>
-
-                            <i data-lucide="wallet-cards" class="send-money-watermark"></i>
-
-                        </section>
-
-
-                        <section class="send-money-guide-card">
-
-                            <span class="send-money-section-label">
-                                BEFORE YOU SEND
-                            </span>
-
-                            <h3>
-                                Payment Checklist
-                            </h3>
-
-                            <div class="send-money-checklist-item">
-
-                                <i data-lucide="check-circle-2"></i>
-
-                                <p>
-                                    Confirm the recipient's wallet address.
-                                </p>
-
-                            </div>
-
-                            <div class="send-money-checklist-item">
-
-                                <i data-lucide="check-circle-2"></i>
-
-                                <p>
-                                    Check the payment amount and currency.
-                                </p>
-
-                            </div>
-
-                            <div class="send-money-checklist-item">
-
-                                <i data-lucide="check-circle-2"></i>
-
-                                <p>
-                                    Add a reference you can recognize later.
-                                </p>
-
-                            </div>
-
-                        </section>
-
-                    </aside>
+                    <div class="send-money-heading-icon">
+                        <i data-lucide="send"></i>
+                    </div>
 
                 </div>
 
-            </main>
+                <div
+                    class="send-money-alert"
+                    id="sendMoneyAlert"
+                    role="alert"
+                    aria-live="assertive"
+                    hidden
+                >
 
+                    <div class="send-money-alert-icon">
+                        <i data-lucide="alert-circle"></i>
+                    </div>
 
-            <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+                    <div class="send-money-alert-content">
 
-            <script src="/js/navigation.js"></script>
+                        <strong id="sendMoneyAlertTitle">
+                            Payment couldn't be started
+                        </strong>
 
-            <script>
-                if (window.lucide) {
-                    lucide.createIcons();
-                }
-            </script>
+                        <p id="sendMoneyAlertMessage"></p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="send-money-alert-close"
+                        id="sendMoneyAlertClose"
+                        aria-label="Dismiss error"
+                    >
+                        <i data-lucide="x"></i>
+                    </button>
+
+                </div>
+
+                <form
+                    action="/payments/send"
+                    method="POST"
+                    class="send-money-form"
+                    id="sendMoneyForm"
+                    novalidate
+                >
+
+                    <div class="send-money-field">
+
+                        <label for="walletAddress">
+                            Recipient Wallet Address
+                            <span>*</span>
+                        </label>
+
+                        <div class="send-money-input-wrap">
+
+                            <i data-lucide="wallet"></i>
+
+                            <input
+                                id="walletAddress"
+                                type="text"
+                                name="walletAddress"
+                                placeholder="https://ilp.interledger-test.dev/vendor"
+                                autocomplete="off"
+                                required
+                            >
+
+                        </div>
+
+                        <p class="send-money-field-help">
+                            Enter the recipient's complete Interledger wallet address.
+                        </p>
+
+                    </div>
+
+                    <div class="send-money-field">
+
+                        <label for="amount">
+                            Amount (ZAR)
+                            <span>*</span>
+                        </label>
+
+                        <div class="send-money-input-wrap">
+
+                            <span class="send-money-currency">R</span>
+
+                            <input
+                                id="amount"
+                                type="number"
+                                name="amount"
+                                min="0.01"
+                                step="0.01"
+                                placeholder="100.00"
+                                inputmode="decimal"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="send-money-field">
+
+                        <label for="reference">
+                            Payment Reference
+                            <span>*</span>
+                        </label>
+
+                        <div class="send-money-input-wrap">
+
+                            <i data-lucide="file-text"></i>
+
+                            <input
+                                id="reference"
+                                type="text"
+                                name="reference"
+                                maxlength="100"
+                                placeholder="e.g. Stock payment"
+                                required
+                            >
+
+                        </div>
+
+                        <p class="send-money-field-help">
+                            A short description to help identify this transaction.
+                        </p>
+
+                    </div>
+
+                    <div class="send-money-form-footer">
+
+                        <div class="send-money-security-note">
+
+                            <i data-lucide="shield-check"></i>
+
+                            <span>
+                                Double-check the recipient wallet address
+                                before sending your payment.
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="send-money-submit"
+                            id="sendMoneySubmit"
+                        >
+
+                            <span class="send-money-submit-default">
+                                <i data-lucide="arrow-up-right"></i>
+                                Send with Open Payments
+                            </span>
+
+                            <span class="send-money-submit-loading">
+                                <span class="send-money-spinner"></span>
+                                Connecting to wallet...
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+            <aside class="send-money-sidebar">
+
+                <section class="send-money-info-card">
+
+                    <div class="send-money-info-heading">
+
+                        <div class="send-money-info-icon">
+                            <i data-lucide="store"></i>
+                        </div>
+
+                        <span>SENDING FROM</span>
+
+                    </div>
+
+                    <h3>
+                        <%= currentShop.name %>
+                    </h3>
+
+                    <div class="send-money-wallet-details">
+
+                        <span>Your Wallet Address</span>
+
+                        <p>
+                            <%= currentShop.walletAddress || "No wallet configured" %>
+                        </p>
+
+                    </div>
+
+                    <% if (!currentShop.walletAddress) { %>
+
+                        <div class="send-money-wallet-warning">
+
+                            <i data-lucide="alert-triangle"></i>
+
+                            <span>
+                                Your shop doesn't have a wallet address.
+                                <a href="/shop/edit">Add a wallet</a>
+                                before sending money.
+                            </span>
+
+                        </div>
+
+                    <% } %>
+
+                    <i data-lucide="wallet-cards" class="send-money-watermark"></i>
+
+                </section>
+
+                <section class="send-money-guide-card">
+
+                    <span class="send-money-section-label">
+                        BEFORE YOU SEND
+                    </span>
+
+                    <h3>
+                        Payment Checklist
+                    </h3>
+
+                    <div class="send-money-checklist-item">
+                        <i data-lucide="check-circle-2"></i>
+                        <p>Confirm the recipient's wallet address.</p>
+                    </div>
+
+                    <div class="send-money-checklist-item">
+                        <i data-lucide="check-circle-2"></i>
+                        <p>Check the payment amount and currency.</p>
+                    </div>
+
+                    <div class="send-money-checklist-item">
+                        <i data-lucide="check-circle-2"></i>
+                        <p>Add a reference you can recognize later.</p>
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="/js/navigation.js"></script>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+        const sendMoneyForm = document.getElementById("sendMoneyForm");
+        const sendMoneySubmit = document.getElementById("sendMoneySubmit");
+        const sendMoneyAlert = document.getElementById("sendMoneyAlert");
+        const sendMoneyAlertTitle = document.getElementById("sendMoneyAlertTitle");
+        const sendMoneyAlertMessage = document.getElementById("sendMoneyAlertMessage");
+        const sendMoneyAlertClose = document.getElementById("sendMoneyAlertClose");
+
+        const walletInput = document.getElementById("walletAddress");
+        const amountInput = document.getElementById("amount");
+        const referenceInput = document.getElementById("reference");
+
+        const hasSenderWallet = <%- JSON.stringify(Boolean(currentShop.walletAddress)) %>;
+
+        const showPaymentError = (message, field = null) => {
+
+            sendMoneyAlertTitle.textContent = "Payment couldn't be started";
+            sendMoneyAlertMessage.textContent = message;
+            sendMoneyAlert.hidden = false;
+
+            document.querySelectorAll(".send-money-input-invalid").forEach((element) => {
+                element.classList.remove("send-money-input-invalid");
+            });
+
+            if (field) {
+                field.closest(".send-money-input-wrap")?.classList.add("send-money-input-invalid");
+                field.focus();
+            }
+
+            sendMoneyAlert.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        };
+
+        const paymentError = new URLSearchParams(
+            window.location.search
+        ).get("error");
+
+        if (paymentError) {
+            showPaymentError(paymentError);
+
+            window.history.replaceState(
+                {},
+                "",
+                window.location.pathname
+            );
+        }
+
+        const normalizeWallet = (value) => {
+
+            const wallet = String(value || "").trim();
+
+            if (wallet.startsWith("$")) {
+                return `https://${wallet.slice(1)}`;
+            }
+
+            return wallet;
+
+        };
+
+        sendMoneyAlertClose.addEventListener("click", () => {
+            sendMoneyAlert.hidden = true;
+        });
+
+        [walletInput, amountInput, referenceInput].forEach((input) => {
+
+            input.addEventListener("input", () => {
+                input.closest(".send-money-input-wrap")?.classList.remove("send-money-input-invalid");
+            });
+
+        });
+
+        sendMoneyForm.addEventListener("submit", (event) => {
+
+            sendMoneyAlert.hidden = true;
+
+            if (!hasSenderWallet) {
+
+                event.preventDefault();
+
+                showPaymentError(
+                    "Your shop doesn't have an Open Payments wallet address. Add one in your shop settings before sending money."
+                );
+
+                return;
+
+            }
+
+            const receiverWallet = normalizeWallet(walletInput.value);
+            const amount = Number(amountInput.value);
+            const reference = referenceInput.value.trim();
+
+            let walletIsValid = false;
+
+            try {
+
+                const walletUrl = new URL(receiverWallet);
+
+                walletIsValid =
+                    walletUrl.protocol === "https:" &&
+                    Boolean(walletUrl.hostname);
+
+            } catch (error) {
+
+                walletIsValid = false;
+
+            }
+
+            if (!walletIsValid) {
+
+                event.preventDefault();
+
+                showPaymentError(
+                    "Enter a valid HTTPS wallet address or an Interledger address beginning with $.",
+                    walletInput
+                );
+
+                return;
+
+            }
+
+            if (
+                !amountInput.value.trim() ||
+                !Number.isFinite(amount) ||
+                amount <= 0 ||
+                !amountInput.validity.valid
+            ) {
+
+                event.preventDefault();
+
+                showPaymentError(
+                    "Enter a valid payment amount greater than R0.00.",
+                    amountInput
+                );
+
+                return;
+
+            }
+
+            if (!reference) {
+
+                event.preventDefault();
+
+                showPaymentError(
+                    "Please enter a payment reference.",
+                    referenceInput
+                );
+
+                return;
+
+            }
+
+            if (sendMoneySubmit.disabled) {
+
+                event.preventDefault();
+                return;
+
+            }
+
+            sendMoneySubmit.disabled = true;
+            sendMoneySubmit.classList.add("is-loading");
+
+        });
+
+        window.addEventListener("pageshow", () => {
+
+            sendMoneySubmit.disabled = false;
+            sendMoneySubmit.classList.remove("is-loading");
+
+        });
+    </script>
 
 </body>
 

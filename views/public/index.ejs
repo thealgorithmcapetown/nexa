@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,26 +6,1167 @@
     <%- include('../partials/head') %>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NEXA connects local businesses through smarter trading, communication and Interledger-powered payments.">
 
-    <title>NEXA</title>
+    <title>NEXA | Connect. Trade. Get Paid.</title>
 
     <link rel="stylesheet" href="/css/main.css">
+
+    <style>
+        :root {
+            --landing-bg: #07110c;
+            --landing-border: rgba(175, 223, 164, 0.13);
+            --landing-lime: #9bec00;
+            --landing-white: #f4f8f2;
+            --landing-muted: #9aada0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--landing-bg);
+            color: var(--landing-white);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .landing-container {
+            width: min(1180px, calc(100% - 48px));
+            margin-inline: auto;
+        }
+
+        .landing-glow-background {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .landing-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.3;
+            will-change: transform;
+        }
+
+        .landing-glow-one {
+            width: 520px;
+            height: 520px;
+            top: -180px;
+            left: -180px;
+            background: radial-gradient(circle, #87f500 0%, #315d0a 45%, transparent 72%);
+            animation: landingFloatOne 19s ease-in-out infinite alternate;
+        }
+
+        .landing-glow-two {
+            width: 650px;
+            height: 650px;
+            top: 25%;
+            right: -250px;
+            background: radial-gradient(circle, #4fca25 0%, #174e2b 45%, transparent 72%);
+            animation: landingFloatTwo 24s ease-in-out infinite alternate;
+        }
+
+        .landing-glow-three {
+            width: 480px;
+            height: 480px;
+            bottom: -180px;
+            left: 15%;
+            background: radial-gradient(circle, #a1ff00 0%, #285d15 40%, transparent 72%);
+            animation: landingFloatThree 21s ease-in-out infinite alternate;
+        }
+
+        .landing-navbar,
+        .landing-hero,
+        .landing-section,
+        .landing-cta,
+        .landing-footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        .landing-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 17, 12, 0.91);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--landing-border);
+        }
+
+        .landing-nav-inner {
+            min-height: 82px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .landing-logo {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .landing-logo img {
+            display: block;
+            width: 145px;
+            max-height: 55px;
+            object-fit: contain;
+            object-position: left center;
+        }
+
+        .landing-nav-links,
+        .landing-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .landing-nav-links a {
+            color: var(--landing-muted);
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .landing-nav-links a:hover {
+            color: var(--landing-lime);
+        }
+
+        .landing-login {
+            color: var(--landing-white);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .landing-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 23px;
+            border: 1px solid transparent;
+            border-radius: 11px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: transform 0.2s, background 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+
+        .landing-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .landing-btn-primary {
+            background: var(--landing-lime);
+            color: #091109;
+        }
+
+        .landing-btn-primary:hover {
+            background: #b0ff27;
+        }
+
+        .landing-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .landing-hero {
+            padding: 112px 0 105px;
+            overflow: hidden;
+        }
+
+        .landing-hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 70px;
+            align-items: center;
+        }
+
+        .landing-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--landing-lime);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .landing-eyebrow::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--landing-lime);
+            box-shadow: 0 0 13px rgba(155, 236, 0, 0.5);
+        }
+
+        .landing-hero h1 {
+            margin: 24px 0;
+            font-size: clamp(48px, 5.6vw, 82px);
+            line-height: 1.08;
+            letter-spacing: -4px;
+            font-weight: 800;
+        }
+
+        .landing-hero h1 span,
+        .landing-section-heading h2 span {
+            color: var(--landing-lime);
+        }
+
+        .landing-preview {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            padding: 22px;
+            border: 1px solid rgba(235, 255, 225, 0.23);
+            border-radius: 30px;
+            background: linear-gradient(
+                145deg,
+                rgba(215, 255, 202, 0.13),
+                rgba(108, 178, 101, 0.045) 40%,
+                rgba(255, 255, 255, 0.035)
+            );
+            backdrop-filter: blur(32px) saturate(160%);
+            -webkit-backdrop-filter: blur(32px) saturate(160%);
+            box-shadow:
+                inset 0 1px 1px rgba(255, 255, 255, 0.28),
+                inset 0 -1px 1px rgba(255, 255, 255, 0.045),
+                0 30px 90px rgba(0, 0, 0, 0.28),
+                0 0 65px rgba(116, 220, 44, 0.065);
+            animation: landingFadeUp 0.85s 0.15s ease both;
+        }
+
+        .landing-preview::before {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 360px;
+            height: 360px;
+            top: -200px;
+            right: -130px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(190, 255, 143, 0.27),
+                transparent 70%
+            );
+            filter: blur(30px);
+            animation: glassFloat 10s ease-in-out infinite alternate;
+        }
+
+        .landing-preview::after {
+            content: "";
+            position: absolute;
+            z-index: -1;
+            width: 280px;
+            height: 280px;
+            bottom: -170px;
+            left: -100px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(125, 240, 56, 0.2),
+                transparent 70%
+            );
+            filter: blur(25px);
+            animation: glassFloat 13s ease-in-out infinite alternate-reverse;
+        }
+
+        .landing-preview-inner {
+            padding: 27px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 21px;
+            background: rgba(6, 19, 12, 0.38);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.09);
+        }
+
+        .landing-preview-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 28px;
+        }
+
+        .landing-preview-label {
+            color: var(--landing-lime);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.6px;
+        }
+
+        .landing-preview-title {
+            margin-top: 7px;
+            font-size: 19px;
+            font-weight: 750;
+            letter-spacing: -0.5px;
+        }
+
+        .landing-preview-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 12px;
+            border: 1px solid rgba(155, 236, 0, 0.2);
+            border-radius: 50px;
+            background: rgba(155, 236, 0, 0.075);
+            color: var(--landing-lime);
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .landing-preview-status::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--landing-lime);
+            box-shadow: 0 0 10px var(--landing-lime);
+        }
+
+        .landing-glass-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .landing-glass-item {
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 17px;
+            background: linear-gradient(
+                115deg,
+                rgba(255, 255, 255, 0.085),
+                rgba(255, 255, 255, 0.025)
+            );
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: inset 0 1px rgba(255, 255, 255, 0.075);
+            transition: transform 0.3s, border-color 0.3s, background 0.3s;
+        }
+
+        .landing-glass-item:hover {
+            transform: translateY(-3px);
+            border-color: rgba(155, 236, 0, 0.32);
+            background: rgba(255, 255, 255, 0.09);
+        }
+
+        .landing-glass-item-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .landing-glass-item h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .landing-glass-item strong {
+            color: var(--landing-lime);
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .landing-glass-item p {
+            margin: 8px 0 0;
+            color: #a8bca9;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .landing-glass-item-footer {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 19px;
+            color: #c0d0c1;
+            font-size: 11px;
+        }
+
+        .landing-glass-item-footer svg {
+            width: 13px;
+            height: 13px;
+            color: var(--landing-lime);
+        }
+
+        .landing-glass-divider {
+            height: 1px;
+            margin: 22px 0 18px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.17),
+                transparent
+            );
+        }
+
+        .landing-glass-caption {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            color: #a7bca8;
+            font-size: 11px;
+        }
+
+        .landing-glass-caption span:last-child {
+            color: var(--landing-lime);
+            font-weight: 600;
+        }
+
+        .landing-section {
+            padding: 105px 0;
+        }
+
+        .landing-section-heading {
+            max-width: 640px;
+            margin-bottom: 45px;
+        }
+
+        .landing-section-heading h2 {
+            margin: 15px 0;
+            font-size: clamp(32px, 4vw, 49px);
+            line-height: 1.15;
+            letter-spacing: -2px;
+        }
+
+        .landing-section-heading p {
+            color: var(--landing-muted);
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .landing-features {
+            border-top: 1px solid var(--landing-border);
+            background: rgba(11, 23, 16, 0.85);
+        }
+
+        .landing-feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .landing-feature-card {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            min-height: 255px;
+            padding: 35px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            border: 1px solid var(--landing-border);
+            border-radius: 18px;
+            background: #112017;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .landing-feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(155, 236, 0, 0.38);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .landing-feature-icon {
+            position: absolute;
+            z-index: 0;
+            top: 18px;
+            right: 18px;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--landing-lime);
+            opacity: 0.085;
+            transform: rotate(-12deg);
+            pointer-events: none;
+            transition: opacity 0.4s, transform 0.5s;
+        }
+
+        .landing-feature-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke-width: 1.15;
+        }
+
+        .landing-feature-card:hover .landing-feature-icon {
+            opacity: 0.16;
+            transform: rotate(0deg) scale(1.08);
+        }
+
+        .landing-feature-card h3 {
+            position: relative;
+            z-index: 1;
+            margin: 0 0 13px;
+            font-size: 18px;
+        }
+
+        .landing-feature-card p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            color: var(--landing-muted);
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .landing-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .landing-step {
+            padding: 15px 0;
+        }
+
+        .landing-step-number {
+            display: block;
+            margin-bottom: 22px;
+            color: var(--landing-lime);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .landing-step h3 {
+            margin: 0 0 12px;
+            font-size: 19px;
+        }
+
+        .landing-step p {
+            max-width: 310px;
+            color: var(--landing-muted);
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .landing-cta {
+            padding: 35px 0 110px;
+        }
+
+        .landing-cta-inner {
+            position: relative;
+            overflow: hidden;
+            padding: 65px;
+            border: 1px solid rgba(155, 236, 0, 0.25);
+            border-radius: 24px;
+            background: linear-gradient(120deg, #182d1c, #0d1c12);
+        }
+
+        .landing-cta-inner::after {
+            content: "";
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            right: -120px;
+            top: -120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(155, 236, 0, 0.16), transparent 70%);
+            pointer-events: none;
+        }
+
+        .landing-cta h2 {
+            position: relative;
+            z-index: 1;
+            max-width: 620px;
+            margin: 0 0 18px;
+            font-size: clamp(32px, 4vw, 52px);
+            letter-spacing: -2px;
+        }
+
+        .landing-cta p {
+            position: relative;
+            z-index: 1;
+            max-width: 510px;
+            margin-bottom: 30px;
+            color: var(--landing-muted);
+            line-height: 1.8;
+        }
+
+        .landing-cta .landing-btn {
+            position: relative;
+            z-index: 1;
+        }
+
+        .landing-footer {
+            padding: 34px 0;
+            border-top: 1px solid var(--landing-border);
+        }
+
+        .landing-footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .landing-footer p {
+            color: var(--landing-muted);
+            font-size: 12px;
+        }
+
+        .landing-footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .landing-footer-links a {
+            color: var(--landing-muted);
+            font-size: 12px;
+        }
+
+        .landing-footer-links a:hover {
+            color: var(--landing-lime);
+        }
+
+        @keyframes landingFadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glassFloat {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(-80px, 75px) scale(1.25);
+            }
+        }
+
+        @keyframes landingFloatOne {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(160px, 140px) scale(1.2);
+            }
+
+            100% {
+                transform: translate(320px, 60px) scale(0.9);
+            }
+        }
+
+        @keyframes landingFloatTwo {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(-220px, -120px) scale(1.15);
+            }
+
+            100% {
+                transform: translate(-100px, 180px) scale(0.85);
+            }
+        }
+
+        @keyframes landingFloatThree {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(220px, -180px) scale(1.3);
+            }
+
+            100% {
+                transform: translate(-100px, -300px) scale(1);
+            }
+        }
+
+        .landing-hero-content {
+            animation: landingFadeUp 0.7s ease both;
+        }
+
+        @media (max-width: 950px) {
+            .landing-nav-links {
+                display: none;
+            }
+
+            .landing-hero-grid {
+                grid-template-columns: 1fr;
+                gap: 65px;
+            }
+
+            .landing-hero {
+                padding: 80px 0;
+            }
+
+            .landing-preview {
+                max-width: 650px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .landing-container {
+                width: min(100% - 32px, 1180px);
+            }
+
+            .landing-nav-inner {
+                min-height: 70px;
+            }
+
+            .landing-logo img {
+                width: 115px;
+            }
+
+            .landing-nav-actions {
+                gap: 14px;
+            }
+
+            .landing-nav-actions .landing-btn {
+                padding: 11px 14px;
+                font-size: 11px;
+            }
+
+            .landing-hero {
+                padding: 68px 0 70px;
+            }
+
+            .landing-hero h1 {
+                font-size: clamp(44px, 11vw, 60px);
+                letter-spacing: -2.5px;
+            }
+
+            .landing-preview {
+                padding: 12px;
+                border-radius: 23px;
+            }
+
+            .landing-preview-inner {
+                padding: 17px;
+            }
+
+            .landing-preview-title {
+                font-size: 16px;
+            }
+
+            .landing-glass-item {
+                padding: 16px;
+            }
+
+            .landing-section {
+                padding: 75px 0;
+            }
+
+            .landing-feature-grid,
+            .landing-steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .landing-feature-card {
+                min-height: 220px;
+                padding: 27px;
+            }
+
+            .landing-feature-icon {
+                width: 130px;
+                height: 130px;
+            }
+
+            .landing-cta-inner {
+                padding: 36px 25px;
+            }
+
+            .landing-footer-inner {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .landing-glow {
+                filter: blur(65px);
+                opacity: 0.2;
+            }
+
+            .landing-glow-one,
+            .landing-glow-two,
+            .landing-glow-three {
+                width: 320px;
+                height: 320px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .landing-glow {
+                will-change: auto;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>NEXA</h1>
+    <div class="landing-glow-background" aria-hidden="true">
+        <div class="landing-glow landing-glow-one"></div>
+        <div class="landing-glow landing-glow-two"></div>
+        <div class="landing-glow landing-glow-three"></div>
+    </div>
 
-    <h2>Connect. Trade. Get Paid.</h2>
+    <nav class="landing-navbar">
+        <div class="landing-container landing-nav-inner">
 
-    <p>
-        A platform connecting small businesses
-        for trading, communication and payments.
-    </p>
+            <a href="/" class="landing-logo" aria-label="NEXA home">
+                <img src="/images/branding/nexa-logo2.svg" alt="NEXA">
+            </a>
 
-    <a href="/login">Login</a>
+            <div class="landing-nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="#about">About Us</a>
+            </div>
 
-    <a href="/signup">Get Started</a>
+            <div class="landing-nav-actions">
+                <a href="/login" class="landing-login">Log in</a>
+
+                <a href="/signup" class="landing-btn landing-btn-primary">
+                    Get Started
+                    <i data-lucide="arrow-up-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <section class="landing-hero" id="about">
+        <div class="landing-container landing-hero-grid">
+
+            <div class="landing-hero-content">
+
+                <span class="landing-eyebrow">
+                    Built for local businesses
+                </span>
+
+                <h1>
+                    Your business.<br>
+                    <span>Better connected.</span>
+                </h1>
+
+            </div>
+
+            <div class="landing-preview">
+
+                <div class="landing-preview-inner">
+
+                    <div class="landing-preview-top">
+
+                        <div>
+                            <div class="landing-preview-label">
+                                NEXA MARKETPLACE
+                            </div>
+
+                            <div class="landing-preview-title">
+                                Nearby opportunities
+                            </div>
+                        </div>
+
+                        <span class="landing-preview-status">
+                            Marketplace
+                        </span>
+
+                    </div>
+
+                    <div class="landing-glass-list">
+
+                        <div class="landing-glass-item">
+
+                            <div class="landing-glass-item-top">
+                                <h3>Cooking oil</h3>
+                                <strong>R 350</strong>
+                            </div>
+
+                            <p>
+                                10 litres · Pickup available
+                            </p>
+
+                            <div class="landing-glass-item-footer">
+                                <i data-lucide="store"></i>
+                                Neighbourhood Spaza
+                            </div>
+
+                        </div>
+
+                        <div class="landing-glass-item">
+
+                            <div class="landing-glass-item-top">
+                                <h3>Rice stock</h3>
+                                <strong>R 800</strong>
+                            </div>
+
+                            <p>
+                                5 bags · Delivery requested
+                            </p>
+
+                            <div class="landing-glass-item-footer">
+                                <i data-lucide="store"></i>
+                                Local Mini Market
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="landing-glass-divider"></div>
+
+                    <div class="landing-glass-caption">
+                        <span>Illustrative marketplace preview</span>
+                        <span>Connect. Trade. Get Paid.</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="landing-section landing-features" id="features">
+        <div class="landing-container">
+
+            <div class="landing-section-heading">
+
+                <span class="landing-eyebrow">
+                    THE NEXA EXPERIENCE
+                </span>
+
+                <h2>
+                    Everything your business needs.
+                    <span>One connected platform.</span>
+                </h2>
+
+                <p>
+                    From finding nearby trading opportunities to
+                    managing payments, NEXA brings essential
+                    business tools together.
+                </p>
+
+            </div>
+
+            <div class="landing-feature-grid">
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon" aria-hidden="true">
+                        <i data-lucide="store"></i>
+                    </div>
+
+                    <h3>Local Marketplace</h3>
+
+                    <p>
+                        Discover nearby businesses, post stock
+                        requests and respond to opportunities
+                        within your trading area.
+                    </p>
+
+                </article>
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon" aria-hidden="true">
+                        <i data-lucide="messages-square"></i>
+                    </div>
+
+                    <h3>Vendor Communication</h3>
+
+                    <p>
+                        Connect directly with other vendors,
+                        discuss offers and coordinate trades
+                        without unnecessary back-and-forth.
+                    </p>
+
+                </article>
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon" aria-hidden="true">
+                        <i data-lucide="wallet"></i>
+                    </div>
+
+                    <h3>Interledger Payments</h3>
+
+                    <p>
+                        Use compatible Open Payments wallets
+                        to initiate payments through NEXA,
+                        including customer QR checkout.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="landing-section" id="how-it-works">
+        <div class="landing-container">
+
+            <div class="landing-section-heading">
+
+                <span class="landing-eyebrow">
+                    SIMPLE BY DESIGN
+                </span>
+
+                <h2>
+                    Three steps to
+                    <span>better business.</span>
+                </h2>
+
+                <p>
+                    NEXA makes connecting and trading
+                    with other businesses straightforward.
+                </p>
+
+            </div>
+
+            <div class="landing-steps-grid">
+
+                <div class="landing-step">
+
+                    <span class="landing-step-number">01 / JOIN</span>
+
+                    <h3>Create your shop</h3>
+
+                    <p>
+                        Register your business, add your shop
+                        information and set up your profile.
+                    </p>
+
+                </div>
+
+                <div class="landing-step">
+
+                    <span class="landing-step-number">02 / CONNECT</span>
+
+                    <h3>Discover opportunities</h3>
+
+                    <p>
+                        Browse nearby requests, submit offers,
+                        and communicate with other vendors.
+                    </p>
+
+                </div>
+
+                <div class="landing-step">
+
+                    <span class="landing-step-number">03 / TRADE</span>
+
+                    <h3>Manage your payments</h3>
+
+                    <p>
+                        Agree on trades and use compatible
+                        Open Payments wallets to initiate
+                        digital payments.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="landing-cta">
+        <div class="landing-container">
+
+            <div class="landing-cta-inner">
+
+                <span class="landing-eyebrow">
+                    READY TO GET CONNECTED?
+                </span>
+
+                <h2>
+                    Grow your network.<br>
+                    Grow your opportunities.
+                </h2>
+
+                <p>
+                    Join NEXA and bring your business
+                    into a more connected marketplace.
+                </p>
+
+                <a href="/signup" class="landing-btn landing-btn-primary">
+                    Create Your Shop
+                    <i data-lucide="arrow-up-right"></i>
+                </a>
+
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="landing-footer">
+
+        <div class="landing-container landing-footer-inner">
+
+            <a href="/" class="landing-logo" aria-label="NEXA home">
+                <img src="/images/branding/nexa-logo2.svg" alt="NEXA">
+            </a>
+
+            <p>
+                © 2026 TheAlgorithm. All rights reserved.
+            </p>
+
+            <div class="landing-footer-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="/login">Log in</a>
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
 
 </body>
 

@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <%- include('../partials/loader') %>
     <link rel="stylesheet" href="/css/loader.css">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -19,6 +20,46 @@
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/offers.css">
+
+    <style>
+        /* ========================================
+           VENDOR RATINGS
+        ======================================== */
+
+        .offers-vendor-rating {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 9px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        .offers-vendor-rating .rating-star {
+            display: inline-flex;
+            align-items: center;
+            color: #b5f34b;
+        }
+
+        .offers-vendor-rating .rating-star svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+            stroke: currentColor;
+        }
+
+        .offers-vendor-rating .rating-value {
+            color: #d7f8b5;
+            font-weight: 700;
+        }
+
+        .offers-vendor-rating .rating-count,
+        .offers-vendor-rating .rating-empty {
+            color: #91a79a;
+            font-weight: 400;
+        }
+    </style>
 
 </head>
 
@@ -102,7 +143,9 @@
         </section>
 
 
-        <!-- OFFERS RECEIVED -->
+        <!-- ========================================
+             OFFERS RECEIVED
+        ======================================== -->
 
         <section class="offers-section">
 
@@ -184,6 +227,37 @@
                                     <%= offer.seller.name %>
                                 </h3>
 
+
+                                <!-- Seller rating -->
+
+                                <div class="offers-vendor-rating">
+
+                                    <span class="rating-star">
+                                        <i data-lucide="star"></i>
+                                    </span>
+
+                                    <% if (Number(offer.seller.ratingCount || 0) > 0) { %>
+
+                                        <span class="rating-value">
+                                            <%= Number(offer.seller.rating || 0).toFixed(1) %> / 5
+                                        </span>
+
+                                        <span class="rating-count">
+                                            (<%= offer.seller.ratingCount %>
+                                            <%= Number(offer.seller.ratingCount) === 1 ? 'review' : 'reviews' %>)
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="rating-empty">
+                                            No ratings yet
+                                        </span>
+
+                                    <% } %>
+
+                                </div>
+
+
                                 <p class="offers-card-product">
                                     <i data-lucide="package"></i>
                                     <%= offer.tradeRequest.product %>
@@ -242,7 +316,9 @@
         </section>
 
 
-        <!-- OFFERS SENT -->
+        <!-- ========================================
+             OFFERS SENT
+        ======================================== -->
 
         <section class="offers-section">
 
@@ -330,6 +406,36 @@
                                 </p>
 
 
+                                <!-- Buyer rating -->
+
+                                <div class="offers-vendor-rating">
+
+                                    <span class="rating-star">
+                                        <i data-lucide="star"></i>
+                                    </span>
+
+                                    <% if (Number(offer.buyer.ratingCount || 0) > 0) { %>
+
+                                        <span class="rating-value">
+                                            <%= Number(offer.buyer.rating || 0).toFixed(1) %> / 5
+                                        </span>
+
+                                        <span class="rating-count">
+                                            (<%= offer.buyer.ratingCount %>
+                                            <%= Number(offer.buyer.ratingCount) === 1 ? 'review' : 'reviews' %>)
+                                        </span>
+
+                                    <% } else { %>
+
+                                        <span class="rating-empty">
+                                            No ratings yet
+                                        </span>
+
+                                    <% } %>
+
+                                </div>
+
+
                                 <div class="offers-card-divider"></div>
 
 
@@ -388,8 +494,10 @@
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="/js/navigation.js"></script>
-<script src="/js/loader.js"></script>
-<%- include('../partials/footer') %>
+    <script src="/js/loader.js"></script>
+
+    <%- include('../partials/footer') %>
+
 </body>
 
 </html>

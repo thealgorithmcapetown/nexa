@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Notification from "../models/Notification.js";
 
 
@@ -13,29 +14,53 @@ export const showNotifications = async (req, res) => {
                 createdAt: -1
             });
 
-        res.render("notifications/index", {
+        return res.render("notifications/index", {
             notifications
         });
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "SHOW NOTIFICATIONS ERROR:",
+            error
+        );
 
-        res.status(500).send(
+        return res.status(500).send(
             "Unable to load notifications"
         );
 
     }
 
 };
+
+
 export const openNotification = async (req, res) => {
 
     try {
 
-        const notification =
-            await Notification.findById(
+        if (
+            !mongoose.Types.ObjectId.isValid(
                 req.params.id
+            )
+        ) {
+
+            return res.status(400).send(
+                "Invalid notification"
             );
+
+        }
+
+
+        const notification =
+            await Notification.findOne({
+
+                _id:
+                    req.params.id,
+
+                user:
+                    req.session.userId
+
+            });
 
 
         if (!notification) {
@@ -47,28 +72,14 @@ export const openNotification = async (req, res) => {
         }
 
 
-        if (
-            notification.user.toString() !==
-            req.session.userId.toString()
-        ) {
+        if (!notification.read) {
 
-            return res.status(403).send(
-                "Not authorized"
-            );
+            notification.read = true;
+
+            await notification.save();
 
         }
 
-
-        // Mark notification as read
-
-        notification.read = true;
-
-        await notification.save();
-
-
-        // ========================================
-        // NEW MESSAGE
-        // ========================================
 
         if (
             notification.type === "new_message" &&
@@ -82,15 +93,39 @@ export const openNotification = async (req, res) => {
         }
 
 
-        // ========================================
-        // TRADE-RELATED NOTIFICATION
-        //
-        // IMPORTANT:
-        // Check relatedTrade BEFORE transaction.
-        //
-        // Vendor trade payments should open the
-        // trade so the seller can fulfil it.
-        // ========================================
+        const offerNotificationTypes = [
+            "new_offer",
+            "offer_accepted",
+            "offer_declined"
+        ];
+
+
+        if (
+            offerNotificationTypes.includes(
+                notification.type
+            ) &&
+            notification.relatedOffer
+        ) {
+
+            return res.redirect(
+                `/offers/${notification.relatedOffer}`
+            );
+
+        }
+
+
+        if (
+            notification.type === "payment_received" &&
+            notification.relatedTransaction &&
+            !notification.relatedTrade
+        ) {
+
+            return res.redirect(
+                `/transactions/${notification.relatedTransaction}`
+            );
+
+        }
+
 
         if (notification.relatedTrade) {
 
@@ -101,17 +136,7 @@ export const openNotification = async (req, res) => {
         }
 
 
-        // ========================================
-        // CUSTOMER PAYMENT
-        //
-        // Customer QR payments don't have a trade,
-        // so take the vendor to the receipt.
-        // ========================================
-
-        if (
-            notification.type === "payment_received" &&
-            notification.relatedTransaction
-        ) {
+        if (notification.relatedTransaction) {
 
             return res.redirect(
                 `/transactions/${notification.relatedTransaction}`
@@ -119,10 +144,6 @@ export const openNotification = async (req, res) => {
 
         }
 
-
-        // ========================================
-        // OFFER
-        // ========================================
 
         if (notification.relatedOffer) {
 
@@ -132,8 +153,6 @@ export const openNotification = async (req, res) => {
 
         }
 
-
-        // Nothing related — return to notifications
 
         return res.redirect(
             "/notifications"
@@ -147,7 +166,6 @@ export const openNotification = async (req, res) => {
             error
         );
 
-
         return res.status(500).send(
             "Unable to open notification"
         );
@@ -155,22 +173,35 @@ export const openNotification = async (req, res) => {
     }
 
 };
+
+
 export const getUnreadNotificationCount = async (req, res) => {
 
     try {
 
-        const unreadCount = await Notification.countDocuments({
-            user: req.session.userId,
-            read: false
-        });
+        const unreadCount =
+            await Notification.countDocuments({
+
+                user:
+                    req.session.userId,
+
+                read:
+                    false
+
+            });
+
 
         return res.json({
             unreadCount
         });
 
+
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "UNREAD NOTIFICATION COUNT ERROR:",
+            error
+        );
 
         return res.status(500).json({
             unreadCount: 0
@@ -179,27 +210,35 @@ export const getUnreadNotificationCount = async (req, res) => {
     }
 
 };
-// ========================================
-// MARK ALL NOTIFICATIONS AS READ
-// ========================================
+
 
 export const markAllNotificationsRead = async (req, res) => {
 
     try {
 
         await Notification.updateMany(
+
             {
-                user: req.session.userId,
-                read: false
+                user:
+                    req.session.userId,
+
+                read:
+                    false
             },
+
             {
                 $set: {
                     read: true
                 }
             }
+
         );
 
-        return res.redirect("/notifications");
+
+        return res.redirect(
+            "/notifications"
+        );
+
 
     } catch (error) {
 

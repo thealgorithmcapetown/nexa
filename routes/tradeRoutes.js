@@ -1,3 +1,4 @@
+
 import express from "express";
 
 import {
@@ -15,16 +16,17 @@ import {
 
 
 import {
+    submitRating
+} from "../controllers/ratingController.js";
+
+
+import {
     requireAuth
 } from "../middleware/authMiddleware.js";
 
 
 const router = express.Router();
 
-
-// ========================================
-// TRADE BOARD
-// ========================================
 
 router.get(
     "/trade",
@@ -33,9 +35,6 @@ router.get(
 );
 
 
-// ========================================
-// CREATE TRADE
-// ========================================
 
 router.get(
     "/trade/create",
@@ -51,21 +50,12 @@ router.post(
 );
 
 
-// ========================================
-// MY REQUESTS
-// ========================================
-
 router.get(
     "/trade/my-requests",
     requireAuth,
     showMyRequests
 );
 
-
-// ========================================
-// FULFIL TRADE
-// Seller only
-// ========================================
 
 router.post(
     "/trade/:id/fulfill",
@@ -74,33 +64,24 @@ router.post(
 );
 
 
-// ========================================
-// COMPLETE TRADE
-// Buyer only
-// ========================================
-
 router.post(
     "/trade/:id/complete",
     requireAuth,
     completeTrade
 );
 
+router.post(
+    "/trade/:id/rate",
+    requireAuth,
+    submitRating
+);
 
-// ========================================
-// TRADE DETAILS
-// Keep this AFTER the specific routes
-// ========================================
 
 router.get(
     "/trade/:id",
     requireAuth,
     showTradeDetails
 );
-// ========================================
-// CANCEL TRADE
-// Owner only,
-// Pressly gangy change thison the details.ejs
-// ========================================
 
 router.post(
     "/trade/:id/cancel",

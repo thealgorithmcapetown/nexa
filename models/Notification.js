@@ -65,23 +65,13 @@ const notificationSchema = new mongoose.Schema(
 );
 
 
-// --------------------------------
-// INDEXES
-// --------------------------------
-
-// Fast notification list:
-// Notification.find({ user }).sort({ createdAt: -1 })
+// Helps load notifications and unread counts faster
 notificationSchema.index({
     user: 1,
     createdAt: -1
 });
 
 
-// Fast unread notification count:
-// Notification.countDocuments({
-//     user,
-//     read: false
-// })
 notificationSchema.index({
     user: 1,
     read: 1

@@ -1,103 +1,1335 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <%- include('../partials/head') %>
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>NEXA — Sign Up</title>
 
-    <title>NEXA - Sign Up</title>
-
-    <link
-        rel="stylesheet"
-        href="/css/main.css"
-    >
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="/css/shop-location.css">
 
 </head>
 
-<body>
+<body class="nexa-auth-body">
 
-    <h1>Create your NEXA account</h1>
-
-    <form action="/signup" method="POST">
-
-        <h2>Your Details</h2>
-
-        <input
-            type="text"
-            name="name"
-            placeholder="Your name"
-            required
+    <div class="nexa-wave-background" aria-hidden="true">
+        <svg
+            class="nexa-wave-svg"
+            viewBox="0 0 1440 900"
+            preserveAspectRatio="xMidYMid slice"
+            xmlns="http://www.w3.org/2000/svg"
         >
+            <defs>
+                <linearGradient
+                    id="nexaWaveGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="0%"
+                >
+                    <stop offset="0%" stop-color="#8CE11A" stop-opacity="0.15"/>
+                    <stop offset="35%" stop-color="#8CE11A" stop-opacity="0.85"/>
+                    <stop offset="70%" stop-color="#8CE11A" stop-opacity="0.75"/>
+                    <stop offset="100%" stop-color="#8CE11A" stop-opacity="0.12"/>
+                </linearGradient>
 
-        <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-        >
+                <filter
+                    id="nexaWaveGlow"
+                    x="-30%"
+                    y="-100%"
+                    width="160%"
+                    height="300%"
+                >
+                    <feGaussianBlur stdDeviation="4"/>
+                </filter>
+            </defs>
 
-        <input
-            type="text"
-            name="phone"
-            placeholder="Phone"
-            required
-        >
+            <path
+                class="nexa-wave-glow"
+                d="M -150 140 C 120 10, 260 70, 480 230 S 850 420, 1110 290 S 1430 110, 1590 190"
+            />
+            <path
+                class="nexa-wave-line nexa-wave-line-one"
+                d="M -150 140 C 120 10, 260 70, 480 230 S 850 420, 1110 290 S 1430 110, 1590 190"
+            />
 
-        <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-        >
+            <path
+                class="nexa-wave-glow"
+                d="M -180 490 C 130 370, 300 590, 550 490 S 960 340, 1190 470 S 1480 600, 1620 450"
+            />
+            <path
+                class="nexa-wave-line nexa-wave-line-two"
+                d="M -180 490 C 130 370, 300 590, 550 490 S 960 340, 1190 470 S 1480 600, 1620 450"
+            />
 
+            <path
+                class="nexa-wave-glow"
+                d="M -150 800 C 150 620, 300 700, 530 790 S 900 920, 1110 720 S 1440 620, 1600 690"
+            />
+            <path
+                class="nexa-wave-line nexa-wave-line-three"
+                d="M -150 800 C 150 620, 300 700, 530 790 S 900 920, 1110 720 S 1440 620, 1600 690"
+            />
+        </svg>
+    </div>
 
-        <h2>Your Business</h2>
+    <main class="nexa-auth-main">
 
-        <input
-            type="text"
-            name="shopName"
-            placeholder="Shop name"
-            required
-        >
+        <section class="nexa-auth-card nexa-signup-card">
 
-        <input
-            type="text"
-            name="category"
-            placeholder="Business category"
-            required
-        >
+            <div class="nexa-auth-brand"></div>
 
-        <input
-            type="text"
-            name="address"
-            placeholder="Business address"
-            required
-        >
+            <div class="nexa-auth-heading">
+                <span class="nexa-auth-eyebrow">JOIN NEXA</span>
+                <h1>Create your account</h1>
+                <p>Set up your business and start trading.</p>
+            </div>
 
-        <input
-            type="text"
-            name="location"
-            placeholder="Location e.g Capetown"
-            required
-        >
+            <div class="nexa-signup-progress">
 
+                <div class="nexa-signup-progress-top">
+                    <span id="signupStepLabel">PERSONAL DETAILS</span>
+                    <span id="signupStepCount">STEP 1 OF 4</span>
+                </div>
 
-        <button type="submit">
-            Create Account
-        </button>
+                <div class="nexa-signup-progress-bars">
+                    <span class="nexa-signup-progress-bar active"></span>
+                    <span class="nexa-signup-progress-bar"></span>
+                    <span class="nexa-signup-progress-bar"></span>
+                    <span class="nexa-signup-progress-bar"></span>
+                </div>
 
-    </form>
+            </div>
 
+            <form
+                action="/signup"
+                method="POST"
+                class="nexa-auth-form nexa-signup-form"
+                id="signupForm"
+            >
 
-    <p>
-        Already have an account?
-        <a href="/login">Login</a>
-    </p>
+                <div class="nexa-signup-step active" data-step="0">
+
+                    <div class="nexa-signup-step-heading">
+                        <h2>Your details</h2>
+                        <p>Let's start with your personal information.</p>
+                    </div>
+
+                    <div class="nexa-auth-field">
+                        <label for="name">Full name</label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            required
+                        >
+                    </div>
+
+                    <div class="nexa-auth-field">
+                        <label for="email">Email address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+
+                    <div class="nexa-auth-field">
+                        <label for="phone">Phone number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="Enter your phone number"
+                            autocomplete="tel"
+                            required
+                        >
+                    </div>
+
+                    <div class="nexa-auth-field">
+
+                        <label for="password">Password</label>
+
+                        <div class="nexa-auth-password">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Create a password"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="nexa-password-toggle"
+                                aria-label="Show password"
+                                aria-pressed="false"
+                            >
+                                <i data-lucide="eye"></i>
+                            </button>
+
+                        </div>
+
+                        <span class="nexa-signup-hint">
+                            Use at least 8 characters.
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="nexa-signup-step" data-step="1" hidden>
+
+                    <div class="nexa-signup-step-heading">
+                        <h2>Your business</h2>
+                        <p>Tell us a little about your shop.</p>
+                    </div>
+
+                    <div class="nexa-auth-field">
+                        <label for="shopName">Shop name</label>
+                        <input
+                            type="text"
+                            id="shopName"
+                            name="shopName"
+                            placeholder="Enter your shop name"
+                            required
+                        >
+                    </div>
+
+                    <div class="nexa-auth-field">
+                        <label for="category">Business category</label>
+                        <input
+                            type="text"
+                            id="category"
+                            name="category"
+                            placeholder="e.g. Grocery, Spaza, Retail"
+                            required
+                        >
+                    </div>
+
+                    <div class="nexa-auth-field">
+
+                        <label for="address">Business address</label>
+
+                        <input
+                            type="text"
+                            id="address"
+                            name="address"
+                            placeholder="Street address"
+                            autocomplete="street-address"
+                            required
+                        >
+
+                        <span class="nexa-signup-hint">
+                            Select your shop on the map to fill the address
+                            automatically. If the street is not mapped,
+                            enter your exact address or shop description manually.
+                        </span>
+
+                    </div>
+
+                    <div class="nexa-auth-field">
+
+                        <label for="location">City / Area</label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            placeholder="e.g. Cape Town"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="nexa-shop-location">
+
+                        <div class="nexa-shop-location-heading">
+
+                            <label>Confirm your shop location</label>
+
+                            <p>
+                                Click the map to place your shop pin or
+                                enter your address and select "Find address
+                                on map". Drag the pin to the exact position.
+                                Your address will fill automatically when available.
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            id="findShopLocation"
+                            class="nexa-shop-location-search"
+                        >
+                            <i data-lucide="search"></i>
+                            Find address on map
+                        </button>
+
+                        <div
+                            id="shopLocationMap"
+                            aria-label="Interactive shop location map"
+                        ></div>
+
+                        <p
+                            id="shopLocationStatus"
+                            class="nexa-shop-location-status"
+                            role="status"
+                            aria-live="polite"
+                        >
+                            Click the map to select your shop location.
+                        </p>
+
+                        <button
+                            type="button"
+                            id="confirmShopLocation"
+                            class="nexa-shop-location-confirm"
+                            disabled
+                        >
+                            <i data-lucide="map-pin"></i>
+                            Confirm this location
+                        </button>
+
+                        <input
+                            type="hidden"
+                            id="shopLatitude"
+                            name="latitude"
+                            value=""
+                        >
+
+                        <input
+                            type="hidden"
+                            id="shopLongitude"
+                            name="longitude"
+                            value=""
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="nexa-signup-step" data-step="2" hidden>
+
+                    <div class="nexa-signup-step-heading">
+                        <h2>Payment wallet</h2>
+                        <p>
+                            Add your Open Payments wallet address
+                            to prepare your shop for payments.
+                        </p>
+                    </div>
+
+                    <div class="nexa-signup-wallet-icon">
+                        <i data-lucide="wallet"></i>
+                    </div>
+
+                    <div class="nexa-auth-field">
+
+                        <label for="walletAddress">
+                            Wallet address
+                            <span class="nexa-signup-optional">Optional</span>
+                        </label>
+
+                        <input
+                            type="url"
+                            id="walletAddress"
+                            name="walletAddress"
+                            placeholder="https://wallet.example.com/yourname"
+                            autocomplete="off"
+                        >
+
+                        <span class="nexa-signup-hint">
+                            You can connect or update your wallet later in Settings.
+                        </span>
+
+                    </div>
+
+                    <div class="nexa-signup-wallet-note">
+
+                        <i data-lucide="info"></i>
+
+                        <p>
+                            Adding a wallet address does not automatically
+                            authorize payments. Additional wallet setup
+                            may be required before receiving funds.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="nexa-signup-step" data-step="3" hidden>
+
+                    <div class="nexa-signup-step-heading">
+                        <h2>Review your details</h2>
+                        <p>Make sure everything looks right.</p>
+                    </div>
+
+                    <div class="nexa-signup-review">
+
+                        <div class="nexa-signup-review-section">
+
+                            <h3>Personal details</h3>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Name</span>
+                                <strong id="reviewName"></strong>
+                            </div>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Email</span>
+                                <strong id="reviewEmail"></strong>
+                            </div>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Phone</span>
+                                <strong id="reviewPhone"></strong>
+                            </div>
+
+                        </div>
+
+                        <div class="nexa-signup-review-section">
+
+                            <h3>Business details</h3>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Shop</span>
+                                <strong id="reviewShop"></strong>
+                            </div>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Category</span>
+                                <strong id="reviewCategory"></strong>
+                            </div>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Address</span>
+                                <strong id="reviewAddress"></strong>
+                            </div>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Location</span>
+                                <strong id="reviewLocation"></strong>
+                            </div>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Map location</span>
+                                <strong id="reviewMapLocation"></strong>
+                            </div>
+
+                        </div>
+
+                        <div class="nexa-signup-review-section">
+
+                            <h3>Payment wallet</h3>
+
+                            <div class="nexa-signup-review-row">
+                                <span>Wallet</span>
+                                <strong id="reviewWallet"></strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="nexa-signup-actions">
+
+                    <button
+                        type="button"
+                        class="nexa-signup-back"
+                        id="signupBack"
+                        hidden
+                    >
+                        <i data-lucide="arrow-left"></i>
+                        Back
+                    </button>
+
+                    <button
+                        type="button"
+                        class="nexa-auth-submit nexa-signup-next"
+                        id="signupNext"
+                    >
+                        Continue
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="nexa-auth-submit nexa-signup-create"
+                        id="signupCreate"
+                        hidden
+                    >
+                        Create Account
+                        <i data-lucide="check"></i>
+                    </button>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="nexa-signup-skip"
+                    id="signupSkip"
+                    hidden
+                >
+                    Skip wallet setup for now
+                </button>
+
+            </form>
+
+            <p class="nexa-auth-switch">
+                Already have an account?
+                <a href="/login">Log in</a>
+            </p>
+
+        </section>
+
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            const form = document.getElementById("signupForm");
+
+            const steps = Array.from(
+                document.querySelectorAll(".nexa-signup-step")
+            );
+
+            const progressBars = Array.from(
+                document.querySelectorAll(".nexa-signup-progress-bar")
+            );
+
+            const backButton = document.getElementById("signupBack");
+            const nextButton = document.getElementById("signupNext");
+            const createButton = document.getElementById("signupCreate");
+            const skipButton = document.getElementById("signupSkip");
+
+            const stepLabel = document.getElementById("signupStepLabel");
+            const stepCount = document.getElementById("signupStepCount");
+
+            const addressInput = document.getElementById("address");
+            const locationInput = document.getElementById("location");
+
+            const latitudeInput = document.getElementById("shopLatitude");
+            const longitudeInput = document.getElementById("shopLongitude");
+
+            const searchLocationButton =
+                document.getElementById("findShopLocation");
+
+            const confirmLocationButton =
+                document.getElementById("confirmShopLocation");
+
+            const locationStatus =
+                document.getElementById("shopLocationStatus");
+
+            const stepNames = [
+                "PERSONAL DETAILS",
+                "BUSINESS DETAILS",
+                "PAYMENT WALLET",
+                "REVIEW & FINISH"
+            ];
+
+            let currentStep = 0;
+
+            let shopMap = null;
+            let shopMarker = null;
+            let selectedCoordinates = null;
+
+            let confirmedAddress = "";
+            let locationConfirmed = false;
+
+            let searchController = null;
+            let reverseController = null;
+            let reverseTimer = null;
+            let reverseRequestId = 0;
+            let reverseLookupPending = false;
+
+            const passwordInput = document.getElementById("password");
+            const passwordToggle =
+                document.querySelector(".nexa-password-toggle");
+
+            passwordToggle.addEventListener("click", () => {
+
+                const isHidden = passwordInput.type === "password";
+
+                passwordInput.type = isHidden ? "text" : "password";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    isHidden ? "Hide password" : "Show password"
+                );
+
+                passwordToggle.setAttribute(
+                    "aria-pressed",
+                    String(isHidden)
+                );
+
+                passwordToggle.innerHTML = isHidden
+                    ? '<i data-lucide="eye-off"></i>'
+                    : '<i data-lucide="eye"></i>';
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+            });
+
+            function getAddressText() {
+
+                return [
+                    addressInput.value.trim(),
+                    locationInput.value.trim()
+                ].filter(Boolean).join(", ");
+
+            }
+
+            function setLocationStatus(message, confirmed = false) {
+
+                locationStatus.textContent = message;
+
+                locationStatus.classList.toggle(
+                    "confirmed",
+                    confirmed
+                );
+
+            }
+
+            function resetLocationConfirmation() {
+
+                locationConfirmed = false;
+                confirmedAddress = "";
+
+                latitudeInput.value = "";
+                longitudeInput.value = "";
+
+                confirmLocationButton.disabled =
+                    !selectedCoordinates || reverseLookupPending;
+
+                if (selectedCoordinates) {
+
+                    setLocationStatus(
+                        "Location changed. Confirm the pin again."
+                    );
+
+                } else {
+
+                    setLocationStatus(
+                        "Click the map to select your shop location."
+                    );
+
+                }
+
+            }
+
+            function initializeShopMap() {
+
+                if (shopMap) {
+
+                    setTimeout(() => {
+                        shopMap.invalidateSize();
+                    }, 50);
+
+                    return;
+                }
+
+                if (!window.L) {
+
+                    setLocationStatus(
+                        "The map could not load. Check your internet connection and refresh."
+                    );
+
+                    return;
+                }
+
+                shopMap = L.map("shopLocationMap").setView(
+                    [-28.5, 24.5],
+                    5
+                );
+
+                L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                        maxZoom: 19,
+                        attribution: '&copy; OpenStreetMap contributors'
+                    }
+                ).addTo(shopMap);
+
+                shopMap.on("click", (event) => {
+
+                    updateShopMarker(
+                        event.latlng.lat,
+                        event.latlng.lng,
+                        true
+                    );
+
+                });
+
+                setTimeout(() => {
+                    shopMap.invalidateSize();
+                }, 50);
+
+            }
+
+            function updateShopMarker(
+                latitude,
+                longitude,
+                lookupAddress = false
+            ) {
+
+                if (
+                    !Number.isFinite(latitude) ||
+                    !Number.isFinite(longitude)
+                ) {
+                    return;
+                }
+
+                selectedCoordinates = {
+                    latitude,
+                    longitude
+                };
+
+                if (!shopMarker) {
+
+                    shopMarker = L.marker(
+                        [latitude, longitude],
+                        {
+                            draggable: true
+                        }
+                    ).addTo(shopMap);
+
+                    shopMarker.on("dragend", () => {
+
+                        const position = shopMarker.getLatLng();
+
+                        updateShopMarker(
+                            position.lat,
+                            position.lng,
+                            true
+                        );
+
+                    });
+
+                } else {
+
+                    shopMarker.setLatLng([
+                        latitude,
+                        longitude
+                    ]);
+
+                }
+
+                resetLocationConfirmation();
+
+                setLocationStatus(
+                    "Pin selected. Checking the address..."
+                );
+
+                if (lookupAddress) {
+
+                    lookupSelectedLocation(
+                        latitude,
+                        longitude
+                    );
+
+                }
+
+            }
+
+            function lookupSelectedLocation(latitude, longitude) {
+
+                reverseRequestId++;
+
+                const requestId = reverseRequestId;
+
+                if (reverseTimer) {
+                    clearTimeout(reverseTimer);
+                }
+
+                if (reverseController) {
+                    reverseController.abort();
+                }
+
+                reverseLookupPending = true;
+
+                confirmLocationButton.disabled = true;
+
+                setLocationStatus(
+                    "Finding the address for your pin..."
+                );
+
+                reverseTimer = setTimeout(async () => {
+
+                    reverseController = new AbortController();
+
+                    try {
+
+                        const url = new URL(
+                            "https://nominatim.openstreetmap.org/reverse"
+                        );
+
+                        url.searchParams.set(
+                            "lat",
+                            String(latitude)
+                        );
+
+                        url.searchParams.set(
+                            "lon",
+                            String(longitude)
+                        );
+
+                        url.searchParams.set("format", "json");
+                        url.searchParams.set("addressdetails", "1");
+                        url.searchParams.set("zoom", "18");
+
+                        const response = await fetch(
+                            url.toString(),
+                            {
+                                signal: reverseController.signal,
+                                headers: {
+                                    "Accept": "application/json"
+                                }
+                            }
+                        );
+
+                        if (!response.ok) {
+                            throw new Error("Address lookup failed");
+                        }
+
+                        const result = await response.json();
+
+                        if (requestId !== reverseRequestId) {
+                            return;
+                        }
+
+                        const details = result.address || {};
+
+                        const road =
+                            details.road ||
+                            details.pedestrian ||
+                            details.residential ||
+                            details.footway ||
+                            "";
+
+                        const number = details.house_number || "";
+
+                        const area =
+                            details.suburb ||
+                            details.neighbourhood ||
+                            details.quarter ||
+                            details.village ||
+                            details.township ||
+                            "";
+
+                        const city =
+                            details.city ||
+                            details.town ||
+                            details.municipality ||
+                            details.county ||
+                            details.village ||
+                            "";
+
+                        const streetAddress = [
+                            number,
+                            road
+                        ].filter(Boolean).join(" ").trim();
+
+                        const fallbackAddress =
+                            details.shop ||
+                            details.building ||
+                            details.amenity ||
+                            area ||
+                            "";
+
+                        if (streetAddress || fallbackAddress) {
+
+                            addressInput.value =
+                                streetAddress || fallbackAddress;
+
+                        }
+
+                        if (city || area) {
+
+                            locationInput.value = [
+                                area,
+                                city
+                            ].filter(
+                                (value, index, values) =>
+                                    value &&
+                                    values.indexOf(value) === index
+                            ).join(", ");
+
+                        }
+
+                        resetLocationConfirmation();
+
+                        setLocationStatus(
+                            "Address filled from the map. Check the details, correct them if needed, then confirm the pin."
+                        );
+
+                    } catch (error) {
+
+                        if (requestId !== reverseRequestId) {
+                            return;
+                        }
+
+                        if (error.name !== "AbortError") {
+
+                            setLocationStatus(
+                                "We couldn't find a precise address. Enter your street or shop description and city manually, then confirm the pin."
+                            );
+
+                        }
+
+                    } finally {
+
+                        if (requestId === reverseRequestId) {
+
+                            reverseLookupPending = false;
+
+                            confirmLocationButton.disabled = false;
+
+                        }
+
+                    }
+
+                }, 1100);
+
+            }
+
+            async function findShopAddress() {
+
+                const address = getAddressText();
+
+                if (!addressInput.value.trim()) {
+                    addressInput.reportValidity();
+                    return;
+                }
+
+                if (!locationInput.value.trim()) {
+                    locationInput.reportValidity();
+                    return;
+                }
+
+                initializeShopMap();
+
+                if (!shopMap) {
+                    return;
+                }
+
+                if (searchController) {
+                    searchController.abort();
+                }
+
+                searchController = new AbortController();
+
+                searchLocationButton.disabled = true;
+
+                setLocationStatus(
+                    "Searching for your shop address..."
+                );
+
+                try {
+
+                    const url = new URL(
+                        "https://nominatim.openstreetmap.org/search"
+                    );
+
+                    url.searchParams.set("q", address);
+                    url.searchParams.set("format", "json");
+                    url.searchParams.set("limit", "1");
+
+                    const response = await fetch(
+                        url.toString(),
+                        {
+                            signal: searchController.signal,
+                            headers: {
+                                "Accept": "application/json"
+                            }
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error("Address lookup failed");
+                    }
+
+                    const results = await response.json();
+
+                    if (!results.length) {
+
+                        selectedCoordinates = null;
+
+                        if (shopMarker) {
+
+                            shopMap.removeLayer(shopMarker);
+                            shopMarker = null;
+
+                        }
+
+                        resetLocationConfirmation();
+
+                        setLocationStatus(
+                            "Address not found. Click the map to place your shop pin manually."
+                        );
+
+                        return;
+                    }
+
+                    const latitude = Number(results[0].lat);
+                    const longitude = Number(results[0].lon);
+
+                    updateShopMarker(
+                        latitude,
+                        longitude
+                    );
+
+                    shopMap.setView(
+                        [latitude, longitude],
+                        17
+                    );
+
+                    setLocationStatus(
+                        "Address found. Check the pin carefully, adjust it if needed, then confirm."
+                    );
+
+                } catch (error) {
+
+                    if (error.name !== "AbortError") {
+
+                        setLocationStatus(
+                            "Address search failed. Try again or select your location directly on the map."
+                        );
+
+                    }
+
+                } finally {
+
+                    searchLocationButton.disabled = false;
+
+                }
+
+            }
+
+            searchLocationButton.addEventListener(
+                "click",
+                findShopAddress
+            );
+
+            confirmLocationButton.addEventListener("click", () => {
+
+                if (
+                    !selectedCoordinates ||
+                    reverseLookupPending
+                ) {
+                    return;
+                }
+
+                if (!addressInput.value.trim()) {
+
+                    addressInput.reportValidity();
+
+                    setLocationStatus(
+                        "Enter your business address before confirming the pin."
+                    );
+
+                    return;
+                }
+
+                if (!locationInput.value.trim()) {
+
+                    locationInput.reportValidity();
+
+                    setLocationStatus(
+                        "Enter your city or area before confirming the pin."
+                    );
+
+                    return;
+                }
+
+                latitudeInput.value = String(
+                    selectedCoordinates.latitude
+                );
+
+                longitudeInput.value = String(
+                    selectedCoordinates.longitude
+                );
+
+                confirmedAddress = getAddressText();
+                locationConfirmed = true;
+
+                confirmLocationButton.disabled = true;
+
+                setLocationStatus(
+                    "Shop location confirmed successfully.",
+                    true
+                );
+
+            });
+
+            addressInput.addEventListener(
+                "input",
+                resetLocationConfirmation
+            );
+
+            locationInput.addEventListener(
+                "input",
+                resetLocationConfirmation
+            );
+
+            function isLocationValid() {
+
+                const latitude = Number(latitudeInput.value);
+                const longitude = Number(longitudeInput.value);
+
+                return (
+                    locationConfirmed &&
+                    !reverseLookupPending &&
+                    addressInput.value.trim() !== "" &&
+                    locationInput.value.trim() !== "" &&
+                    confirmedAddress === getAddressText() &&
+                    latitudeInput.value.trim() !== "" &&
+                    longitudeInput.value.trim() !== "" &&
+                    Number.isFinite(latitude) &&
+                    Number.isFinite(longitude) &&
+                    latitude >= -90 &&
+                    latitude <= 90 &&
+                    longitude >= -180 &&
+                    longitude <= 180
+                );
+
+            }
+
+            function validateStep(stepIndex) {
+
+                const inputs = steps[stepIndex].querySelectorAll(
+                    "input:not([type='hidden']), select, textarea"
+                );
+
+                for (const input of inputs) {
+
+                    const wasDisabled = input.disabled;
+
+                    input.disabled = false;
+
+                    const valid = input.checkValidity();
+
+                    if (!valid) {
+                        input.reportValidity();
+                    }
+
+                    input.disabled = wasDisabled;
+
+                    if (!valid) {
+                        return false;
+                    }
+
+                }
+
+                if (
+                    stepIndex === 1 &&
+                    !isLocationValid()
+                ) {
+
+                    setLocationStatus(
+                        "Please select and confirm your shop location before continuing."
+                    );
+
+                    return false;
+                }
+
+                return true;
+            }
+
+            function setReviewValue(
+                elementId,
+                inputName,
+                fallback = "Not provided"
+            ) {
+
+                const input = form.elements.namedItem(inputName);
+
+                const value = input && input.value.trim()
+                    ? input.value.trim()
+                    : fallback;
+
+                document.getElementById(
+                    elementId
+                ).textContent = value;
+
+            }
+
+            function updateReview() {
+
+                setReviewValue("reviewName", "name");
+                setReviewValue("reviewEmail", "email");
+                setReviewValue("reviewPhone", "phone");
+
+                setReviewValue("reviewShop", "shopName");
+                setReviewValue("reviewCategory", "category");
+                setReviewValue("reviewAddress", "address");
+                setReviewValue("reviewLocation", "location");
+
+                setReviewValue(
+                    "reviewWallet",
+                    "walletAddress",
+                    "Not connected"
+                );
+
+                document.getElementById(
+                    "reviewMapLocation"
+                ).textContent = isLocationValid()
+                    ? "Confirmed"
+                    : "Not confirmed";
+
+            }
+
+            function showStep(stepIndex) {
+
+                currentStep = stepIndex;
+
+                steps.forEach((step, index) => {
+
+                    const isActive = index === currentStep;
+
+                    step.hidden = !isActive;
+
+                    step.classList.toggle(
+                        "active",
+                        isActive
+                    );
+
+                    step.querySelectorAll(
+                        "input, select, textarea"
+                    ).forEach((input) => {
+
+                        input.disabled = !isActive;
+
+                    });
+
+                });
+
+                progressBars.forEach((bar, index) => {
+
+                    bar.classList.toggle(
+                        "active",
+                        index <= currentStep
+                    );
+
+                });
+
+                stepLabel.textContent = stepNames[currentStep];
+
+                stepCount.textContent =
+                    `STEP ${currentStep + 1} OF 4`;
+
+                backButton.hidden = currentStep === 0;
+                nextButton.hidden = currentStep === 3;
+                createButton.hidden = currentStep !== 3;
+                skipButton.hidden = currentStep !== 2;
+
+                if (currentStep === 1) {
+                    initializeShopMap();
+                }
+
+                if (currentStep === 3) {
+                    updateReview();
+                }
+
+                if (window.lucide) {
+                    lucide.createIcons();
+                }
+
+            }
+
+            nextButton.addEventListener("click", () => {
+
+                if (!validateStep(currentStep)) {
+                    return;
+                }
+
+                if (currentStep < steps.length - 1) {
+                    showStep(currentStep + 1);
+                }
+
+            });
+
+            backButton.addEventListener("click", () => {
+
+                if (currentStep > 0) {
+                    showStep(currentStep - 1);
+                }
+
+            });
+
+            skipButton.addEventListener("click", () => {
+
+                form.elements.namedItem(
+                    "walletAddress"
+                ).value = "";
+
+                showStep(3);
+
+            });
+
+            form.addEventListener("submit", (event) => {
+
+                steps.forEach((step) => {
+
+                    step.querySelectorAll(
+                        "input, select, textarea"
+                    ).forEach((input) => {
+
+                        input.disabled = false;
+
+                    });
+
+                });
+
+                for (let index = 0; index < 3; index++) {
+
+                    if (!validateStep(index)) {
+
+                        event.preventDefault();
+
+                        showStep(index);
+
+                        return;
+                    }
+
+                }
+
+                createButton.disabled = true;
+
+                createButton.textContent =
+                    "Creating Account...";
+
+            });
+
+            showStep(0);
+
+        });
+    </script>
 
 </body>
 

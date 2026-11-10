@@ -1,168 +1,119 @@
+
 import Transaction from "../models/Transaction.js";
 
-
-export const showTransactions = async (req, res) => {
-
-    try {
-
-        const currentShopId =
-            req.session.shopId;
-
-
-        const transactions =
-            await Transaction.find({
-                $or: [
-                    {
-                        fromShop:
-                            currentShopId
-                    },
-                    {
-                        toShop:
-                            currentShopId
-                    }
-                ]
-            })
-                .populate("fromShop")
-                .populate("toShop")
-                .populate("tradeRequest")
-                .sort({
-                    createdAt: -1
-                });
-
-
-        return res.render(
-            "transactions/index",
-            {
-                transactions,
-                currentShopId
-            }
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "SHOW TRANSACTIONS ERROR:",
-            error
-        );
-
-        return res.status(500).send(
-            "Unable to load transactions"
-        );
-
-    }
-
+const renderError = (res, statusCode, message) => {
+    return res.status(statusCode).render("public/error", {
+        statusCode,
+        message
+    });
 };
 
-
-
-export const showTransactionDetails = async (
-    req,
-    res
-) => {
-
+export const showTransactions = async (req, res) => {
     try {
+        if (!req.session.shopId) {
+            return renderError(
+                res,
+                401,
+                "Your session has expired. Please log in again."
+            );
+        }
 
-        const transaction =
-            await Transaction.findById(
-                req.params.id
-            )
-                .populate("fromShop")
-                .populate("toShop")
-                .populate("tradeRequest")
-                .populate("payment")
-                .populate("offer")
-                .populate("paymentRequest");
+        const currentShopId = req.session.shopId;
 
+        const transactions = await Transaction.find({
+            $or: [
+                {
+                    fromShop: currentShopId
+                },
+                {
+                    toShop: currentShopId
+                }
+            ]
+        })
+            .populate("fromShop")
+            .populate("toShop")
+            .populate("tradeRequest")
+            .sort({
+                createdAt: -1
+            });
+
+        return res.render("transactions/index", {
+            transactions,
+            currentShopId
+        });
+    } catch (error) {
+        console.error("SHOW TRANSACTIONS ERROR:", error);
+
+        return renderError(
+            res,
+            500,
+            "Unable to load transactions"
+        );
+    }
+};
+
+export const showTransactionDetails = async (req, res) => {
+    try {
+        if (!req.session.shopId) {
+            return renderError(
+                res,
+                401,
+                "Your session has expired. Please log in again."
+            );
+        }
+
+        const transaction = await Transaction.findById(req.params.id)
+            .populate("fromShop")
+            .populate("toShop")
+            .populate("tradeRequest")
+            .populate("payment")
+            .populate("offer")
+            .populate("paymentRequest");
 
         if (!transaction) {
-
-            return res.status(404).send(
+            return renderError(
+                res,
+                404,
                 "Transaction not found"
             );
-
         }
 
-
-        if (!req.session.shopId) {
-
-            return res.status(401).send(
-                "Shop session not found"
-            );
-
-        }
-
-
-        const currentShopId =
-            req.session.shopId.toString();
-
-
-        // --------------------------------
-        // CUSTOMER QR PAYMENT
-        // --------------------------------
+        const currentShopId = req.session.shopId.toString();
 
         const isCustomerPayment =
-            transaction.type ===
-            "customer_payment";
-
-
-        // Customer payments have no
-        // fromShop because the customer
-        // does not need a NEXA account.
+            transaction.type === "customer_payment";
 
         const isSender =
             !isCustomerPayment &&
-            transaction.fromShop &&
-            transaction.fromShop._id
-                .toString() ===
-            currentShopId;
-
-
-        // Both trade payments and customer
-        // payments have a receiving shop.
+            Boolean(transaction.fromShop) &&
+            transaction.fromShop._id.toString() === currentShopId;
 
         const isReceiver =
-            transaction.toShop &&
-            transaction.toShop._id
-                .toString() ===
-            currentShopId;
+            Boolean(transaction.toShop) &&
+            transaction.toShop._id.toString() === currentShopId;
 
-
-        if (
-            !isSender &&
-            !isReceiver
-        ) {
-
-            return res.status(403).send(
+        if (!isSender && !isReceiver) {
+            return renderError(
+                res,
+                403,
                 "You cannot view this transaction"
             );
-
         }
 
-
-        return res.render(
-            "transactions/details",
-            {
-                transaction,
-                currentShopId,
-                isCustomerPayment,
-                isSender,
-                isReceiver
-            }
-        );
-
-
+        return res.render("transactions/details", {
+            transaction,
+            currentShopId,
+            isCustomerPayment,
+            isSender,
+            isReceiver
+        });
     } catch (error) {
+        console.error("TRANSACTION DETAILS ERROR:", error);
 
-        console.error(
-            "TRANSACTION DETAILS ERROR:",
-            error
-        );
-
-        return res.status(500).send(
+        return renderError(
+            res,
+            500,
             "Unable to load transaction"
         );
-
     }
-
 };

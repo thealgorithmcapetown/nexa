@@ -6,17 +6,9 @@ import Shop from "../models/Shop.js";
 import Notification from "../models/Notification.js";
 
 
-// ========================================
-// SHOW OFFER FORM
-// ========================================
-
 export const showOfferForm = async (req, res) => {
 
     try {
-
-        // --------------------------------
-        // VALIDATE TRADE ID
-        // --------------------------------
 
         if (
             !mongoose.Types.ObjectId.isValid(
@@ -57,10 +49,6 @@ export const showOfferForm = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // TRADE MUST STILL BE OPEN
-        // --------------------------------
-
         if (
             tradeRequest.status !==
             "open"
@@ -72,10 +60,6 @@ export const showOfferForm = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // CANNOT OFFER ON OWN REQUEST
-        // --------------------------------
 
         if (
             tradeRequest.shop._id.toString() ===
@@ -114,17 +98,9 @@ export const showOfferForm = async (req, res) => {
 };
 
 
-// ========================================
-// CREATE OFFER
-// ========================================
-
 export const createOffer = async (req, res) => {
 
     try {
-
-        // --------------------------------
-        // VALIDATE TRADE ID
-        // --------------------------------
 
         if (
             !mongoose.Types.ObjectId.isValid(
@@ -146,10 +122,6 @@ export const createOffer = async (req, res) => {
             message
         } = req.body;
 
-
-        // --------------------------------
-        // VALIDATE AMOUNT + QUANTITY
-        // --------------------------------
 
         const parsedAmount =
             Number(amount);
@@ -182,10 +154,6 @@ export const createOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // FIND TRADE
-        // --------------------------------
-
         const tradeRequest =
             await TradeRequest.findById(
                 req.params.id
@@ -213,10 +181,6 @@ export const createOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // FIND SELLER SHOP
-        // --------------------------------
-
         const sellerShop =
             await Shop.findById(
                 req.session.shopId
@@ -232,10 +196,6 @@ export const createOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // CANNOT OFFER ON OWN REQUEST
-        // --------------------------------
-
         if (
             tradeRequest.shop.toString() ===
             sellerShop._id.toString()
@@ -247,14 +207,6 @@ export const createOffer = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // PREVENT DUPLICATE PENDING OFFER
-        //
-        // Same seller should not accidentally
-        // create multiple pending offers for
-        // the same trade.
-        // --------------------------------
 
         const existingPendingOffer =
             await Offer.findOne({
@@ -279,10 +231,6 @@ export const createOffer = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // CREATE OFFER
-        // --------------------------------
 
         const offer =
             await Offer.create({
@@ -313,10 +261,6 @@ export const createOffer = async (req, res) => {
 
             });
 
-
-        // --------------------------------
-        // NOTIFY BUYER
-        // --------------------------------
 
         const buyerShop =
             await Shop.findById(
@@ -392,10 +336,6 @@ export const createOffer = async (req, res) => {
 };
 
 
-// ========================================
-// SHOW ALL OFFERS
-// ========================================
-
 export const showOffers = async (req, res) => {
 
     try {
@@ -455,10 +395,6 @@ export const showOffers = async (req, res) => {
 
 };
 
-
-// ========================================
-// SHOW OFFER DETAILS
-// ========================================
 
 export const showOfferDetails = async (req, res) => {
 
@@ -525,10 +461,6 @@ export const showOfferDetails = async (req, res) => {
             currentShopId;
 
 
-        // --------------------------------
-        // ONLY PARTICIPANTS CAN VIEW
-        // --------------------------------
-
         if (
             !isBuyer &&
             !isSeller
@@ -568,11 +500,6 @@ export const showOfferDetails = async (req, res) => {
 };
 
 
-// ========================================
-// ACCEPT OFFER
-// BUYER ONLY
-// ========================================
-
 export const acceptOffer = async (req, res) => {
 
     try {
@@ -605,10 +532,6 @@ export const acceptOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // BUYER ONLY
-        // --------------------------------
-
         if (
             offer.buyer.toString() !==
             req.session.shopId.toString()
@@ -620,10 +543,6 @@ export const acceptOffer = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // IDEMPOTENT ACCEPT
-        // --------------------------------
 
         if (
             offer.status ===
@@ -649,10 +568,6 @@ export const acceptOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // FIND TRADE
-        // --------------------------------
-
         const tradeRequest =
             await TradeRequest.findById(
                 offer.tradeRequest
@@ -668,9 +583,6 @@ export const acceptOffer = async (req, res) => {
         }
 
 
-        // Make sure this offer actually belongs
-        // to the shop that owns the trade.
-
         if (
             tradeRequest.shop.toString() !==
             offer.buyer.toString()
@@ -683,10 +595,6 @@ export const acceptOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // TRADE MUST STILL BE OPEN
-        // --------------------------------
-
         if (
             tradeRequest.status !==
             "open"
@@ -698,11 +606,6 @@ export const acceptOffer = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // SAFETY CHECK:
-        // NO OTHER ACCEPTED OFFER
-        // --------------------------------
 
         const alreadyAcceptedOffer =
             await Offer.findOne({
@@ -730,29 +633,17 @@ export const acceptOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // ACCEPT CHOSEN OFFER
-        // --------------------------------
-
         offer.status =
             "accepted";
 
         await offer.save();
 
 
-        // --------------------------------
-        // CLOSE TRADE
-        // --------------------------------
-
         tradeRequest.status =
             "accepted";
 
         await tradeRequest.save();
 
-
-        // --------------------------------
-        // DECLINE OTHER PENDING OFFERS
-        // --------------------------------
 
         await Offer.updateMany(
 
@@ -778,10 +669,6 @@ export const acceptOffer = async (req, res) => {
 
         );
 
-
-        // --------------------------------
-        // NOTIFY SELLER
-        // --------------------------------
 
         const sellerShop =
             await Shop.findById(
@@ -857,11 +744,6 @@ export const acceptOffer = async (req, res) => {
 };
 
 
-// ========================================
-// DECLINE OFFER
-// BUYER ONLY
-// ========================================
-
 export const declineOffer = async (req, res) => {
 
     try {
@@ -894,10 +776,6 @@ export const declineOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // BUYER ONLY
-        // --------------------------------
-
         if (
             offer.buyer.toString() !==
             req.session.shopId.toString()
@@ -909,10 +787,6 @@ export const declineOffer = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // IDEMPOTENT DECLINE
-        // --------------------------------
 
         if (
             offer.status ===
@@ -937,10 +811,6 @@ export const declineOffer = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // FIND TRADE
-        // --------------------------------
 
         const tradeRequest =
             await TradeRequest.findById(
@@ -969,19 +839,11 @@ export const declineOffer = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // DECLINE OFFER
-        // --------------------------------
-
         offer.status =
             "declined";
 
         await offer.save();
 
-
-        // --------------------------------
-        // NOTIFY SELLER
-        // --------------------------------
 
         const sellerShop =
             await Shop.findById(
@@ -1055,10 +917,7 @@ export const declineOffer = async (req, res) => {
     }
 
 };
-// ========================================
-// WITHDRAW OFFER
-// Seller only
-// ========================================
+
 
 export const withdrawOffer = async (req, res) => {
 
@@ -1079,9 +938,6 @@ export const withdrawOffer = async (req, res) => {
         }
 
 
-        // Only seller who created
-        // the offer can withdraw it
-
         if (
             offer.seller.toString() !==
             req.session.shopId.toString()
@@ -1093,9 +949,6 @@ export const withdrawOffer = async (req, res) => {
 
         }
 
-
-        // Accepted/declined offers
-        // cannot be withdrawn
 
         if (offer.status !== "pending") {
 

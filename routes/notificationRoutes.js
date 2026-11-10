@@ -15,9 +15,6 @@ import {
 const router = express.Router();
 
 
-// ========================================
-// SHOW NOTIFICATIONS
-// ========================================
 
 router.get(
     "/notifications",
@@ -26,10 +23,6 @@ router.get(
 );
 
 
-// ========================================
-// MARK ALL AS READ
-// ========================================
-
 router.post(
     "/notifications/mark-all-read",
     requireAuth,
@@ -37,20 +30,12 @@ router.post(
 );
 
 
-// ========================================
-// OPEN NOTIFICATION
-// ========================================
-
 router.get(
     "/notifications/:id",
     requireAuth,
     openNotification
 );
 
-
-// ========================================
-// UNREAD NOTIFICATION COUNT
-// ========================================
 
 router.get(
     "/api/notifications/unread-count",

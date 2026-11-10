@@ -1,80 +1,340 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include('../partials/head') %>
     <%- include('../partials/loader') %>
+
     <link rel="stylesheet" href="/css/loader.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title><%= shop.name %> - NEXA</title>
+
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/shop-account.css">
+
+    <style>
+        /* ========================================
+           SHOP RATING
+        ======================================== */
+
+        .account-rating {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-align: center;
+        }
+
+        .account-rating .rating-star {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #b5f34b;
+        }
+
+        .account-rating .rating-star svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            stroke: currentColor;
+        }
+
+        .account-rating .rating-value {
+            color: #d7f8b5;
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .account-rating .rating-empty {
+            color: #a4b8a9;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .account-rating .rating-count {
+            color: #91a79a;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .account-rating {
+                align-items: flex-start;
+                text-align: left;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
     <%- include('../partials/sidebar') %>
     <%- include('../partials/navbar') %>
 
+
     <main class="nexa-main account-page">
+
+        <!-- ========================================
+             PAGE HEADER
+        ======================================== -->
+
         <header class="account-page-header">
+
             <div>
                 <span class="account-eyebrow">YOUR BUSINESS</span>
-                <h1>My Shop<span class="nexa-title-dot">.</span></h1>
-                <p>Manage your business identity and payment information.</p>
+
+                <h1>
+                    My Shop<span class="nexa-title-dot">.</span>
+                </h1>
+
+                <p>
+                    Manage your business identity and payment information.
+                </p>
             </div>
-            <a href="/shop/edit" class="account-btn account-btn-primary"><i data-lucide="pencil"></i> Edit Shop</a>
+
+            <a href="/shop/edit" class="account-btn account-btn-primary">
+                <i data-lucide="pencil"></i>
+                Edit Shop
+            </a>
+
         </header>
 
+
+        <!-- ========================================
+             SHOP PROFILE HERO
+        ======================================== -->
+
         <section class="account-profile-hero">
-            <div class="account-shop-avatar"><i data-lucide="store"></i></div>
+
+            <div class="account-shop-avatar">
+                <i data-lucide="store"></i>
+            </div>
+
             <div class="account-profile-identity">
-                <span class="account-eyebrow">BUSINESS PROFILE</span>
-                <h2><%= shop.name %></h2>
-                <p><i data-lucide="map-pin"></i> <%= shop.address %></p>
+
+                <span class="account-eyebrow">
+                    BUSINESS PROFILE
+                </span>
+
+                <h2>
+                    <%= shop.name %>
+                </h2>
+
+                <p>
+                    <i data-lucide="map-pin"></i>
+                    <%= shop.address %>
+                </p>
+
             </div>
+
+
+            <!-- ========================================
+                 LIVE SHOP RATING
+            ======================================== -->
+
             <div class="account-rating">
-                <i data-lucide="star"></i>
-                <span><%= shop.rating != null ? shop.rating : 'Not rated' %></span>
-                <small>Shop rating</small>
+
+                <span class="rating-star">
+                    <i data-lucide="star"></i>
+                </span>
+
+                <% if (Number(shop.ratingCount || 0) > 0) { %>
+
+                    <span class="rating-value">
+                        <%= Number(shop.rating || 0).toFixed(1) %> / 5
+                    </span>
+
+                    <span class="rating-count">
+                        <%= shop.ratingCount %>
+                        <%= Number(shop.ratingCount) === 1 ? 'review' : 'reviews' %>
+                    </span>
+
+                <% } else { %>
+
+                    <span class="rating-empty">
+                        Not rated yet
+                    </span>
+
+                    <small>
+                        No reviews
+                    </small>
+
+                <% } %>
+
             </div>
+
         </section>
 
+
+        <!-- ========================================
+             SHOP INFORMATION + WALLET
+        ======================================== -->
+
         <div class="account-content-grid">
+
             <section class="account-panel">
+
                 <div class="account-panel-heading">
-                    <div class="account-panel-icon"><i data-lucide="store"></i></div>
-                    <div><span class="account-eyebrow">ABOUT YOUR BUSINESS</span><h2>Shop Information</h2></div>
+
+                    <div class="account-panel-icon">
+                        <i data-lucide="store"></i>
+                    </div>
+
+                    <div>
+                        <span class="account-eyebrow">
+                            ABOUT YOUR BUSINESS
+                        </span>
+
+                        <h2>Shop Information</h2>
+                    </div>
+
                 </div>
+
+
                 <div class="account-info-grid">
-                    <div class="account-info-item"><span>Shop Name</span><strong><%= shop.name %></strong></div>
-                    <div class="account-info-item"><span>Category</span><strong><%= shop.category || 'Not set' %></strong></div>
-                    <div class="account-info-item account-info-wide"><span>Address</span><strong><%= shop.address %></strong></div>
-                    <div class="account-info-item account-info-wide"><span>Description</span><p><%= shop.description || 'No description yet.' %></p></div>
+
+                    <div class="account-info-item">
+
+                        <span>Shop Name</span>
+
+                        <strong>
+                            <%= shop.name %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-info-item">
+
+                        <span>Category</span>
+
+                        <strong>
+                            <%= shop.category || 'Not set' %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-info-item account-info-wide">
+
+                        <span>Address</span>
+
+                        <strong>
+                            <%= shop.address %>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="account-info-item account-info-wide">
+
+                        <span>Description</span>
+
+                        <p>
+                            <%= shop.description || 'No description yet.' %>
+                        </p>
+
+                    </div>
+
                 </div>
+
             </section>
 
+
+            <!-- ========================================
+                 OPEN PAYMENTS WALLET
+            ======================================== -->
+
             <aside class="account-panel account-wallet-panel">
+
                 <div class="account-panel-heading">
-                    <div class="account-panel-icon"><i data-lucide="wallet"></i></div>
-                    <div><span class="account-eyebrow">PAYMENT DETAILS</span><h2>Open Payments Wallet</h2></div>
+
+                    <div class="account-panel-icon">
+                        <i data-lucide="wallet"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="account-eyebrow">
+                            PAYMENT DETAILS
+                        </span>
+
+                        <h2>Open Payments Wallet</h2>
+
+                    </div>
+
                 </div>
+
+
                 <% if (shop.walletAddress) { %>
-                    <span class="account-status account-status-ready"><i data-lucide="check-circle-2"></i> Wallet configured</span>
-                    <div class="account-wallet-value"><%= shop.walletAddress %></div>
-                    <p class="account-help">This wallet is used to receive NEXA payments.</p>
+
+                    <span class="account-status account-status-ready">
+                        <i data-lucide="check-circle-2"></i>
+                        Wallet configured
+                    </span>
+
+                    <div class="account-wallet-value">
+                        <%= shop.walletAddress %>
+                    </div>
+
+                    <p class="account-help">
+                        This wallet is used to receive NEXA payments.
+                    </p>
+
                 <% } else { %>
-                    <span class="account-status"><i data-lucide="alert-circle"></i> Not configured</span>
-                    <p class="account-help">Add an Open Payments wallet address to your shop profile.</p>
-                    <a href="/shop/edit" class="account-btn account-btn-outline">Configure Wallet <i data-lucide="arrow-up-right"></i></a>
+
+                    <span class="account-status">
+                        <i data-lucide="alert-circle"></i>
+                        Not configured
+                    </span>
+
+                    <p class="account-help">
+                        Add an Open Payments wallet address to your shop profile.
+                    </p>
+
+                    <a href="/shop/edit" class="account-btn account-btn-outline">
+                        Configure Wallet
+                        <i data-lucide="arrow-up-right"></i>
+                    </a>
+
                 <% } %>
+
             </aside>
+
         </div>
-        <a href="/dashboard" class="account-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+
+
+        <!-- ========================================
+             BACK TO DASHBOARD
+        ======================================== -->
+
+        <a href="/dashboard" class="account-back">
+            <i data-lucide="arrow-left"></i>
+            Back to Dashboard
+        </a>
+
     </main>
+
+
+    <!-- SHARED SCRIPTS -->
+
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="/js/navigation.js"></script>
-    <script>if (window.lucide) lucide.createIcons();</script>
+
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
+
     <script src="/js/loader.js"></script>
+
 </body>
+
 </html>

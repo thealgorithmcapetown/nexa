@@ -1,3 +1,4 @@
+
 import express from "express";
 
 import {
@@ -10,16 +11,13 @@ import {
     updateShop,
     showSettings,
     updateSettings,
-    changePassword
+    changePassword,
+    updateWallet,
+    removeWallet
 } from "../controllers/shopController.js";
 
-const router =
-    express.Router();
+const router = express.Router();
 
-
-// ========================================
-// SHOP PROFILE
-// ========================================
 
 router.get(
     "/shop",
@@ -28,16 +26,12 @@ router.get(
 );
 
 
-// ========================================
-// EDIT SHOP
-// ========================================
 
 router.get(
     "/shop/edit",
     requireAuth,
     showEditShop
 );
-
 
 router.post(
     "/shop/edit",
@@ -46,16 +40,12 @@ router.post(
 );
 
 
-// ========================================
-// SETTINGS
-// ========================================
 
 router.get(
     "/settings",
     requireAuth,
     showSettings
 );
-
 
 router.post(
     "/settings",
@@ -64,14 +54,23 @@ router.post(
 );
 
 
-// ========================================
-// CHANGE PASSWORD
-// ========================================
-
 router.post(
     "/settings/password",
     requireAuth,
     changePassword
+);
+
+
+router.post(
+    "/settings/wallet",
+    requireAuth,
+    updateWallet
+);
+
+router.post(
+    "/settings/wallet/remove",
+    requireAuth,
+    removeWallet
 );
 
 

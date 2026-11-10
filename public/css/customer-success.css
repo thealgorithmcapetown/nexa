@@ -1,12 +1,3 @@
-
-/* ==========================================
-   NEXA — CUSTOMER PAYMENT SUCCESS
-   STAGE 6.6
-========================================== */
-
-
-/* PAGE */
-
 .customer-success-body {
     min-height: 100vh;
     margin: 0;
@@ -21,8 +12,6 @@
     box-sizing: border-box;
 }
 
-
-/* BRAND HEADER */
 
 .customer-success-header {
     display: flex;

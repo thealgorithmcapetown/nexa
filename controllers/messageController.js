@@ -4,10 +4,6 @@ import Notification from "../models/Notification.js";
 import TradeRequest from "../models/TradeRequest.js";
 
 
-// ========================================
-// SHOW ALL CONVERSATIONS
-// ========================================
-
 export const showMessages = async (req, res) => {
 
     try {
@@ -59,9 +55,6 @@ export const showMessages = async (req, res) => {
                     ? message.receiver
                     : message.sender;
 
-
-            // Keep different trade conversations
-            // with the same shop separate.
 
             const tradeId =
                 message.tradeRequest?._id
@@ -129,10 +122,6 @@ export const showMessages = async (req, res) => {
 };
 
 
-// ========================================
-// SHOW ONE CHAT
-// ========================================
-
 export const showChat = async (req, res) => {
 
     try {
@@ -199,9 +188,6 @@ export const showChat = async (req, res) => {
                 tradeRequest.shop.toString();
 
 
-            // One of these two shops MUST own
-            // the trade request.
-
             if (
                 tradeOwnerId !==
                     currentShopId.toString() &&
@@ -248,9 +234,6 @@ export const showChat = async (req, res) => {
 
         } else {
 
-            // General chat should not accidentally
-            // include trade-specific messages.
-
             messageFilter.tradeRequest =
                 null;
 
@@ -268,10 +251,6 @@ export const showChat = async (req, res) => {
                     createdAt: 1
                 });
 
-
-        // --------------------------------
-        // MARK RECEIVED MESSAGES AS READ
-        // --------------------------------
 
         const unreadFilter = {
 
@@ -338,10 +317,6 @@ export const showChat = async (req, res) => {
 };
 
 
-// ========================================
-// SEND MESSAGE
-// ========================================
-
 export const sendMessage = async (req, res) => {
 
     try {
@@ -359,10 +334,6 @@ export const sendMessage = async (req, res) => {
             content
         } = req.body;
 
-
-        // --------------------------------
-        // VALIDATE MESSAGE
-        // --------------------------------
 
         if (
             !content ||
@@ -418,10 +389,6 @@ export const sendMessage = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // VALIDATE TRADE CONTEXT
-        // --------------------------------
-
         let tradeRequest =
             null;
 
@@ -447,10 +414,6 @@ export const sendMessage = async (req, res) => {
                 tradeRequest.shop.toString();
 
 
-            // IMPORTANT:
-            // Either sender or receiver must own
-            // the trade request.
-
             if (
                 tradeOwnerId !==
                     senderShop._id.toString() &&
@@ -466,10 +429,6 @@ export const sendMessage = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // CREATE MESSAGE
-        // --------------------------------
 
         await Message.create({
 
@@ -489,10 +448,6 @@ export const sendMessage = async (req, res) => {
 
         });
 
-
-        // --------------------------------
-        // NOTIFY RECEIVER
-        // --------------------------------
 
         if (receiverShop.owner) {
 
@@ -520,10 +475,6 @@ export const sendMessage = async (req, res) => {
         }
 
 
-        // --------------------------------
-        // JSON RESPONSE
-        // --------------------------------
-
         if (
             req.headers.accept
                 ?.includes(
@@ -537,10 +488,6 @@ export const sendMessage = async (req, res) => {
 
         }
 
-
-        // --------------------------------
-        // REDIRECT BACK TO CHAT
-        // --------------------------------
 
         if (tradeRequest) {
 
@@ -572,10 +519,6 @@ export const sendMessage = async (req, res) => {
 
 };
 
-
-// ========================================
-// GET UNREAD MESSAGE COUNT
-// ========================================
 
 export const getUnreadMessageCount =
     async (req, res) => {
@@ -615,10 +558,6 @@ export const getUnreadMessageCount =
 
     };
 
-
-// ========================================
-// MARK CHAT AS READ
-// ========================================
 
 export const markChatAsRead =
     async (req, res) => {

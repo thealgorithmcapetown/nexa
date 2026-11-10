@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +15,127 @@
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/navbar.css">
     <link rel="stylesheet" href="/css/trade-details.css">
+
+    <style>
+        /* Vendor rating section */
+
+        .nexa-rating-section {
+            margin-top: 24px;
+            padding: 22px;
+            border: 1px solid rgba(172, 230, 82, 0.22);
+            border-radius: 18px;
+            background: rgba(12, 42, 31, 0.55);
+        }
+
+        .nexa-rating-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .nexa-rating-heading i {
+            color: #b8ef69;
+        }
+
+        .nexa-rating-heading h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .nexa-rating-description {
+            margin-bottom: 18px;
+            font-size: 13px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .nexa-rating-stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+            margin-bottom: 18px;
+        }
+
+        .nexa-rating-stars input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+
+        .nexa-rating-stars label {
+            cursor: pointer;
+            font-size: 34px;
+            line-height: 1;
+            color: #66756d;
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
+
+        .nexa-rating-stars label:hover {
+            transform: scale(1.08);
+        }
+
+        .nexa-rating-stars label:hover,
+        .nexa-rating-stars label:hover ~ label,
+        .nexa-rating-stars input:checked ~ label {
+            color: #c6f56f;
+        }
+
+        .nexa-rating-stars input:focus-visible + label {
+            outline: 2px solid #c6f56f;
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        .nexa-rating-review-label {
+            display: block;
+            margin-bottom: 9px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .nexa-rating-review {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 90px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(172, 230, 82, 0.22);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.18);
+            color: inherit;
+            font: inherit;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .nexa-rating-review:focus {
+            outline: none;
+            border-color: #b8ef69;
+        }
+
+        .nexa-rating-submit {
+            width: 100%;
+        }
+
+        .nexa-rating-completed {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 12px;
+            background: rgba(172, 230, 82, 0.09);
+            color: #b8ef69;
+            font-size: 13px;
+        }
+
+        .nexa-rating-completed i {
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -104,7 +226,9 @@
                 <!-- LOCATION AND DESCRIPTION -->
                 <section class="details-section details-info-panel">
                     <div class="details-info-row">
-                        <div class="details-info-icon"><i data-lucide="map-pinned"></i></div>
+                        <div class="details-info-icon">
+                            <i data-lucide="map-pinned"></i>
+                        </div>
                         <div>
                             <span>TRADE LOCATION</span>
                             <p><%= request.address %></p>
@@ -113,7 +237,9 @@
 
                     <% if (request.description) { %>
                         <div class="details-info-row">
-                            <div class="details-info-icon"><i data-lucide="align-left"></i></div>
+                            <div class="details-info-icon">
+                                <i data-lucide="align-left"></i>
+                            </div>
                             <div>
                                 <span>ADDITIONAL DETAILS</span>
                                 <p class="details-description"><%= request.description %></p>
@@ -130,10 +256,24 @@
                     </div>
 
                     <div class="details-vendor-body">
-                        <div class="details-vendor-avatar"><i data-lucide="store"></i></div>
+                        <div class="details-vendor-avatar">
+                            <i data-lucide="store"></i>
+                        </div>
+
                         <div class="details-vendor-copy">
                             <h3><%= request.shop.name %></h3>
-                            <span class="details-rating"><i data-lucide="star"></i> <%= request.shop.rating %></span>
+
+                            <span class="details-rating">
+                                <i data-lucide="star"></i>
+
+                                <% if (request.shop.ratingCount > 0) { %>
+                                    <%= Number(request.shop.rating).toFixed(1) %>
+                                    (<%= request.shop.ratingCount %>)
+                                <% } else { %>
+                                    No ratings yet
+                                <% } %>
+                            </span>
+
                             <p><%= request.shop.description || "No description available." %></p>
                         </div>
                     </div>
@@ -141,15 +281,21 @@
 
             </div>
 
-            <!-- STATUS-AWARE ACTIONS: PRESERVE ALL EXISTING ROUTES -->
+            <!-- STATUS-AWARE ACTIONS -->
             <aside class="details-action-column">
+
                 <section class="details-action-panel">
+
                     <span class="details-eyebrow">NEXT STEP</span>
 
                     <% if (request.status === "open") { %>
 
                         <% if (request.shop._id.toString() === currentShopId.toString()) { %>
-                            <div class="details-action-icon"><i data-lucide="clipboard-list"></i></div>
+
+                            <div class="details-action-icon">
+                                <i data-lucide="clipboard-list"></i>
+                            </div>
+
                             <h2>Manage your request</h2>
                             <p>Your trade request is currently open and visible to other vendors.</p>
 
@@ -159,8 +305,13 @@
                                     Cancel Request
                                 </button>
                             </form>
+
                         <% } else { %>
-                            <div class="details-action-icon"><i data-lucide="handshake"></i></div>
+
+                            <div class="details-action-icon">
+                                <i data-lucide="handshake"></i>
+                            </div>
+
                             <h2>Interested in this trade?</h2>
                             <p>Make an offer or start a conversation with the vendor.</p>
 
@@ -174,99 +325,280 @@
                                 <i data-lucide="message-circle"></i>
                                 Chat With Vendor
                             </a>
+
                         <% } %>
 
                     <% } %>
 
+
                     <% if (request.status === "accepted") { %>
-                        <div class="details-action-icon"><i data-lucide="handshake"></i></div>
+
+                        <div class="details-action-icon">
+                            <i data-lucide="handshake"></i>
+                        </div>
+
                         <h2>Trade in progress</h2>
                         <p>An offer has been accepted.</p>
 
                         <% if (acceptedOffer && acceptedOffer.seller && acceptedOffer.seller.toString() === currentShopId.toString()) { %>
+
                             <% if (successfulPayment) { %>
-                                <div class="details-notice details-notice-success">Payment received.</div>
+
+                                <div class="details-notice details-notice-success">
+                                    Payment received.
+                                </div>
+
                                 <form action="/trade/<%= request._id %>/fulfill" method="POST">
                                     <button class="details-button details-button-primary" type="submit">
                                         <i data-lucide="package-check"></i>
                                         Mark as Fulfilled
                                     </button>
                                 </form>
+
                             <% } else { %>
-                                <div class="details-notice">Waiting for payment from buyer.</div>
+
+                                <div class="details-notice">
+                                    Waiting for payment from buyer.
+                                </div>
+
                             <% } %>
+
                         <% } %>
 
                         <% if (acceptedOffer && acceptedOffer.buyer && acceptedOffer.buyer.toString() === currentShopId.toString()) { %>
+
                             <% if (successfulPayment) { %>
-                                <div class="details-notice details-notice-success">Payment successful. Waiting for the seller to fulfil the trade.</div>
+
+                                <div class="details-notice details-notice-success">
+                                    Payment successful. Waiting for the seller to fulfil the trade.
+                                </div>
+
                             <% } else { %>
-                                <div class="details-notice">Payment is still required.</div>
+
+                                <div class="details-notice">
+                                    Payment is still required.
+                                </div>
+
                                 <a class="details-button details-button-primary" href="/payments/offer/<%= acceptedOffer._id %>">
                                     <i data-lucide="credit-card"></i>
                                     Proceed to Payment
                                 </a>
+
                             <% } %>
+
                         <% } %>
+
                     <% } %>
 
+
                     <% if (request.status === "fulfilled") { %>
-                        <div class="details-action-icon"><i data-lucide="package-check"></i></div>
+
+                        <div class="details-action-icon">
+                            <i data-lucide="package-check"></i>
+                        </div>
+
                         <h2>Trade fulfilled</h2>
                         <p>The seller has marked this trade as fulfilled.</p>
 
                         <% if (request.fulfilledAt) { %>
-                            <div class="details-notice">Fulfilled: <%= request.fulfilledAt.toLocaleString() %></div>
+                            <div class="details-notice">
+                                Fulfilled: <%= request.fulfilledAt.toLocaleString() %>
+                            </div>
                         <% } %>
 
                         <% if (acceptedOffer && acceptedOffer.buyer && acceptedOffer.buyer.toString() === currentShopId.toString()) { %>
+
                             <p>If you have received the goods, confirm the trade below.</p>
+
                             <form action="/trade/<%= request._id %>/complete" method="POST">
                                 <button class="details-button details-button-primary" type="submit">
                                     <i data-lucide="check-check"></i>
                                     Confirm Received
                                 </button>
                             </form>
+
                         <% } else { %>
-                            <div class="details-notice">Waiting for the buyer to confirm receipt.</div>
+
+                            <div class="details-notice">
+                                Waiting for the buyer to confirm receipt.
+                            </div>
+
                         <% } %>
+
                     <% } %>
 
+
                     <% if (request.status === "completed") { %>
-                        <div class="details-action-icon"><i data-lucide="badge-check"></i></div>
+
+                        <div class="details-action-icon">
+                            <i data-lucide="badge-check"></i>
+                        </div>
+
                         <h2>Trade completed</h2>
                         <p>This trade has been successfully completed.</p>
 
                         <% if (request.completedAt) { %>
-                            <div class="details-notice details-notice-success">Completed: <%= request.completedAt.toLocaleString() %></div>
+                            <div class="details-notice details-notice-success">
+                                Completed: <%= request.completedAt.toLocaleString() %>
+                            </div>
                         <% } %>
+
+
+                        <!-- VERIFIED VENDOR RATING -->
+
+                        <%
+                            const isTradeParticipant =
+                                acceptedOffer &&
+                                acceptedOffer.buyer &&
+                                acceptedOffer.seller &&
+                                (
+                                    acceptedOffer.buyer.toString() === currentShopId.toString() ||
+                                    acceptedOffer.seller.toString() === currentShopId.toString()
+                                );
+
+                            const ratingTargetName =
+                                isTradeParticipant &&
+                                acceptedOffer.buyer.toString() === currentShopId.toString()
+                                    ? (typeof sellerShopName !== "undefined" && sellerShopName
+                                        ? sellerShopName
+                                        : "the seller")
+                                    : (typeof buyerShopName !== "undefined" && buyerShopName
+                                        ? buyerShopName
+                                        : request.shop.name);
+
+                            const hasSubmittedRating =
+                                typeof existingRating !== "undefined" &&
+                                Boolean(existingRating);
+                        %>
+
+                        <% if (isTradeParticipant) { %>
+
+                            <div class="nexa-rating-section">
+
+                                <% if (hasSubmittedRating) { %>
+
+                                    <div class="nexa-rating-completed">
+                                        <i data-lucide="check-circle-2"></i>
+                                        <span>
+                                            You have already rated this trade.
+                                            Thanks for your feedback!
+                                        </span>
+                                    </div>
+
+                                <% } else { %>
+
+                                    <div class="nexa-rating-heading">
+                                        <i data-lucide="star"></i>
+                                        <h3>Rate your trading experience</h3>
+                                    </div>
+
+                                    <p class="nexa-rating-description">
+                                        How was your experience trading with
+                                        <strong><%= ratingTargetName %></strong>?
+                                        Your feedback helps build trust between NEXA vendors.
+                                    </p>
+
+                                    <form
+                                        action="/trade/<%= request._id %>/rate"
+                                        method="POST"
+                                    >
+
+                                        <div class="nexa-rating-stars" role="radiogroup" aria-label="Choose a star rating">
+
+                                            <input type="radio" name="stars" id="nexa-star-5" value="5" required>
+                                            <label for="nexa-star-5" title="5 stars" aria-label="5 stars">★</label>
+
+                                            <input type="radio" name="stars" id="nexa-star-4" value="4">
+                                            <label for="nexa-star-4" title="4 stars" aria-label="4 stars">★</label>
+
+                                            <input type="radio" name="stars" id="nexa-star-3" value="3">
+                                            <label for="nexa-star-3" title="3 stars" aria-label="3 stars">★</label>
+
+                                            <input type="radio" name="stars" id="nexa-star-2" value="2">
+                                            <label for="nexa-star-2" title="2 stars" aria-label="2 stars">★</label>
+
+                                            <input type="radio" name="stars" id="nexa-star-1" value="1">
+                                            <label for="nexa-star-1" title="1 star" aria-label="1 star">★</label>
+
+                                        </div>
+
+                                        <label class="nexa-rating-review-label" for="nexa-rating-review">
+                                            Leave a review (optional)
+                                        </label>
+
+                                        <textarea
+                                            class="nexa-rating-review"
+                                            id="nexa-rating-review"
+                                            name="review"
+                                            maxlength="500"
+                                            placeholder="Tell other vendors about your trading experience..."
+                                        ></textarea>
+
+                                        <button
+                                            class="details-button details-button-primary nexa-rating-submit"
+                                            type="submit"
+                                        >
+                                            <i data-lucide="star"></i>
+                                            Submit Rating
+                                        </button>
+
+                                    </form>
+
+                                <% } %>
+
+                            </div>
+
+                        <% } %>
+
                     <% } %>
 
+
                     <% if (request.status === "cancelled") { %>
-                        <div class="details-action-icon"><i data-lucide="circle-x"></i></div>
+
+                        <div class="details-action-icon">
+                            <i data-lucide="circle-x"></i>
+                        </div>
+
                         <h2>Trade cancelled</h2>
                         <p>This trade is no longer active.</p>
+
                     <% } %>
+
 
                     <div class="details-action-bottom">
                         <i data-lucide="shield-check"></i>
                         Trade confidently on NEXA
                     </div>
+
                 </section>
 
                 <div class="details-back-links">
+
                     <% if (request.shop && request.shop._id.toString() === currentShopId.toString()) { %>
-                        <a href="/trade/my-requests"><i data-lucide="arrow-left"></i> Back to My Requests</a>
+
+                        <a href="/trade/my-requests">
+                            <i data-lucide="arrow-left"></i>
+                            Back to My Requests
+                        </a>
+
                     <% } %>
-                    <a href="/trade"><i data-lucide="arrow-left"></i> Back to Trade Board</a>
+
+                    <a href="/trade">
+                        <i data-lucide="arrow-left"></i>
+                        Back to Trade Board
+                    </a>
+
                 </div>
+
             </aside>
 
         </div>
+
     </main>
 
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <script src="/js/navigation.js"></script>
     <script src="/js/loader.js"></script>
+
 </body>
 </html>

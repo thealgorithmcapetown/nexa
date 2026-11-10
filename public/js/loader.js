@@ -1,8 +1,3 @@
-
-/* ========================================
-   NEXA — GLOBAL LOADER
-======================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const loader = document.getElementById("nexaLoader");
