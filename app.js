@@ -2,6 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 import http from "http";
 import { Server } from "socket.io";
 import path from "path";
@@ -27,6 +28,9 @@ console.log("Passed DNS config");
 dotenv.config();
 
 const app = express();
+
+app.set("trust proxy", 1);
+
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -112,7 +116,14 @@ app.use(
         secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: process.env.MONGO_URI,
+            collectionName: "sessions"
+        }),
         cookie: {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
             maxAge: 1000 * 60 * 60 * 24 * 7
         }
     })
@@ -135,6 +146,7 @@ app.get("/", (req, res) => {
     res.render("public/index");
 
 });
+
 app.use((req, res) => {
 
     res.status(404).render("public/error", {
