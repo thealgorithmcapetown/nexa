@@ -603,39 +603,190 @@ export const showPaymentSuccess = async (req, res) => {
     }
 };
 
-export const finishOfferOpenPayment = async (req, res) => {
+
+export const showPayments = async (req, res) => {
     try {
-        const state = req.session.vendorOpenPayment;
+        const currentShopId = req.session.shopId;
 
-        if (!state) {
-            return renderError(res, 400, "Vendor payment session not found");
-        }
-
-        if (state.offerId !== req.params.offerId) {
-            return renderError(res, 403, "Payment session does not match this offer");
-        }
-
-        const payment = await Payment.findById(state.paymentId)
-            .populate("payer")
-            .populate("payee")
+        const recentTransactions = await Transaction.find({
+            $or: [
+                { fromShop: currentShopId },
+                { toShop: currentShopId }
+            ]
+        })
+            .populate("fromShop")
+            .populate("toShop")
             .populate("tradeRequest")
-            .populate("offer");
+            .sort({ createdAt: -1 })
+            .limit(5);
 
-        if (!payment) {
-            return renderError(res, 404, "Payment not found");
+        return res.render("payments/index", {
+            recentTransactions,
+            currentShopId
+        });
+    } catch (error) {
+        paymentError(error, "SHOW PAYMENTS ERROR");
+
+        return renderError(res, 500, "Unable to load payments");
+    }
+};
+
+export const showSendMoney = async (req, res) => {
+    try {
+        const currentShop = await Shop.findById(req.session.shopId);
+
+        if (!currentShop) {
+            return renderError(res, 404, "Shop not found");
+        }
+
+        return res.render("payments/send-money", {
+            currentShop
+        });
+    } catch (error) {
+        paymentError(error, "SHOW SEND MONEY ERROR");
+
+        return renderError(res, 500, "Unable to load Send Money");
+    }
+};
+
+export const processSendMoney = async (req, res) => {
+    try {
+        const currentShop = await Shop.findById(req.session.shopId);
+
+        if (!currentShop) {
+            return renderError(res, 404, "Shop not found");
+        }
+
+        if (req.session.directOpenPayment) {
+            return sendMoneyError(
+                res,
+                "A previous payment is still pending or requires verification"
+            );
+        }
+
+        const senderWalletAddress = normalizeWalletAddress(
+            currentShop.walletAddress
+        );
+
+        const receiverWalletAddress = normalizeWalletAddress(
+            req.body.walletAddress
+        );
+
+        const amount = req.body.amount;
+        const reference = String(req.body.reference || "").trim();
+
+        if (!validWallet(senderWalletAddress)) {
+            return sendMoneyError(
+                res,
+                "Add a valid Open Payments wallet to your shop settings"
+            );
+        }
+
+        if (!validWallet(receiverWalletAddress)) {
+            return sendMoneyError(
+                res,
+                "Enter a valid recipient wallet address"
+            );
+        }
+
+        if (!validAmount(amount)) {
+            return sendMoneyError(
+                res,
+                "Enter a valid amount with no more than two decimal places"
+            );
+        }
+
+        if (!reference) {
+            return sendMoneyError(res, "Payment reference is required");
+        }
+
+        if (reference.length > 120) {
+            return sendMoneyError(
+                res,
+                "Payment reference cannot exceed 120 characters"
+            );
+        }
+
+        const shops = await Shop.find({
+            walletAddress: {
+                $exists: true,
+                $ne: null
+            }
+        });
+
+        const recipientShop = shops.find((shop) => {
+            return normalizeWalletAddress(
+                shop.walletAddress
+            ) === receiverWalletAddress;
+        });
+
+        if (!recipientShop) {
+            return sendMoneyError(
+                res,
+                "No NEXA shop uses this wallet address"
+            );
         }
 
         if (
-            payment.payer?._id.toString() !== String(req.session.shopId)
+            recipientShop._id.toString() ===
+            currentShop._id.toString()
         ) {
-            return renderError(res, 403, "You cannot complete this payment");
+            return sendMoneyError(
+                res,
+                "You cannot send money to your own shop"
+            );
         }
 
-        if (payment.status === "successful") {
-            await clearPaymentSession(req, "vendorOpenPayment");
+        const finishUri =
+            `${getPublicBaseUrl(req)}` +
+            "/payments/send/open-payments/callback";
 
-            return res.redirect(
-                `/payments/${payment._id}/success`
+        const redirectUrl = await startOpenPayment({
+            req,
+            senderWalletAddress,
+            receiverWalletAddress,
+            amount: Number(amount),
+            finishUri,
+            sessionKey: "directOpenPayment",
+            sessionData: {
+                senderShopId: currentShop._id.toString(),
+                recipientShopId: recipientShop._id.toString(),
+                amount: Number(amount),
+                reference
+            }
+        });
+
+        return res.redirect(redirectUrl);
+    } catch (error) {
+        paymentError(error, "START DIRECT PAYMENT ERROR");
+
+        return renderError(
+            res,
+            502,
+            "Unable to start the payment. Please check your wallet connection."
+        );
+    }
+};
+
+export const finishSendMoney = async (req, res) => {
+    try {
+        const state = req.session.directOpenPayment;
+
+        if (!state) {
+            return renderError(
+                res,
+                400,
+                "Payment session not found or already completed"
+            );
+        }
+
+        if (
+            state.senderShopId !== String(req.session.shopId)
+        ) {
+            return renderError(
+                res,
+                403,
+                "You cannot complete this payment"
             );
         }
 
@@ -644,22 +795,34 @@ export const finishOfferOpenPayment = async (req, res) => {
                 return renderError(
                     res,
                     409,
-                    "Payment processing may already have started. Check its status."
+                    "Payment status requires verification"
                 );
             }
 
-            await clearPaymentSession(req, "vendorOpenPayment");
+            await clearPaymentSession(req, "directOpenPayment");
 
-            return res.redirect(
-                `/payments/offer/${req.params.offerId}`
+            return sendMoneyError(
+                res,
+                "Payment authorization was cancelled"
             );
         }
 
-        if (!(await reserveCallback(req, "vendorOpenPayment"))) {
+        if (!(await reserveCallback(req, "directOpenPayment"))) {
             return renderError(
                 res,
                 409,
-                "This payment is already processing or requires a status check"
+                "This payment is already processing or requires verification"
+            );
+        }
+
+        const senderShop = await Shop.findById(state.senderShopId);
+        const recipientShop = await Shop.findById(state.recipientShopId);
+
+        if (!senderShop || !recipientShop) {
+            return renderError(
+                res,
+                404,
+                "Sender or recipient shop no longer exists"
             );
         }
 
@@ -669,15 +832,12 @@ export const finishOfferOpenPayment = async (req, res) => {
         );
 
         if (outgoingPayment.failed === true) {
-            payment.status = "failed";
-            await payment.save();
-
-            await clearPaymentSession(req, "vendorOpenPayment");
+            await clearPaymentSession(req, "directOpenPayment");
 
             return renderError(
                 res,
                 400,
-                "The payment provider reported that this transaction failed"
+                "The payment provider reported that the transaction failed"
             );
         }
 
@@ -689,103 +849,46 @@ export const finishOfferOpenPayment = async (req, res) => {
             );
         }
 
-        payment.status = "successful";
-        payment.method = "open_payments";
-        payment.providerTransactionId = outgoingPayment.id;
-        payment.completedAt = new Date();
-
-        await payment.save();
-
         let transaction = await Transaction.findOne({
-            payment: payment._id
+            providerTransactionId: outgoingPayment.id
         });
 
         if (!transaction) {
             transaction = await Transaction.create({
-                payment: payment._id,
-                offer: payment.offer._id,
-                tradeRequest: payment.tradeRequest._id,
-                fromShop: payment.payer._id,
-                toShop: payment.payee._id,
-                amount: payment.amount,
-                currency: payment.currency,
-                type: "trade_payment",
+                fromShop: senderShop._id,
+                toShop: recipientShop._id,
+                amount: state.amount,
+                currency: "ZAR",
+                type: "direct_payment",
                 status: "successful",
-                reference: `NEXA-${payment._id.toString().slice(-10).toUpperCase()}`,
+                reference: state.reference,
                 providerTransactionId: outgoingPayment.id
             });
         }
 
         try {
             await notifyOnce(transaction, {
-                user: payment.payee.owner,
-                message: `Payment of R${Number(payment.amount).toFixed(2)} received for ${payment.tradeRequest.product}`,
-                relatedTrade: payment.tradeRequest._id,
-                relatedOffer: payment.offer._id,
-                relatedShop: payment.payer._id,
-                relatedPayment: payment._id
+                user: recipientShop.owner,
+                message: `R${Number(state.amount).toFixed(2)} received from ${senderShop.name}`,
+                relatedShop: senderShop._id
             });
         } catch (notificationError) {
-            console.error("VENDOR PAYMENT NOTIFICATION ERROR:", notificationError);
+            console.error("DIRECT PAYMENT NOTIFICATION ERROR:", notificationError);
         }
 
-        await clearPaymentSession(req, "vendorOpenPayment");
+        await clearPaymentSession(req, "directOpenPayment");
 
         return res.redirect(
-            `/payments/${payment._id}/success`
+            `/transactions/${transaction._id}`
         );
     } catch (error) {
-        paymentError(error, "FINISH VENDOR PAYMENT ERROR");
+        paymentError(error, "FINISH DIRECT PAYMENT ERROR");
 
         return renderError(
             res,
             502,
-            "The payment outcome requires verification. Do not start another payment until it is checked."
+            "The payment outcome is uncertain. Check the transaction before attempting another transfer."
         );
-    }
-};
-
-export const showPaymentSuccess = async (req, res) => {
-    try {
-        const payment = await Payment.findById(req.params.paymentId)
-            .populate("payer")
-            .populate("payee")
-            .populate("tradeRequest")
-            .populate("offer");
-
-        if (!payment) {
-            return renderError(res, 404, "Payment not found");
-        }
-
-        const shopId = String(req.session.shopId);
-
-        if (
-            payment.payer?._id.toString() !== shopId &&
-            payment.payee?._id.toString() !== shopId
-        ) {
-            return renderError(res, 403, "You cannot view this payment");
-        }
-
-        if (payment.status !== "successful") {
-            return renderError(
-                res,
-                409,
-                "This payment has not been confirmed as successful"
-            );
-        }
-
-        const transaction = await Transaction.findOne({
-            payment: payment._id
-        });
-
-        return res.render("payments/success", {
-            payment,
-            transaction
-        });
-    } catch (error) {
-        paymentError(error, "SHOW PAYMENT SUCCESS ERROR");
-
-        return renderError(res, 500, "Unable to load payment");
     }
 };
 
