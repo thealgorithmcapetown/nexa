@@ -1,4 +1,3 @@
-V
 import Offer from "../models/Offer.js";
 import Payment from "../models/Payment.js";
 import Transaction from "../models/Transaction.js";
