@@ -1,4 +1,4 @@
-
+V
 import Offer from "../models/Offer.js";
 import Payment from "../models/Payment.js";
 import Transaction from "../models/Transaction.js";
@@ -15,6 +15,22 @@ import {
     continueOutgoingPaymentGrant,
     createOutgoingPayment
 } from "../services/openPaymentsService.js";
+
+const getPublicBaseUrl = (req) => {
+    const configuredUrl = String(process.env.PUBLIC_BASE_URL || "").trim();
+
+    if (configuredUrl) {
+        const parsedUrl = new URL(configuredUrl);
+
+        if (parsedUrl.protocol !== "https:" && process.env.NODE_ENV === "production") {
+            throw new Error("PUBLIC_BASE_URL must use HTTPS in production");
+        }
+
+        return parsedUrl.origin;
+    }
+
+    return `${req.protocol}://${req.get("host")}`;
+};
 
 const normalizeWalletAddress = (walletAddress) => {
     const value = String(walletAddress || "").trim();
@@ -358,7 +374,7 @@ export const processOfferPayment = async (req, res) => {
         });
 
         const finishUri =
-            `${req.protocol}://${req.get("host")}` +
+            `${getPublicBaseUrl(req)}` +
             `/payments/offer/${offer._id}/open-payments/callback`;
 
         const redirectUrl = await startOpenPayment({
@@ -706,7 +722,7 @@ export const processSendMoney = async (req, res) => {
         }
 
         const finishUri =
-            `${req.protocol}://${req.get("host")}` +
+            `${getPublicBaseUrl(req)}` +
             "/payments/send/open-payments/callback";
 
         const redirectUrl = await startOpenPayment({
@@ -964,7 +980,7 @@ export const showGeneratedPaymentRequest = async (req, res) => {
         }
 
         const paymentUrl =
-            `${req.protocol}://${req.get("host")}` +
+            `${getPublicBaseUrl(req)}` +
             `/pay/${paymentRequest._id}`;
 
         const qrCode = await QRCode.toDataURL(paymentUrl);
@@ -1107,7 +1123,7 @@ export const startCustomerOpenPayment = async (req, res) => {
         }
 
         const finishUri =
-            `${req.protocol}://${req.get("host")}` +
+            `${getPublicBaseUrl(req)}` +
             `/pay/${paymentRequest._id}/open-payments/callback`;
 
         const redirectUrl = await startOpenPayment({
