@@ -127,6 +127,10 @@
             line-height: 1.6;
         }
 
+        .customer-wallet-paste-button {
+            margin-top: 10px;
+        }
+
         @media (max-width: 600px) {
             .customer-wallet-warning {
                 padding: 14px;
@@ -372,6 +376,15 @@
 
                         </div>
 
+                        <button
+                            type="button"
+                            class="customer-wallet-copy-button customer-wallet-paste-button"
+                            id="pastePayerWallet"
+                        >
+                            <i data-lucide="clipboard-paste"></i>
+                            <span>Paste Wallet Address</span>
+                        </button>
+
                         <p class="customer-pay-field-help">
                             Paste your wallet address exactly as provided,
                             including the $ symbol. No HTTPS link is needed.
@@ -484,6 +497,64 @@
             payerWalletInput.setCustomValidity("");
 
         });
+
+        const pastePayerWalletButton =
+            document.getElementById("pastePayerWallet");
+
+        if (pastePayerWalletButton) {
+
+            pastePayerWalletButton.addEventListener("click", async () => {
+
+                const label = pastePayerWalletButton.querySelector("span");
+
+                try {
+
+                    const walletAddress =
+                        await navigator.clipboard.readText();
+
+                    if (!walletAddress.trim()) {
+
+                        label.textContent = "Clipboard is empty";
+
+                        setTimeout(() => {
+                            label.textContent = "Paste Wallet Address";
+                        }, 2000);
+
+                        return;
+
+                    }
+
+                    payerWalletInput.value = walletAddress.trim();
+
+                    payerWalletInput.setCustomValidity("");
+
+                    payerWalletInput.dispatchEvent(
+                        new Event("input", { bubbles: true })
+                    );
+
+                    label.textContent = "Wallet Pasted!";
+
+                    setTimeout(() => {
+                        label.textContent = "Paste Wallet Address";
+                    }, 2000);
+
+                } catch (error) {
+
+                    console.error("WALLET PASTE ERROR:", error);
+
+                    label.textContent = "Paste manually";
+
+                    payerWalletInput.focus();
+
+                    setTimeout(() => {
+                        label.textContent = "Paste Wallet Address";
+                    }, 2000);
+
+                }
+
+            });
+
+        }
 
         customerPaymentForm.addEventListener("submit", (event) => {
 

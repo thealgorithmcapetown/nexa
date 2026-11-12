@@ -346,6 +346,29 @@ export const processOfferPayment = async (req, res) => {
             );
         }
 
+        if (
+            payment?.status === "pending" &&
+            payment.paymentStage === "created" &&
+            payment.canSafelyExpire()
+        ) {
+            await Payment.updateOne(
+                {
+                    _id: payment._id,
+                    status: "pending",
+                    paymentStage: "created",
+                    providerTransactionId: { $exists: false }
+                },
+                {
+                    $set: {
+                        status: "failed",
+                        failureReason: "Payment setup timed out after 60 seconds"
+                    }
+                }
+            );
+
+            payment = await Payment.findById(payment._id);
+        }
+
         if (payment && payment.status !== "failed") {
             return renderError(
                 res,
@@ -356,6 +379,13 @@ export const processOfferPayment = async (req, res) => {
 
         if (payment?.status === "failed") {
             payment.status = "pending";
+            payment.paymentStage = "created";
+            payment.failureReason = null;
+            payment.attemptStartedAt = new Date();
+            payment.expiresAt = new Date(
+                payment.attemptStartedAt.getTime() + 60000
+            );
+
             await payment.save();
         } else {
             payment = await Payment.create({
@@ -375,6 +405,9 @@ export const processOfferPayment = async (req, res) => {
             `/payments/offer/${offer._id}/open-payments/callback`;
 
         let redirectUrl;
+
+        payment.paymentStage = "authorizing";
+        await payment.save();
 
         try {
             redirectUrl = await startOpenPayment({
@@ -399,11 +432,17 @@ export const processOfferPayment = async (req, res) => {
                 )
             ) {
                 payment.status = "failed";
+                payment.failureReason =
+                    "Open Payments rejected the outgoing grant request";
+
                 await payment.save();
             }
 
             throw error;
         }
+
+        payment.paymentStage = "authorized";
+        await payment.save();
 
         return res.redirect(redirectUrl);
     } catch (error) {
@@ -416,6 +455,7 @@ export const processOfferPayment = async (req, res) => {
         );
     }
 };
+
 
 export const finishOfferOpenPayment = async (req, res) => {
     try {
@@ -453,6 +493,16 @@ export const finishOfferOpenPayment = async (req, res) => {
             );
         }
 
+        if (payment.status === "failed") {
+            await clearPaymentSession(req, "vendorOpenPayment");
+
+            return renderError(
+                res,
+                409,
+                "This payment attempt has already failed"
+            );
+        }
+
         if (!req.query.interact_ref) {
             if (state.processing) {
                 return renderError(
@@ -462,6 +512,10 @@ export const finishOfferOpenPayment = async (req, res) => {
                 );
             }
 
+            payment.status = "failed";
+            payment.failureReason = "Payment authorization was cancelled";
+
+            await payment.save();
             await clearPaymentSession(req, "vendorOpenPayment");
 
             return res.redirect(
@@ -477,6 +531,9 @@ export const finishOfferOpenPayment = async (req, res) => {
             );
         }
 
+        payment.paymentStage = "submitting";
+        await payment.save();
+
         const outgoingPayment = await executeOpenPayment(
             state,
             req.query.interact_ref
@@ -484,8 +541,10 @@ export const finishOfferOpenPayment = async (req, res) => {
 
         if (outgoingPayment.failed === true) {
             payment.status = "failed";
-            await payment.save();
+            payment.failureReason =
+                "The payment provider confirmed the transaction failed";
 
+            await payment.save();
             await clearPaymentSession(req, "vendorOpenPayment");
 
             return renderError(
@@ -503,9 +562,21 @@ export const finishOfferOpenPayment = async (req, res) => {
             );
         }
 
-        payment.status = "successful";
-        payment.method = "open_payments";
+        payment.paymentStage = "submitted";
         payment.providerTransactionId = outgoingPayment.id;
+
+        await payment.save();
+
+        if (outgoingPayment.debitAmount && outgoingPayment.receiveAmount) {
+            console.log(
+                "VENDOR OUTGOING PAYMENT:",
+                outgoingPayment.id
+            );
+        }
+
+        payment.status = "successful";
+        payment.paymentStage = "completed";
+        payment.method = "open_payments";
         payment.completedAt = new Date();
 
         await payment.save();
@@ -602,7 +673,6 @@ export const showPaymentSuccess = async (req, res) => {
         return renderError(res, 500, "Unable to load payment");
     }
 };
-
 
 export const showPayments = async (req, res) => {
     try {
