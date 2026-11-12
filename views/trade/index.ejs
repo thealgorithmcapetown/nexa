@@ -467,6 +467,26 @@
 
     <%- include('../partials/footer') %>
 
+    <script>
+        const tradeParams = new URLSearchParams(window.location.search);
+
+        if (tradeParams.get("posted") === "success") {
+
+            const cleanUrl = new URL(window.location.href);
+
+            cleanUrl.searchParams.delete("posted");
+
+            window.history.replaceState(
+                {},
+                "",
+                cleanUrl.pathname + cleanUrl.search + cleanUrl.hash
+            );
+
+            alert("Trade posted successfully!");
+
+        }
+    </script>
+
 </body>
 
 </html>

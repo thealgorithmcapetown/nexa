@@ -392,7 +392,7 @@ export const createTradeRequest = async (req, res) => {
         });
 
 
-        return res.redirect("/trade");
+        return res.redirect("/trade?posted=success");
 
     } catch (error) {
 
