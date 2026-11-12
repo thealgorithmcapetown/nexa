@@ -131,6 +131,69 @@
             margin-top: 10px;
         }
 
+        .customer-wallet-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .customer-wallet-actions .customer-wallet-paste-button {
+            margin-top: 0;
+        }
+
+        .customer-saved-wallet {
+            display: none;
+            margin-top: 16px;
+            padding: 15px;
+            border: 1px solid rgba(181, 243, 75, 0.3);
+            border-radius: 12px;
+            background: rgba(181, 243, 75, 0.07);
+        }
+
+        .customer-saved-wallet.is-visible {
+            display: block;
+        }
+
+        .customer-saved-wallet-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #d7f8b5;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .customer-saved-wallet-title svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .customer-saved-wallet-address {
+            margin: 10px 0 13px;
+            color: #d7f8b5;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .customer-saved-wallet-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .customer-wallet-status {
+            margin: 10px 0 0;
+            color: #d7f8b5;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .customer-wallet-status:empty {
+            display: none;
+        }
+
         @media (max-width: 600px) {
             .customer-wallet-warning {
                 padding: 14px;
@@ -183,7 +246,7 @@
             </h1>
 
             <p>
-                Review the payment request and enter your Open Payments
+                Review the payment request and use your Open Payments
                 wallet address to continue.
             </p>
 
@@ -258,36 +321,20 @@
                 <div class="customer-pay-recipient">
 
                     <span>
-                        RECIPIENT WALLET
+                        RECEIVING WALLET
                     </span>
 
                     <div class="customer-wallet-copy-row">
 
-                        <p
-                            class="customer-wallet-copy-address"
-                            id="recipientWalletAddress"
-                        >
+                        <p class="customer-wallet-copy-address">
                             <%= recipientWallet || "Wallet not available" %>
                         </p>
-
-                        <% if (recipientWallet) { %>
-
-                            <button
-                                type="button"
-                                class="customer-wallet-copy-button"
-                                id="copyRecipientWallet"
-                                aria-label="Copy recipient wallet address"
-                            >
-                                <i data-lucide="copy"></i>
-                                <span>Copy Wallet</span>
-                            </button>
-
-                        <% } %>
 
                     </div>
 
                     <p class="customer-wallet-copy-help">
-                        Copy this wallet address whenever you need it.
+                        This is the shop's receiving wallet.
+                        Your own wallet is entered below.
                     </p>
 
                 </div>
@@ -309,7 +356,7 @@
                     </h2>
 
                     <p>
-                        Enter your wallet address to proceed with
+                        Use your wallet address to proceed with
                         payment authorization.
                     </p>
 
@@ -376,18 +423,78 @@
 
                         </div>
 
-                        <button
-                            type="button"
-                            class="customer-wallet-copy-button customer-wallet-paste-button"
-                            id="pastePayerWallet"
+                        <div class="customer-wallet-actions">
+
+                            <button
+                                type="button"
+                                class="customer-wallet-copy-button"
+                                id="pastePayerWallet"
+                            >
+                                <i data-lucide="clipboard-paste"></i>
+                                <span>Paste Wallet Address</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="customer-wallet-copy-button"
+                                id="copyPayerWallet"
+                            >
+                                <i data-lucide="copy"></i>
+                                <span>Copy My Wallet</span>
+                            </button>
+
+                        </div>
+
+                        <div
+                            class="customer-saved-wallet"
+                            id="savedWalletPanel"
                         >
-                            <i data-lucide="clipboard-paste"></i>
-                            <span>Paste Wallet Address</span>
-                        </button>
+
+                            <div class="customer-saved-wallet-title">
+                                <i data-lucide="check-circle-2"></i>
+                                Saved Wallet
+                            </div>
+
+                            <p
+                                class="customer-saved-wallet-address"
+                                id="savedWalletAddress"
+                            ></p>
+
+                            <div class="customer-saved-wallet-actions">
+
+                                <button
+                                    type="button"
+                                    class="customer-wallet-copy-button"
+                                    id="useSavedWallet"
+                                >
+                                    <i data-lucide="wallet"></i>
+                                    <span>Use Saved Wallet</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="customer-wallet-copy-button"
+                                    id="forgetSavedWallet"
+                                >
+                                    <i data-lucide="trash-2"></i>
+                                    <span>Forget Wallet</span>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <p
+                            class="customer-wallet-status"
+                            id="walletStatus"
+                            role="status"
+                            aria-live="polite"
+                        ></p>
 
                         <p class="customer-pay-field-help">
-                            Paste your wallet address exactly as provided,
-                            including the $ symbol. No HTTPS link is needed.
+                            Enter your own wallet address once.
+                            NEXA can remember it on this device for
+                            future payments. You can change it anytime.
                         </p>
 
                     </div>
@@ -446,45 +553,7 @@
             lucide.createIcons();
         }
 
-        const copyRecipientWalletButton =
-            document.getElementById("copyRecipientWallet");
-
-        if (copyRecipientWalletButton) {
-
-            copyRecipientWalletButton.addEventListener("click", async () => {
-
-                const walletAddress = document
-                    .getElementById("recipientWalletAddress")
-                    .textContent
-                    .trim();
-
-                const label = copyRecipientWalletButton.querySelector("span");
-
-                try {
-
-                    await navigator.clipboard.writeText(walletAddress);
-
-                    label.textContent = "Copied!";
-
-                    setTimeout(() => {
-                        label.textContent = "Copy Wallet";
-                    }, 2000);
-
-                } catch (error) {
-
-                    console.error("WALLET COPY ERROR:", error);
-
-                    label.textContent = "Copy failed";
-
-                    setTimeout(() => {
-                        label.textContent = "Copy Wallet";
-                    }, 2000);
-
-                }
-
-            });
-
-        }
+        const walletStorageKey = "nexa_customer_wallet_address";
 
         const customerPaymentForm =
             document.getElementById("customerOpenPaymentsForm");
@@ -492,100 +561,316 @@
         const payerWalletInput =
             document.getElementById("payerWalletAddress");
 
-        payerWalletInput.addEventListener("input", () => {
-
-            payerWalletInput.setCustomValidity("");
-
-        });
-
         const pastePayerWalletButton =
             document.getElementById("pastePayerWallet");
 
-        if (pastePayerWalletButton) {
+        const copyPayerWalletButton =
+            document.getElementById("copyPayerWallet");
 
-            pastePayerWalletButton.addEventListener("click", async () => {
+        const savedWalletPanel =
+            document.getElementById("savedWalletPanel");
 
-                const label = pastePayerWalletButton.querySelector("span");
+        const savedWalletAddress =
+            document.getElementById("savedWalletAddress");
 
-                try {
+        const useSavedWalletButton =
+            document.getElementById("useSavedWallet");
 
-                    const walletAddress =
-                        await navigator.clipboard.readText();
+        const forgetSavedWalletButton =
+            document.getElementById("forgetSavedWallet");
 
-                    if (!walletAddress.trim()) {
+        const walletStatus =
+            document.getElementById("walletStatus");
 
-                        label.textContent = "Clipboard is empty";
+        const normalizeWalletAddress = (value) => {
 
-                        setTimeout(() => {
-                            label.textContent = "Paste Wallet Address";
-                        }, 2000);
+            const trimmed = String(value || "").trim();
 
-                        return;
+            if (!trimmed) {
+                return "";
+            }
 
-                    }
+            if (trimmed.startsWith("https://")) {
+                return `$${trimmed.slice(8)}`;
+            }
 
-                    payerWalletInput.value = walletAddress.trim();
+            return trimmed;
 
-                    payerWalletInput.setCustomValidity("");
+        };
 
-                    payerWalletInput.dispatchEvent(
-                        new Event("input", { bubbles: true })
-                    );
+        const isValidWalletAddress = (value) => {
 
-                    label.textContent = "Wallet Pasted!";
+            const walletAddress = String(value || "").trim();
 
-                    setTimeout(() => {
-                        label.textContent = "Paste Wallet Address";
-                    }, 2000);
-
-                } catch (error) {
-
-                    console.error("WALLET PASTE ERROR:", error);
-
-                    label.textContent = "Paste manually";
-
-                    payerWalletInput.focus();
-
-                    setTimeout(() => {
-                        label.textContent = "Paste Wallet Address";
-                    }, 2000);
-
-                }
-
-            });
-
-        }
-
-        customerPaymentForm.addEventListener("submit", (event) => {
-
-            const value = payerWalletInput.value.trim();
-
-            payerWalletInput.setCustomValidity("");
+            if (!walletAddress || /\s/.test(walletAddress)) {
+                return false;
+            }
 
             try {
 
-                const normalized = value.startsWith("$")
-                    ? `https://${value.slice(1)}`
-                    : value;
+                const normalized = walletAddress.startsWith("$")
+                    ? `https://${walletAddress.slice(1)}`
+                    : walletAddress;
 
                 const url = new URL(normalized);
 
-                const valid = (
+                return (
                     url.protocol === "https:" &&
                     Boolean(url.hostname) &&
                     !url.username &&
                     !url.password &&
-                    !url.hash &&
-                    !/\s/.test(value)
+                    !url.hash
                 );
 
-                if (!valid) {
-                    throw new Error("Invalid wallet address");
-                }
+            } catch (error) {
+                return false;
+            }
 
-                payerWalletInput.value = value;
+        };
+
+        const getSavedWallet = () => {
+
+            try {
+
+                const value = localStorage.getItem(walletStorageKey);
+
+                return isValidWalletAddress(value)
+                    ? normalizeWalletAddress(value)
+                    : "";
 
             } catch (error) {
+                return "";
+            }
+
+        };
+
+        const saveWallet = (walletAddress) => {
+
+            try {
+
+                localStorage.setItem(
+                    walletStorageKey,
+                    normalizeWalletAddress(walletAddress)
+                );
+
+                return true;
+
+            } catch (error) {
+                return false;
+            }
+
+        };
+
+        const removeSavedWallet = () => {
+
+            try {
+
+                localStorage.removeItem(walletStorageKey);
+
+                return true;
+
+            } catch (error) {
+                return false;
+            }
+
+        };
+
+        const showWalletStatus = (message) => {
+            walletStatus.textContent = message;
+        };
+
+        const refreshSavedWallet = () => {
+
+            const walletAddress = getSavedWallet();
+
+            if (walletAddress) {
+
+                savedWalletAddress.textContent = walletAddress;
+
+                savedWalletPanel.classList.add("is-visible");
+
+            } else {
+
+                savedWalletAddress.textContent = "";
+
+                savedWalletPanel.classList.remove("is-visible");
+
+            }
+
+        };
+
+        const initialSavedWallet = getSavedWallet();
+
+        if (initialSavedWallet) {
+
+            payerWalletInput.value = initialSavedWallet;
+
+            showWalletStatus(
+                "Your saved wallet has been filled in automatically."
+            );
+
+        }
+
+        refreshSavedWallet();
+
+        payerWalletInput.addEventListener("input", () => {
+
+            payerWalletInput.setCustomValidity("");
+
+            showWalletStatus("");
+
+        });
+
+        pastePayerWalletButton.addEventListener("click", async () => {
+
+            const label = pastePayerWalletButton.querySelector("span");
+
+            try {
+
+                const clipboardValue =
+                    await navigator.clipboard.readText();
+
+                const walletAddress =
+                    normalizeWalletAddress(clipboardValue);
+
+                if (!isValidWalletAddress(walletAddress)) {
+
+                    showWalletStatus(
+                        "Your clipboard does not contain a valid wallet address."
+                    );
+
+                    return;
+
+                }
+
+                payerWalletInput.value = walletAddress;
+
+                payerWalletInput.setCustomValidity("");
+
+                label.textContent = "Wallet Pasted!";
+
+                showWalletStatus(
+                    "Wallet address pasted. Check it before continuing."
+                );
+
+                setTimeout(() => {
+                    label.textContent = "Paste Wallet Address";
+                }, 2000);
+
+            } catch (error) {
+
+                console.error("WALLET PASTE ERROR:", error);
+
+                label.textContent = "Paste manually";
+
+                payerWalletInput.focus();
+
+                showWalletStatus(
+                    "Clipboard access is unavailable. Paste directly into the field."
+                );
+
+                setTimeout(() => {
+                    label.textContent = "Paste Wallet Address";
+                }, 2000);
+
+            }
+
+        });
+
+        copyPayerWalletButton.addEventListener("click", async () => {
+
+            const walletAddress =
+                normalizeWalletAddress(payerWalletInput.value);
+
+            if (!isValidWalletAddress(walletAddress)) {
+
+                showWalletStatus(
+                    "Enter your own valid wallet address before copying."
+                );
+
+                payerWalletInput.focus();
+
+                return;
+
+            }
+
+            const label = copyPayerWalletButton.querySelector("span");
+
+            try {
+
+                await navigator.clipboard.writeText(walletAddress);
+
+                label.textContent = "Copied!";
+
+                setTimeout(() => {
+                    label.textContent = "Copy My Wallet";
+                }, 2000);
+
+            } catch (error) {
+
+                console.error("WALLET COPY ERROR:", error);
+
+                showWalletStatus(
+                    "Unable to copy automatically. Select and copy the address manually."
+                );
+
+            }
+
+        });
+
+        useSavedWalletButton.addEventListener("click", () => {
+
+            const walletAddress = getSavedWallet();
+
+            if (!walletAddress) {
+                return;
+            }
+
+            payerWalletInput.value = walletAddress;
+
+            payerWalletInput.setCustomValidity("");
+
+            showWalletStatus("Saved wallet selected.");
+
+        });
+
+        forgetSavedWalletButton.addEventListener("click", () => {
+
+            const previousSavedWallet = getSavedWallet();
+
+            if (!removeSavedWallet()) {
+
+                showWalletStatus(
+                    "Unable to remove the saved wallet on this device."
+                );
+
+                return;
+
+            }
+
+            if (
+                normalizeWalletAddress(payerWalletInput.value) ===
+                previousSavedWallet
+            ) {
+                payerWalletInput.value = "";
+            }
+
+            refreshSavedWallet();
+
+            showWalletStatus(
+                "Saved wallet forgotten. Enter a wallet to continue."
+            );
+
+        });
+
+        customerPaymentForm.addEventListener("submit", (event) => {
+
+            const walletAddress =
+                normalizeWalletAddress(payerWalletInput.value);
+
+            payerWalletInput.setCustomValidity("");
+
+            if (!isValidWalletAddress(walletAddress)) {
 
                 event.preventDefault();
 
@@ -594,6 +879,20 @@
                 );
 
                 payerWalletInput.reportValidity();
+
+                return;
+
+            }
+
+            payerWalletInput.value = walletAddress;
+
+            const saved = saveWallet(walletAddress);
+
+            if (!saved) {
+
+                showWalletStatus(
+                    "This browser could not remember your wallet, but you can still continue."
+                );
 
             }
 
