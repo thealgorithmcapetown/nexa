@@ -312,16 +312,18 @@ export const createTradeRequest = async (req, res) => {
 
         }
 
+
         if (
             !Number.isFinite(parsedMaxDistance) ||
-            parsedMaxDistance <= 0
+            parsedMaxDistance < 0
         ) {
 
             return res.status(400).send(
-                "Maximum distance must be greater than 0"
+                "Invalid maximum distance"
             );
 
         }
+
 
 
         const allowedFulfilment = [
