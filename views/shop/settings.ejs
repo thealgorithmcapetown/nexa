@@ -24,8 +24,6 @@
 
     <main class="nexa-main account-page">
 
-        <!-- PAGE HEADER -->
-
         <header class="account-page-header">
 
             <div>
@@ -55,8 +53,6 @@
         </header>
 
         <div class="account-settings-layout">
-
-            <!-- ACCOUNT DETAILS -->
 
             <section class="account-panel">
 
@@ -156,8 +152,6 @@
                 </form>
 
             </section>
-
-            <!-- CHANGE PASSWORD -->
 
             <section class="account-panel">
 
@@ -274,8 +268,6 @@
 
             </section>
 
-            <!-- PAYMENT WALLET -->
-
             <section class="account-panel account-wallet-settings-panel">
 
                 <div class="account-panel-heading">
@@ -346,18 +338,20 @@
                             </label>
 
                             <input
-                                type="url"
+                                type="text"
                                 id="walletAddress"
                                 name="walletAddress"
                                 value="<%= shop.walletAddress || '' %>"
-                                placeholder="https://wallet.example.com/yourname"
+                                placeholder="$ilp.interledger-test.dev/yourname"
                                 autocomplete="off"
+                                autocapitalize="none"
+                                spellcheck="false"
                             >
 
                             <small>
-                                Enter your wallet address using HTTPS.
-                                Saving an address does not automatically
-                                authorize or verify the wallet.
+                                Enter your wallet address starting with
+                                $ or https://. Saving an address does not
+                                automatically authorize or verify the wallet.
                             </small>
 
                         </div>
@@ -419,8 +413,6 @@
 
         </div>
 
-        <!-- BACK LINK -->
-
         <a href="/dashboard" class="account-back">
 
             <i data-lucide="arrow-left"></i>
@@ -438,10 +430,6 @@
         if (window.lucide) {
             lucide.createIcons();
         }
-
-        /* ==========================================
-           PASSWORD CONFIRMATION VALIDATION
-        ========================================== */
 
         const passwordForm =
             document.getElementById("account-password-form");
@@ -490,9 +478,71 @@
 
         });
 
-        /* ==========================================
-           WALLET REMOVAL CONFIRMATION
-        ========================================== */
+        const walletForm =
+            document.getElementById("account-wallet-form");
+
+        const walletInput =
+            document.getElementById("walletAddress");
+
+        function validWalletAddress(walletAddress) {
+
+            const value = String(walletAddress || "").trim();
+
+            if (!value || /\s/.test(value)) {
+                return false;
+            }
+
+            try {
+
+                const normalized = value.startsWith("$")
+                    ? `https://${value.slice(1)}`
+                    : value;
+
+                const url = new URL(normalized);
+
+                return (
+                    url.protocol === "https:" &&
+                    Boolean(url.hostname) &&
+                    !url.username &&
+                    !url.password &&
+                    !url.hash
+                );
+
+            } catch (error) {
+                return false;
+            }
+
+        }
+
+        walletInput.addEventListener("input", function () {
+
+            this.setCustomValidity("");
+
+        });
+
+        walletForm.addEventListener("submit", function (event) {
+
+            const walletAddress = walletInput.value.trim();
+
+            walletInput.setCustomValidity("");
+
+            if (!validWalletAddress(walletAddress)) {
+
+                event.preventDefault();
+
+                walletInput.setCustomValidity(
+                    "Enter a valid wallet address, for example $ilp.interledger-test.dev/yourname"
+                );
+
+                walletInput.reportValidity();
+
+                return;
+
+            }
+
+            walletInput.value = walletAddress;
+
+        });
 
         const removeWalletButton =
             document.getElementById("removeWalletButton");

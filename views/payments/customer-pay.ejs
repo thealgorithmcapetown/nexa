@@ -16,10 +16,6 @@
     <link rel="stylesheet" href="/css/customer-pay.css">
 
     <style>
-        /* ========================================
-           OPEN PAYMENTS WALLET NOTICE
-        ======================================== */
-
         .customer-wallet-warning {
             display: flex;
             align-items: flex-start;
@@ -77,10 +73,69 @@
             font-weight: 600;
         }
 
+        .customer-wallet-copy-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .customer-wallet-copy-address {
+            flex: 1;
+            min-width: 0;
+            margin: 0;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .customer-wallet-copy-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            gap: 7px;
+            padding: 10px 12px;
+            border: 1px solid rgba(181, 243, 75, 0.35);
+            border-radius: 9px;
+            background: rgba(181, 243, 75, 0.12);
+            color: #d7f8b5;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .customer-wallet-copy-button:hover {
+            background: rgba(181, 243, 75, 0.22);
+        }
+
+        .customer-wallet-copy-button svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .customer-wallet-copy-button:focus-visible {
+            outline: 2px solid #b5f34b;
+            outline-offset: 3px;
+        }
+
+        .customer-wallet-copy-help {
+            margin: 9px 0 0;
+            color: #a9bdb0;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
         @media (max-width: 600px) {
             .customer-wallet-warning {
                 padding: 14px;
                 gap: 10px;
+            }
+
+            .customer-wallet-copy-row {
+                align-items: flex-start;
+                flex-direction: column;
             }
         }
     </style>
@@ -90,10 +145,6 @@
 <body class="customer-pay-body">
 
     <main class="customer-pay-page">
-
-        <!-- ========================================
-             BRAND HEADER
-        ======================================== -->
 
         <header class="customer-pay-header">
 
@@ -117,11 +168,6 @@
 
         </header>
 
-
-        <!-- ========================================
-             CHECKOUT HEADING
-        ======================================== -->
-
         <div class="customer-pay-heading">
 
             <span class="customer-pay-eyebrow">
@@ -139,14 +185,7 @@
 
         </div>
 
-
-        <!-- ========================================
-             CHECKOUT LAYOUT
-        ======================================== -->
-
         <div class="customer-pay-layout">
-
-            <!-- PAYMENT SUMMARY -->
 
             <section class="customer-pay-summary-card">
 
@@ -162,7 +201,6 @@
                     R<%= Number(paymentRequest.amount).toFixed(2) %>
                 </h2>
 
-
                 <div class="customer-pay-details">
 
                     <div class="customer-pay-detail-row">
@@ -177,7 +215,6 @@
 
                     </div>
 
-
                     <div class="customer-pay-detail-row">
 
                         <span>
@@ -189,7 +226,6 @@
                         </strong>
 
                     </div>
-
 
                     <div class="customer-pay-detail-row">
 
@@ -205,6 +241,15 @@
 
                 </div>
 
+                <%
+                    const rawRecipientWallet = String(
+                        paymentRequest.walletAddress || ""
+                    ).trim();
+
+                    const recipientWallet = rawRecipientWallet.startsWith("https://")
+                        ? `$${rawRecipientWallet.slice(8)}`
+                        : rawRecipientWallet;
+                %>
 
                 <div class="customer-pay-recipient">
 
@@ -212,8 +257,33 @@
                         RECIPIENT WALLET
                     </span>
 
-                    <p>
-                        <%= paymentRequest.walletAddress %>
+                    <div class="customer-wallet-copy-row">
+
+                        <p
+                            class="customer-wallet-copy-address"
+                            id="recipientWalletAddress"
+                        >
+                            <%= recipientWallet || "Wallet not available" %>
+                        </p>
+
+                        <% if (recipientWallet) { %>
+
+                            <button
+                                type="button"
+                                class="customer-wallet-copy-button"
+                                id="copyRecipientWallet"
+                                aria-label="Copy recipient wallet address"
+                            >
+                                <i data-lucide="copy"></i>
+                                <span>Copy Wallet</span>
+                            </button>
+
+                        <% } %>
+
+                    </div>
+
+                    <p class="customer-wallet-copy-help">
+                        Copy this wallet address whenever you need it.
                     </p>
 
                 </div>
@@ -221,11 +291,6 @@
                 <i data-lucide="wallet-cards" class="customer-pay-watermark"></i>
 
             </section>
-
-
-            <!-- ========================================
-                 PAYMENT FORM
-            ======================================== -->
 
             <section class="customer-pay-form-card">
 
@@ -245,11 +310,6 @@
                     </p>
 
                 </div>
-
-
-                <!-- ========================================
-                     WALLET LOGIN WARNING
-                ======================================== -->
 
                 <div class="customer-wallet-warning" role="note">
 
@@ -281,15 +341,11 @@
 
                 </div>
 
-
-                <!-- ========================================
-                     OPEN PAYMENTS FORM
-                ======================================== -->
-
                 <form
                     action="/pay/<%= paymentRequest._id %>/open-payments"
                     method="POST"
                     class="customer-pay-form"
+                    id="customerOpenPaymentsForm"
                 >
 
                     <div class="customer-pay-field">
@@ -307,7 +363,7 @@
                                 type="text"
                                 id="payerWalletAddress"
                                 name="payerWalletAddress"
-                                placeholder="$ilp.interledger-test.dev/yourWalletAdress"
+                                placeholder="$ilp.interledger-test.dev/yourname"
                                 autocomplete="off"
                                 autocapitalize="none"
                                 spellcheck="false"
@@ -317,14 +373,11 @@
                         </div>
 
                         <p class="customer-pay-field-help">
-                            Enter your Interledger-compatible wallet address
-                            to authorize this payment.
+                            Paste your wallet address exactly as provided,
+                            including the $ symbol. No HTTPS link is needed.
                         </p>
 
                     </div>
-
-
-                    <!-- PAYMENT AUTHORIZATION NOTICE -->
 
                     <div class="customer-pay-notice">
 
@@ -337,7 +390,6 @@
                         </p>
 
                     </div>
-
 
                     <button
                         type="submit"
@@ -355,11 +407,6 @@
             </section>
 
         </div>
-
-
-        <!-- ========================================
-             FOOTER
-        ======================================== -->
 
         <footer class="customer-pay-footer">
 
@@ -379,15 +426,107 @@
 
     </main>
 
-
-    <!-- SHARED SCRIPTS -->
-
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 
     <script>
         if (window.lucide) {
             lucide.createIcons();
         }
+
+        const copyRecipientWalletButton =
+            document.getElementById("copyRecipientWallet");
+
+        if (copyRecipientWalletButton) {
+
+            copyRecipientWalletButton.addEventListener("click", async () => {
+
+                const walletAddress = document
+                    .getElementById("recipientWalletAddress")
+                    .textContent
+                    .trim();
+
+                const label = copyRecipientWalletButton.querySelector("span");
+
+                try {
+
+                    await navigator.clipboard.writeText(walletAddress);
+
+                    label.textContent = "Copied!";
+
+                    setTimeout(() => {
+                        label.textContent = "Copy Wallet";
+                    }, 2000);
+
+                } catch (error) {
+
+                    console.error("WALLET COPY ERROR:", error);
+
+                    label.textContent = "Copy failed";
+
+                    setTimeout(() => {
+                        label.textContent = "Copy Wallet";
+                    }, 2000);
+
+                }
+
+            });
+
+        }
+
+        const customerPaymentForm =
+            document.getElementById("customerOpenPaymentsForm");
+
+        const payerWalletInput =
+            document.getElementById("payerWalletAddress");
+
+        payerWalletInput.addEventListener("input", () => {
+
+            payerWalletInput.setCustomValidity("");
+
+        });
+
+        customerPaymentForm.addEventListener("submit", (event) => {
+
+            const value = payerWalletInput.value.trim();
+
+            payerWalletInput.setCustomValidity("");
+
+            try {
+
+                const normalized = value.startsWith("$")
+                    ? `https://${value.slice(1)}`
+                    : value;
+
+                const url = new URL(normalized);
+
+                const valid = (
+                    url.protocol === "https:" &&
+                    Boolean(url.hostname) &&
+                    !url.username &&
+                    !url.password &&
+                    !url.hash &&
+                    !/\s/.test(value)
+                );
+
+                if (!valid) {
+                    throw new Error("Invalid wallet address");
+                }
+
+                payerWalletInput.value = value;
+
+            } catch (error) {
+
+                event.preventDefault();
+
+                payerWalletInput.setCustomValidity(
+                    "Enter a valid Interledger wallet address, for example $ilp.interledger-test.dev/yourname"
+                );
+
+                payerWalletInput.reportValidity();
+
+            }
+
+        });
     </script>
 
     <script src="/js/loader.js"></script>

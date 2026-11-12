@@ -13,6 +13,64 @@ const renderError = (res, statusCode, message) => {
 
 };
 
+const normalizeWalletAddress = (walletAddress) => {
+
+    const value = String(walletAddress || "").trim();
+
+    if (!value) {
+        return "";
+    }
+
+    if (value.startsWith("$")) {
+        return `https://${value.slice(1)}`;
+    }
+
+    return value;
+
+};
+
+const formatWalletAddress = (walletAddress) => {
+
+    const value = String(walletAddress || "").trim();
+
+    if (value.startsWith("$")) {
+        return value;
+    }
+
+    const url = new URL(value);
+
+    if (url.protocol === "https:") {
+        return `$${url.host}${url.pathname}${url.search}`;
+    }
+
+    return value;
+
+};
+
+const validWalletAddress = (walletAddress) => {
+
+    try {
+
+        const normalized = normalizeWalletAddress(walletAddress);
+        const url = new URL(normalized);
+
+        return (
+            url.protocol === "https:" &&
+            Boolean(url.hostname) &&
+            !url.username &&
+            !url.password &&
+            !url.hash &&
+            !/\s/.test(walletAddress)
+        );
+
+    } catch (error) {
+
+        return false;
+
+    }
+
+};
+
 export const showSignup = (req, res) => {
 
     res.render("auth/signup");
@@ -129,31 +187,21 @@ export const signup = async (req, res) => {
 
         if (walletAddress && String(walletAddress).trim()) {
 
-            cleanWalletAddress = String(walletAddress).trim();
+            const providedWalletAddress = String(walletAddress).trim();
 
-            try {
-
-                const walletUrl = new URL(cleanWalletAddress);
-
-                if (walletUrl.protocol !== "https:") {
-
-                    return renderError(
-                        res,
-                        400,
-                        "Wallet address must use HTTPS"
-                    );
-
-                }
-
-            } catch (error) {
+            if (!validWalletAddress(providedWalletAddress)) {
 
                 return renderError(
                     res,
                     400,
-                    "Invalid wallet address"
+                    "Enter a valid Open Payments wallet address, starting with $"
                 );
 
             }
+
+            cleanWalletAddress = formatWalletAddress(
+                providedWalletAddress
+            );
 
         }
 

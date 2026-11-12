@@ -343,15 +343,20 @@
                         </label>
 
                         <input
-                            type="url"
+                            type="text"
                             id="walletAddress"
                             name="walletAddress"
-                            placeholder="https://wallet.example.com/yourname"
+                            placeholder="$ilp.interledger-test.dev/yourname"
                             autocomplete="off"
+                            autocapitalize="none"
+                            spellcheck="false"
                         >
 
                         <span class="nexa-signup-hint">
-                            You can connect or update your wallet later in Settings.
+                            Paste your Interledger wallet address exactly
+                            as provided, including the $ symbol.
+                            No HTTPS link is needed. You can update
+                            your wallet later in Settings.
                         </span>
 
                     </div>
@@ -543,6 +548,8 @@
 
             const locationStatus =
                 document.getElementById("shopLocationStatus");
+
+            const walletInput = document.getElementById("walletAddress");
 
             const stepNames = [
                 "PERSONAL DETAILS",
@@ -1120,7 +1127,64 @@
 
             }
 
+            function validWalletInput() {
+
+                const value = walletInput.value.trim();
+
+                walletInput.setCustomValidity("");
+
+                if (!value) {
+                    return true;
+                }
+
+                try {
+
+                    const normalized = value.startsWith("$")
+                        ? `https://${value.slice(1)}`
+                        : value;
+
+                    const url = new URL(normalized);
+
+                    const valid = (
+                        url.protocol === "https:" &&
+                        Boolean(url.hostname) &&
+                        !url.username &&
+                        !url.password &&
+                        !url.hash &&
+                        !/\s/.test(value)
+                    );
+
+                    if (!valid) {
+                        throw new Error("Invalid wallet address");
+                    }
+
+                    return true;
+
+                } catch (error) {
+
+                    walletInput.setCustomValidity(
+                        "Enter a valid Interledger wallet address, for example $ilp.interledger-test.dev/yourname"
+                    );
+
+                    walletInput.reportValidity();
+
+                    return false;
+
+                }
+
+            }
+
+            walletInput.addEventListener("input", () => {
+
+                walletInput.setCustomValidity("");
+
+            });
+
             function validateStep(stepIndex) {
+
+                if (stepIndex === 2 && !validWalletInput()) {
+                    return false;
+                }
 
                 const inputs = steps[stepIndex].querySelectorAll(
                     "input:not([type='hidden']), select, textarea"
@@ -1284,9 +1348,8 @@
 
             skipButton.addEventListener("click", () => {
 
-                form.elements.namedItem(
-                    "walletAddress"
-                ).value = "";
+                walletInput.value = "";
+                walletInput.setCustomValidity("");
 
                 showStep(3);
 

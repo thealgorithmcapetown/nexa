@@ -270,10 +270,14 @@
                         id="walletAddress"
                         name="walletAddress"
                         value="<%= shop.walletAddress || '' %>"
-                        placeholder="https://ilp.interledger-test.dev/your-wallet"
+                        placeholder="$ilp.interledger-test.dev/yourname"
+                        autocomplete="off"
+                        autocapitalize="none"
+                        spellcheck="false"
                     >
 
                     <small>
+                        Enter your wallet address starting with $ or https://.
                         This wallet is used to receive NEXA payments.
                     </small>
                 </div>
@@ -320,6 +324,7 @@
 
             const form = document.getElementById("editShopForm");
             const addressInput = document.getElementById("address");
+            const walletInput = document.getElementById("walletAddress");
             const latitudeInput = document.getElementById("shopLatitude");
             const longitudeInput = document.getElementById("shopLongitude");
             const confirmationInput = document.getElementById("locationConfirmed");
@@ -349,6 +354,44 @@
                     longitude >= -180 &&
                     longitude <= 180;
             }
+
+            function validWalletAddress(walletAddress) {
+
+                const value = String(walletAddress || "").trim();
+
+                if (!value) {
+                    return true;
+                }
+
+                if (/\s/.test(value)) {
+                    return false;
+                }
+
+                try {
+
+                    const normalized = value.startsWith("$")
+                        ? `https://${value.slice(1)}`
+                        : value;
+
+                    const url = new URL(normalized);
+
+                    return (
+                        url.protocol === "https:" &&
+                        Boolean(url.hostname) &&
+                        !url.username &&
+                        !url.password &&
+                        !url.hash
+                    );
+
+                } catch (error) {
+                    return false;
+                }
+
+            }
+
+            walletInput.addEventListener("input", () => {
+                walletInput.setCustomValidity("");
+            });
 
             const hasSavedCoordinates = validCoordinates(
                 savedLatitude,
@@ -626,6 +669,25 @@
             });
 
             form.addEventListener("submit", (event) => {
+
+                const walletAddress = walletInput.value.trim();
+
+                walletInput.setCustomValidity("");
+
+                if (!validWalletAddress(walletAddress)) {
+
+                    event.preventDefault();
+
+                    walletInput.setCustomValidity(
+                        "Enter a valid wallet address, for example $ilp.interledger-test.dev/yourname"
+                    );
+
+                    walletInput.reportValidity();
+
+                    return;
+                }
+
+                walletInput.value = walletAddress;
 
                 const latitude = Number(latitudeInput.value);
                 const longitude = Number(longitudeInput.value);

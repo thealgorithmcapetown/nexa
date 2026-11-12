@@ -3,6 +3,33 @@ import Shop from "../models/Shop.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
+const validWalletAddress = (walletAddress) => {
+    const value = String(walletAddress || "").trim();
+
+    if (!value || /\s/.test(value)) {
+        return false;
+    }
+
+    const normalized = value.startsWith("$")
+        ? `https://${value.slice(1)}`
+        : value;
+
+    try {
+        const walletUrl = new URL(normalized);
+
+        return (
+            walletUrl.protocol === "https:" &&
+            Boolean(walletUrl.hostname) &&
+            !walletUrl.username &&
+            !walletUrl.password &&
+            !walletUrl.hash
+        );
+
+    } catch (error) {
+        return false;
+    }
+};
+
 export const showShop = async (req, res) => {
     try {
         const shop = await Shop.findOne({
@@ -113,24 +140,9 @@ export const updateShop = async (req, res) => {
         if (walletAddress && String(walletAddress).trim()) {
             cleanWalletAddress = String(walletAddress).trim();
 
-            try {
-                const walletUrl = new URL(cleanWalletAddress);
-
-                if (walletUrl.protocol !== "https:") {
-                    return res.status(400).send(
-                        "Wallet address must use HTTPS"
-                    );
-                }
-
-                if (walletUrl.username || walletUrl.password) {
-                    return res.status(400).send(
-                        "Wallet address cannot contain login credentials"
-                    );
-                }
-
-            } catch (error) {
+            if (!validWalletAddress(cleanWalletAddress)) {
                 return res.status(400).send(
-                    "Invalid wallet address"
+                    "Enter a valid Open Payments wallet address"
                 );
             }
         }
@@ -359,24 +371,9 @@ export const updateWallet = async (req, res) => {
 
         const cleanWalletAddress = walletAddress.trim();
 
-        try {
-            const walletUrl = new URL(cleanWalletAddress);
-
-            if (walletUrl.protocol !== "https:") {
-                return res.status(400).send(
-                    "Wallet address must use HTTPS"
-                );
-            }
-
-            if (walletUrl.username || walletUrl.password) {
-                return res.status(400).send(
-                    "Wallet address cannot contain login credentials"
-                );
-            }
-
-        } catch (error) {
+        if (!validWalletAddress(cleanWalletAddress)) {
             return res.status(400).send(
-                "Invalid wallet address"
+                "Enter a valid Open Payments wallet address"
             );
         }
 

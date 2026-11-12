@@ -47,7 +47,6 @@ const shopSchema = new mongoose.Schema({
         type: String
     },
 
-    // Average rating from completed trades
     rating: {
         type: Number,
         default: 0,
@@ -55,7 +54,6 @@ const shopSchema = new mongoose.Schema({
         max: 5
     },
 
-    // Total number of ratings received
     ratingCount: {
         type: Number,
         default: 0,

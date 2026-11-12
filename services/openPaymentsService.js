@@ -36,11 +36,40 @@ const validateZarWallet = (wallet) => {
 };
 
 const getWallet = async (client, walletAddress, label) => {
-    console.log(`${label} WALLET URL:`, walletAddress);
+
+    const value = String(walletAddress || "").trim();
+
+    if (!value || /\s/.test(value)) {
+        throw new Error("Invalid wallet address");
+    }
+
+    const normalizedWalletAddress = value.startsWith("$")
+        ? `https://${value.slice(1)}`
+        : value;
+
+    let walletUrl;
+
+    try {
+        walletUrl = new URL(normalizedWalletAddress);
+    } catch (error) {
+        throw new Error("Invalid wallet address");
+    }
+
+    if (
+        walletUrl.protocol !== "https:" ||
+        !walletUrl.hostname ||
+        walletUrl.username ||
+        walletUrl.password ||
+        walletUrl.hash
+    ) {
+        throw new Error("Invalid wallet address");
+    }
+
+    console.log(`${label} WALLET URL:`, normalizedWalletAddress);
 
     try {
         const wallet = await client.walletAddress.get({
-            url: walletAddress
+            url: normalizedWalletAddress
         });
 
         console.log(`${label} WALLET FETCH: SUCCESS`);
@@ -52,7 +81,7 @@ const getWallet = async (client, walletAddress, label) => {
 
     } catch (error) {
         console.error(`${label} WALLET FETCH FAILED`);
-        console.error("WALLET URL:", walletAddress);
+        console.error("WALLET URL:", normalizedWalletAddress);
         console.error("ERROR MESSAGE:", error.message);
         console.error("ERROR DESCRIPTION:", error.description);
         console.error("ERROR CAUSE:", error.cause);
@@ -220,7 +249,6 @@ export const requestOutgoingPaymentGrant = async ({
             access_token: {
                 access: [
                     {
-                        identifier: senderWallet.id,
                         type: "outgoing-payment",
                         actions: [
                             "list",
