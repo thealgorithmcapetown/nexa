@@ -241,6 +241,25 @@ export const requestOutgoingPaymentGrant = async ({
 
     validateZarWallet(senderWallet);
 
+    const outgoingAccess = {
+        identifier: senderWallet.id,
+        type: "outgoing-payment",
+        actions: [
+            "create",
+            "read"
+        ],
+        limits: {
+            debitAmount: {
+                assetCode: quote.debitAmount.assetCode,
+                assetScale: quote.debitAmount.assetScale,
+                value: quote.debitAmount.value
+            }
+        }
+    };
+
+    console.log("OUTGOING GRANT AUTH SERVER:", senderWallet.authServer);
+    console.log("OUTGOING GRANT ACCESS:", JSON.stringify(outgoingAccess));
+
     const grant = await client.grant.request(
         {
             url: senderWallet.authServer
@@ -248,23 +267,7 @@ export const requestOutgoingPaymentGrant = async ({
         {
             access_token: {
                 access: [
-                    {
-                        type: "outgoing-payment",
-                        actions: [
-                            "list",
-                            "list-all",
-                            "read",
-                            "read-all",
-                            "create"
-                        ],
-                        limits: {
-                            debitAmount: {
-                                assetCode: quote.debitAmount.assetCode,
-                                assetScale: quote.debitAmount.assetScale,
-                                value: quote.debitAmount.value
-                            }
-                        }
-                    }
+                    outgoingAccess
                 ]
             },
             interact: {
